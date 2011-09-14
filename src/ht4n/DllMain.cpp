@@ -26,11 +26,20 @@
 #include "Common/Compat.h"
 #include "pthread.h"
 
+#pragma push_macro("_WIN32_WINNT")
+#pragma push_macro("WINVER")
+
+#undef _WIN32_WINNT
+#undef WINVER
+
 //
 // workaround for the boost thread /clr issue
 // add ignore library libboost_thread-vc100-mt-[gd]-1_44.lib
 //
 #include "libs/thread/src/win32/thread.cpp"
+
+#pragma pop_macro("WINVER")
+#pragma pop_macro("_WIN32_WINNT")
 
 //
 // free spirit parser
