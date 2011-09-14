@@ -41,12 +41,11 @@ Building ht4c for Windows requires Microsoft Visual Studio 2010 Professional or 
 
 		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\10.0\EnterpriseTools\QualityTools\TestTypes
 
-* Open the ht4n solution (...\\ht4n\\ht4n.sln) with Microsoft Visual Studio 2010 and build the solution configuration(s) or
-  run Visual Studio Command Prompt and run:
+* Open the ht4n solution (ht4n\ht4n.sln) with Microsoft Visual Studio 2010 and build its configurations. Alternatively, open the Visual Studio command prompt and type:
 
 		cd ...\ht4n
 		msbuild ht4n.buildproj
-  or for a complete rebuild
+  or, for a complete rebuild, type
 
 		cd ...\ht4n
 		msbuild ht4n.buildproj /t:Clean;Make
