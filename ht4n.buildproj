@@ -16,6 +16,15 @@
 		<HasMSBuildCommunityTasks Condition="Exists('$(MSBuildCommunityTasksTargets)')">true</HasMSBuildCommunityTasks>
 	</PropertyGroup>
 
+	<!-- Check for sandcastle -->
+	<PropertyGroup>
+		<Sandcastle>$(ProgramFiles)\EWSoftware\Sandcastle Help File Builder\SandcastleHelpFileBuilder.targets</Sandcastle>
+		<SandcastleX86>$(ProgramFiles(x86))\EWSoftware\Sandcastle Help File Builder\SandcastleHelpFileBuilder.targets</SandcastleX86>
+		<HasSandcastle>false</HasSandcastle>
+		<HasSandcastle Condition="Exists('$(Sandcastle)')">true</HasSandcastle>
+		<HasSandcastle Condition="Exists('$(SandcastleX86)')">true</HasSandcastle>
+	</PropertyGroup>
+
 	<!-- Get machine's architecture -->
 	<PropertyGroup>
 		<MachineProcessorArchitecture>$(registry:HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment@PROCESSOR_ARCHITECTURE)</MachineProcessorArchitecture>
@@ -25,6 +34,13 @@
 		<Is64Bit>False</Is64Bit>
 		<Is64Bit
 			Condition="'$(MachineProcessorArchitecture)' == 'AMD64'">true</Is64Bit>
+	</PropertyGroup>
+
+	<!-- Check for mstest64 -->
+	<PropertyGroup>
+		<MSTest64>$(VSInstallDir)\Common7\IDE\mstest64.exe</MSTest64>
+		<HasMSTest64>false</HasMSTest64>
+		<HasMSTest64 Condition="Exists('$(MSTest64)')">true</HasMSTest64>
 	</PropertyGroup>
 
 	<!-- Configuration group -->
@@ -91,7 +107,8 @@
 	</Target>
 
 	<!-- Make documentation-->
-	<Target Name="MakeDoc">
+	<Target Name="MakeDoc"
+			Condition="$(HasSandcastle) == true">
 		<Error
 			Text="ht4n.xml does not exist."
 			Condition="!Exists('dist\Win32\Debug\ht4n.xml')" />
@@ -162,7 +179,12 @@
 			Value="Hyper" />
 
 		<Exec
-			Command="mstest /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
+			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<Exec
+			Condition="'%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
+			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<XmlPoke
 			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
@@ -170,7 +192,12 @@
 			Value="Thrift" />
 
 		<Exec
-			Command="mstest /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
+			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<Exec
+			Condition="'%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
+			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<Exec
 			Command="if exist TestResults rd /S /Q TestResults" />
