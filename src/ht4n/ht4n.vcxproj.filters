@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CellInterval.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChunkedTableMutator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CM2A.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Context.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ITableMutator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ITableScanner.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Key.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Namespace.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RowInterval.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScanSpec.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Table.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TableMutator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TableScanner.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="NamespaceListing.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MutatorSpec.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CellFlag.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AppDomainHandler.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateDispositions.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenDispositions.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DropDispositions.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CrossAppDomainAction.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CrossAppDomainFunc.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncResult.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockingAsyncResult.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextKind.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MutatorKind.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncScannerCallback.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CellKeyComparer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScannerFlags.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MutatorFlags.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QueuedTableMutator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncScannerContext.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncMutatorContext.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncCallbackResult.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AssemblyInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CellInterval.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChunkedTableMutator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Context.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Key.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Namespace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RowInterval.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScanSpec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Table.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TableMutator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TableScanner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DllMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NamespaceListing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MutatorSpec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalSuppressions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncResult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockingAsyncResult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CellKeyComparer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QueuedTableMutator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ht4n.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ht4n.sed" />
+  </ItemGroup>
+</Project>

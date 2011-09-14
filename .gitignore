@@ -1,1 +1,13 @@
 
+/build
+/dist
+/doc/api
+/ipch
+obj/
+TestResults/
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.aps
+*.shfbproj_*

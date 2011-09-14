@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Make" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+	 <!-- Master files to make -->
+	<PropertyGroup>
+		<Version>0.9.5.0</Version>
+		<Master_x86>dist\ht4n-$(Version)-win-x86.zip</Master_x86>
+		<Master_x64>dist\ht4n-$(Version)-win-x64.zip</Master_x64>
+		<Master_ApiDoc>dist\ht4n-$(Version)-api-doc.zip</Master_ApiDoc>
+	</PropertyGroup>
+
+	<!-- Check for MSBuildCommunityTasks -->
+	<PropertyGroup>
+		<MSBuildCommunityTasksTargets>$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets</MSBuildCommunityTasksTargets>
+		<HasMSBuildCommunityTasks>false</HasMSBuildCommunityTasks>
+		<HasMSBuildCommunityTasks Condition="Exists('$(MSBuildCommunityTasksTargets)')">true</HasMSBuildCommunityTasks>
+	</PropertyGroup>
+
+	<!-- Get machine's architecture -->
+	<PropertyGroup>
+		<MachineProcessorArchitecture>$(registry:HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment@PROCESSOR_ARCHITECTURE)</MachineProcessorArchitecture>
+		<Is32Bit>False</Is32Bit>
+		<Is32Bit
+			Condition="'$(MachineProcessorArchitecture)' == 'x86'">true</Is32Bit>
+		<Is64Bit>False</Is64Bit>
+		<Is64Bit
+			Condition="'$(MachineProcessorArchitecture)' == 'AMD64'">true</Is64Bit>
+	</PropertyGroup>
+
+	<!-- Configuration group -->
+	<ItemGroup>
+		<MakeConfiguration Include="." >
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</MakeConfiguration>
+		<MakeConfiguration Include="." >
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</MakeConfiguration>
+		<MakeConfiguration Include="." Condition="$(Is64Bit) == true" >
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</MakeConfiguration>
+		<MakeConfiguration Include="." Condition="$(Is64Bit) == true" >
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</MakeConfiguration>
+	</ItemGroup>
+
+	<!-- Start/stop servers scripts -->
+	<PropertyGroup>
+		<StartServers>
+			<![CDATA[
+			public static void ScriptMain() {
+				ProcessStartInfo psi = new ProcessStartInfo(@"..\ht4w\dist\Win32\release\hypertable.service.exe", @"--stop-all-services --kill-servers --start-servers");
+				psi.WindowStyle = ProcessWindowStyle.Hidden;
+				Process p = Process.Start(psi);
+				p.WaitForExit();
+			}
+			]]>
+		</StartServers>
+
+		<StopServers>
+			<![CDATA[
+			public static void ScriptMain() {
+				ProcessStartInfo psi = new ProcessStartInfo(@"..\ht4w\dist\Win32\release\hypertable.service.exe", @"--stop-all-services --kill-servers");
+				psi.WindowStyle = ProcessWindowStyle.Hidden;
+				Process p = Process.Start(psi);
+				p.WaitForExit();
+			}
+			]]>
+		</StopServers>
+	</PropertyGroup>
+	
+	<!-- Import MSBuildCommunityTasksTargets if available -->
+	<Import Project="$(MSBuildCommunityTasksTargets)"
+			Condition="$(HasMSBuildCommunityTasks) == true"/>
+
+	<!-- Build, tests, make documentation, make master -->
+	<Target Name="Make"
+		DependsOnTargets="CleanMaster;Build;ExecTests;MakeDoc;MakeMaster">
+	</Target>
+
+	<!-- Build -->
+	<Target Name="Build">
+		<MSBuild
+			Projects="ht4n.sln"
+			Targets="Build"
+			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform)"
+			ContinueOnError="false" />
+	</Target>
+
+	<!-- Make documentation-->
+	<Target Name="MakeDoc">
+		<Error
+			Text="ht4n.xml does not exist."
+			Condition="!Exists('dist\Win32\Debug\ht4n.xml')" />
+		<MSBuild
+			Projects="ht4n.shfbproj"
+			Targets="Build"
+			ContinueOnError="false" />
+
+		<Unzip
+			ZipFileName="src\ht4n-doc-api-styles.zip" 
+			TargetDirectory="doc\api\"/>
+	</Target>
+
+	<!-- Make master -->
+	<Target Name="MakeMaster"
+			Condition="$(HasMSBuildCommunityTasks) == true" >
+
+		<ItemGroup>
+			<MasterFiles_x86 Include="dist\Win32\Release\ht4n.dll;dist\Win32\Release\ht4n.xml;dist\Win32\Release\ht4n.pdb" />
+		</ItemGroup>
+
+		<ItemGroup>
+			<MasterFiles_x64 Include="dist\x64\Release\ht4n.dll;dist\x64\Release\ht4n.xml;dist\x64\Release\ht4n.pdb" />
+		</ItemGroup>
+		
+		<ItemGroup>
+			<MasterFiles_ApiDoc Include="doc\api\**\*.html;doc\api\**\*.htm;doc\api\**\*.css;doc\api\**\*.js;doc\api\**\*.gif;doc\api\**\*.png;doc\api\**\*.jpg;doc\api\**\*.bmp;doc\api\**\*.ico" />
+		</ItemGroup>
+
+		<Zip
+			Files="@(MasterFiles_x86)"
+			ZipFileName="$(Master_x86)"
+			Flatten="true" />
+
+		<Zip
+			Files="@(MasterFiles_x64)"
+			ZipFileName="$(Master_x64)"
+			Flatten="true"
+			Condition="$(Is64Bit) == true" />
+
+		<Zip
+			Files="@(MasterFiles_ApiDoc)"
+			ZipFileName="$(Master_ApiDoc)"
+			WorkingDirectory="doc\api" />
+	</Target>
+
+	<!-- Ececute tests -->
+	<Target Name="ExecTests"
+			DependsOnTargets="StartServers"
+			Condition="$(HasMSBuildCommunityTasks) == true" >
+
+		<CallTarget
+			Targets="InvokeTests" />
+
+		<CallTarget
+			Targets="StopServers" />
+
+		<OnError ExecuteTargets="StopServers" />
+	</Target>
+
+	<!-- Ececute tests w'out statr/stop servers -->
+	<Target Name="InvokeTests"
+			Condition="$(HasMSBuildCommunityTasks) == true" >
+
+		<XmlPoke
+			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
+			Query="/configuration/appSettings/add[@key='TestContextKind']/@value"
+			Value="Hyper" />
+
+		<Exec
+			Command="mstest /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<XmlPoke
+			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
+			Query="/configuration/appSettings/add[@key='TestContextKind']/@value"
+			Value="Thrift" />
+
+		<Exec
+			Command="mstest /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<Exec
+			Command="if exist TestResults rd /S /Q TestResults" />
+
+	</Target>
+
+	<!-- Cleans build, doc and deletes the master files -->
+	<Target Name="Clean"
+			DependsOnTargets="CleanMaster">
+		<MSBuild
+			Projects="ht4n.sln"
+			Targets="Clean"
+			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform)"
+			ContinueOnError="false" />
+
+		<Exec
+			Command="if exist doc\api rd /S /Q doc\api" />
+			
+		<Exec
+			Command="if exist TestResults rd /S /Q TestResults" />
+	</Target>
+
+	<!-- Deletes the master files -->
+	<Target Name="CleanMaster">
+		<Delete
+			Files="$(Master_x86)" />
+		<Delete
+			Files="$(Master_x64)" />
+		<Delete
+			Files="$(Master_api_doc)" />
+	</Target>
+
+	<!-- Start servers -->
+	<Target Name="StartServers"
+			Condition="$(HasMSBuildCommunityTasks) == true" >
+		<Script
+			Language="C#"
+			Code="$(StartServers)"
+			Imports="System.Diagnostics" />
+	</Target>
+
+	<!-- Stop servers -->
+	<Target Name="StopServers"
+			Condition="$(HasMSBuildCommunityTasks) == true" >
+
+		<Script
+			Language="C#"
+			Code="$(StopServers)"
+			Imports="System.Diagnostics" />
+	</Target>
+
+</Project>
