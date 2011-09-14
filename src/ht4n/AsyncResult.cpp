@@ -157,7 +157,7 @@ namespace Hypertable {
 			Common::Cell* cell = Common::Cell::create();
 			try {
 				const Common::Cells& _cells = *ctx->cells;
-				List<Cell^>^ cells = gcnew List<Cell^>( _cells.size() );
+				List<Cell^>^ cells = gcnew List<Cell^>( (int)_cells.size() );
 				for( size_t n = 0; n < _cells.size(); ++n ) {
 					_cells.get_unchecked( n, cell );
 					cells->Add( gcnew Cell(cell) );

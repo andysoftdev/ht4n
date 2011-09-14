@@ -80,7 +80,7 @@ namespace Hypertable {
 			virtual Common::AsyncCallbackResult scannedCells( int64_t _asyncScannerId, Common::Cells& cells ) {
 				Common::Cell* _cell = 0;
 				try {
-					result->Capacity = cells.size();
+					result->Capacity = (int)cells.size();
 					_cell = Common::Cell::create();
 					for( size_t n = 0; n < cells.size(); ++n ) {
 						cells.get_unchecked( n, _cell );
