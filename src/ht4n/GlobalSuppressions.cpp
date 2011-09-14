@@ -15,3 +15,4 @@ CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Maintainability", "CA1506:AvoidExcessiveCl
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase", Scope="member", Target="Hypertable.HypertableException.#GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Usage", "CA2217:DoNotMarkEnumsWithFlags", Scope="type", Target="Hypertable.OpenDispositions");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId="rows", Scope="member", Target="Hypertable.ScanSpec.#AddRows(System.Collections.Generic.IEnumerable`1<System.String>)");
+CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA2210:AssembliesShouldHaveValidStrongNames");
