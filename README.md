@@ -19,16 +19,14 @@ Building ht4c for Windows requires Microsoft Visual Studio 2010 Professional or 
 		git clone git://github.com/andysoftdev/ht4n.git
 
 
-
 ###Download and build Hypertable for Windows###
 
 * See [How To build Hypertable for Windows](https://github.com/andysoftdev/ht4w/blob/windows/README.md).
 
 
-
 ###Build ht4n###
 
-* In order to build the ht4n API documentation download and install [Sandcastle](http://sandcastle.codeplex.com/) and the [Sandcastle Help File Builder](http://shfb.codeplex.com/)
+* In order to build the ht4n API documentation download and install [Sandcastle](http://sandcastle.codeplex.com/) and the [Sandcastle Help File Builder](http://shfb.codeplex.com/).
 
 * In order to run the ht4n test suite download and install the [MSBuild Community Tasks](http://msbuildtasks.tigris.org/). Notice the ht4n x64 test suite requires a mstest64.exe:
 
