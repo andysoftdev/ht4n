@@ -1,17 +1,16 @@
-HOW TO BUILD HT4N
+HOW TO BUILD ht4n
 =================
 
-Building ht4c for Windows requires Microsoft Visual Studio 2010 Professional or better.
+Building ht4n from source requires at least Microsoft Visual Studio 2010 Professional.
 
 
-###Browse or get the source###
+###Browse through or download the ht4n source###
 
-* Browse or download the source at [github](http://github.com/andysoftdev/ht4n).
-  Download the latest sources by pressing the Downloads button and choosing
-  Download.tar.gz or Download.zip.
+* Browse through or download the ht4n source from [github](http://github.com/andysoftdev/ht4n).
+  To download the latest sources press the 'Downloads' button and choose one of the following files, either the
+  Download.tar.gz or the Download.zip.
   
-* Or get the source from the repository, create a projects folder (the path must not
-  contain any spaces) and use:
+* Alternatively, get the source from the repository, create a projects folder (the path must not contain any spaces) and use:
 
 		mkdir hypertable
 		cd hypertable
@@ -33,7 +32,7 @@ Building ht4c for Windows requires Microsoft Visual Studio 2010 Professional or 
 		cd %VSInstallDir%\Common7\IDE
 		copy mstest.exe mstest64.exe
 		copy mstest.exe.config mstest64.exe.config
-		corflags.exe mstest64.exe /32BIT- /Force
+		corflags mstest64.exe /32BIT- /Force
   and copy the complete registry key
 
 		HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\EnterpriseTools\QualityTools\TestTypes
@@ -43,10 +42,10 @@ Building ht4c for Windows requires Microsoft Visual Studio 2010 Professional or 
 
 * Open the ht4n solution (ht4n\ht4n.sln) with Microsoft Visual Studio 2010 and build its configurations. Alternatively, open the Visual Studio command prompt and type:
 
-		cd ...\ht4n
+		cd ht4n
 		msbuild ht4n.buildproj
   or, for a complete rebuild, type
 
-		cd ...\ht4n
+		cd ht4n
 		msbuild ht4n.buildproj /t:Clean;Make
 
