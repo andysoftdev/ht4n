@@ -367,20 +367,23 @@ namespace Hypertable.Test
                     Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.AreEqual(CountA, c);
 
-                    c = 0;
-                    table.BeginScan(
-                        asyncResult,
-                        (ctx, cells) => {
-                            c += cells.Count;
-                            return AsyncCallbackResult.Continue;
-                        });
-                    Assert.IsFalse(asyncResult.IsCompleted);
-                    Assert.IsFalse(asyncResult.IsCancelled);
-                    asyncResult.Join();
-                    Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsFalse(asyncResult.IsCancelled);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
-                    Assert.AreEqual(CountA + CountB + CountC, c);
+                    // The official Hypertable version does not support re-using of the future object
+                    if( CtxKind == ContextKind.Hyper ) {
+                        c = 0;
+                        table.BeginScan(
+                            asyncResult,
+                            (ctx, cells) => {
+                                c += cells.Count;
+                                return AsyncCallbackResult.Continue;
+                            });
+                        Assert.IsFalse(asyncResult.IsCompleted);
+                        Assert.IsFalse(asyncResult.IsCancelled);
+                        asyncResult.Join();
+                        Assert.IsTrue(asyncResult.IsCompleted);
+                        Assert.IsFalse(asyncResult.IsCancelled);
+                        Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                        Assert.AreEqual(CountA + CountB + CountC, c);
+                    }
                 }
 
                 using (var asyncResult = new AsyncResult(delegate { return AsyncCallbackResult.Continue; })) {
@@ -389,19 +392,22 @@ namespace Hypertable.Test
                     asyncResult.Cancel();
                     Assert.IsTrue(asyncResult.IsCancelled);
 
-                    c = 0;
-                    table.BeginScan(
-                        asyncResult,
-                        (ctx, cells) => {
-                            c += cells.Count;
-                            return AsyncCallbackResult.Continue;
-                        });
-                    Assert.IsFalse(asyncResult.IsCancelled);
-                    asyncResult.Join();
-                    Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsFalse(asyncResult.IsCancelled);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
-                    Assert.AreEqual(CountA + CountB + CountC, c);
+                    // The official Hypertable version does not support re-using of the future object
+                    if( CtxKind == ContextKind.Hyper ) {
+                        c = 0;
+                        table.BeginScan(
+                            asyncResult,
+                            (ctx, cells) => {
+                                c += cells.Count;
+                                return AsyncCallbackResult.Continue;
+                            });
+                        Assert.IsFalse(asyncResult.IsCancelled);
+                        asyncResult.Join();
+                        Assert.IsTrue(asyncResult.IsCompleted);
+                        Assert.IsFalse(asyncResult.IsCancelled);
+                        Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                        Assert.AreEqual(CountA + CountB + CountC, c);
+                    }
                 }
             }
         }
@@ -533,16 +539,19 @@ namespace Hypertable.Test
                     Assert.IsTrue(asyncResult.IsCancelled);
                     Assert.AreEqual(CountC, c);
 
-                    c = 0;
-                    table.BeginScan(asyncResult);
-                    Assert.IsFalse(asyncResult.IsCancelled);
-                    while (asyncResult.TryGetCells(out cells)) {
-                        c += cells.Count;
+                    // The official Hypertable version does not support re-using of the future object
+                    if( CtxKind == ContextKind.Hyper ) {
+                        c = 0;
+                        table.BeginScan(asyncResult);
+                        Assert.IsFalse(asyncResult.IsCancelled);
+                        while (asyncResult.TryGetCells(out cells)) {
+                            c += cells.Count;
+                        }
+                        asyncResult.Join();
+                        Assert.IsTrue(asyncResult.IsCompleted);
+                        Assert.IsFalse(asyncResult.IsCancelled);
+                        Assert.AreEqual(CountA + CountB + CountC, c);
                     }
-                    asyncResult.Join();
-                    Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsFalse(asyncResult.IsCancelled);
-                    Assert.AreEqual(CountA + CountB + CountC, c);
                 }
             }
         }
