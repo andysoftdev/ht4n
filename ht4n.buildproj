@@ -227,7 +227,7 @@
 		<Delete
 			Files="$(Master_x64)" />
 		<Delete
-			Files="$(Master_api_doc)" />
+			Files="$(Master_ApiDoc)" />
 	</Target>
 
 	<!-- Start servers -->
