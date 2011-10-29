@@ -529,8 +529,6 @@ namespace Hypertable {
 		if( asyncMutatorContext == nullptr ) throw gcnew ArgumentNullException( L"asyncMutatorContext" );
 		if( asyncMutatorContext->Table == nullptr ) throw gcnew ArgumentException( L"Invalid table", L"asyncMutatorContext" );
 
-		if( asyncMutatorContext->Table->ContextKind == Hypertable::ContextKind::Thrift ) throw gcnew InvalidOperationException( L"Thrift API not support" ); // FIXME if once available
-
 		HT4C_TRY {
 			if( asyncResult ) {
 				int n = static_cast<int>( asyncMutatorContext->Table->ContextKind );
