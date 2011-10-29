@@ -11,3 +11,4 @@ TestResults/
 *.opensdf
 *.aps
 *.shfbproj_*
+*.Cache
