@@ -249,6 +249,9 @@ namespace Hypertable {
 		if( MaxCells > 0 ) {
 			scanSpec.maxCells( MaxCells );
 		}
+		if( MaxCellsColumnFamily > 0 ) {
+			scanSpec.maxCellsColumnFamily( MaxCellsColumnFamily );
+		}
 		scanSpec.keysOnly( KeysOnly );
 		scanSpec.scanAndFilter( ScanAndFilter );
 

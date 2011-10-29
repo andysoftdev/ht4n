@@ -226,63 +226,6 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
-        public void ScanTableCellLimit() {
-            String[] rows = { "A", "B", "C", "D" };
-            String[] columnFamilies = { "d", "e", "f", "g" };
-            String[] columnQualifiers = { "0", "1", "2", "3" };
-
-            foreach (string row in rows) {
-                using (var mutator = table.CreateMutator()) {
-                    foreach (string columnFamily in columnFamilies) {
-                        foreach (String columnQualifier in columnQualifiers) {
-                            mutator.Set(new Key(row, columnFamily, columnQualifier), Encoding.GetBytes(row + columnFamily + columnQualifier));
-                        }
-                    }
-                }
-            }
-
-            using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 2 }.AddRows(rows))) {
-                int c = 0;
-                Cell cell;
-                while (scanner.Next(out cell)) {
-                    ++c;
-                }
-                Assert.AreEqual(rows.Length * columnFamilies.Length * 2, c);
-            }
-
-            foreach (string columnFamily in columnFamilies) {
-                using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 2 }.AddRows(rows).AddColumn(columnFamily))) {
-                    int c = 0;
-                    Cell cell;
-                    while (scanner.Next(out cell)) {
-                        ++c;
-                    }
-                    Assert.AreEqual(rows.Length * 2, c);
-                }
-            }
-
-            using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 2, ScanAndFilter = true }.AddRows(rows))) {
-                int c = 0;
-                Cell cell;
-                while (scanner.Next(out cell)) {
-                    ++c;
-                }
-                Assert.AreEqual(rows.Length * columnFamilies.Length * 2, c);
-            }
-
-            foreach (string columnFamily in columnFamilies) {
-                using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 2, ScanAndFilter = true }.AddRows(rows).AddColumn(columnFamily))) {
-                    int c = 0;
-                    Cell cell;
-                    while (scanner.Next(out cell)) {
-                        ++c;
-                    }
-                    Assert.AreEqual(rows.Length * 2, c);
-                }
-            }
-        }
-
-        [TestMethod]
         public void ScanTableColumnFamily() {
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("a"))) {
                 int c = 0;
@@ -530,6 +473,79 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
+        public void ScanTableMaxCells() {
+            String[] rows = { "A", "B", "C", "D" };
+            String[] columnFamilies = { "d", "e", "f", "g" };
+            String[] columnQualifiers = { "0", "1", "2", "3" };
+
+            foreach (string row in rows) {
+                using (var mutator = table.CreateMutator()) {
+                    foreach (string columnFamily in columnFamilies) {
+                        foreach (string columnQualifier in columnQualifiers) {
+                            mutator.Set(new Key(row, columnFamily, columnQualifier), Encoding.GetBytes(row + columnFamily + columnQualifier));
+                        }
+                    }
+                }
+            }
+
+            using( var scanner = table.CreateScanner(new ScanSpec { MaxCells = 5 }) ) {
+                int c = 0;
+                Cell cell;
+                while( scanner.Next(out cell) ) {
+                    ++c;
+                }
+                Assert.AreEqual(5, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxCellsColumnFamily = 2 }.AddRows(rows))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+                Assert.AreEqual(rows.Length * columnFamilies.Length * 2, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxCellsColumnFamily = 2, ScanAndFilter = true }.AddRows(rows))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+                Assert.AreEqual(rows.Length * columnFamilies.Length * 2, c);
+            }
+
+            foreach (string columnFamily in columnFamilies) {
+                using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 3, ScanAndFilter = true }.AddRows(rows).AddColumn(columnFamily))) {
+                    int c = 0;
+                    Cell cell;
+                    while (scanner.Next(out cell)) {
+                        ++c;
+                    }
+                    Assert.AreEqual(3, c);
+                }
+            }
+
+            using( var scanner = table.CreateScanner(new ScanSpec { MaxCells = 5 }.AddRowInterval(new RowInterval("A", "B")).AddRowInterval(new RowInterval("C", "D"))) ) {
+                int c = 0;
+                Cell cell;
+                while( scanner.Next(out cell) ) {
+                    ++c;
+                }
+                Assert.AreEqual(2 * 5, c); // Applies to each row interval individual
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxCellsColumnFamily = 2 }.AddRowInterval(new RowInterval("A", "B")).AddRowInterval(new RowInterval("C", "D")))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+                Assert.AreEqual(rows.Length * columnFamilies.Length * 2, c);
+            }
+        }
+
+        [TestMethod]
         public void ScanTableMaxRows() {
             using (var scanner = table.CreateScanner(new ScanSpec { MaxRows = CountC }.AddColumn("a"))) {
                 int c = 0;
@@ -549,6 +565,38 @@ namespace Hypertable.Test
                     ++c;
                 }
                 Assert.AreEqual(CountB, c);
+            }
+
+            String[] rows = { "AA", "BB", "CC", "DD" };
+            String[] columnFamilies = { "d", "e", "f", "g" };
+            String[] columnQualifiers = { "0", "1", "2", "3" };
+
+            foreach (string row in rows) {
+                using (var mutator = table.CreateMutator()) {
+                    foreach (string columnFamily in columnFamilies) {
+                        foreach (string columnQualifier in columnQualifiers) {
+                            mutator.Set(new Key(row, columnFamily, columnQualifier), Encoding.GetBytes(row + columnFamily + columnQualifier));
+                        }
+                    }
+                }
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxRows = rows.Length / 2, ScanAndFilter = true }.AddRows(rows))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+                Assert.AreEqual(rows.Length / 2 * columnFamilies.Length * columnQualifiers.Length, c);
+            }
+
+            using( var scanner = table.CreateScanner(new ScanSpec { MaxRows = rows.Length / 2 }.AddRowInterval(new RowInterval("AA", "BB")).AddRowInterval(new RowInterval("CC", "DD"))) ) {
+                int c = 0;
+                Cell cell;
+                while( scanner.Next(out cell) ) {
+                    ++c;
+                }
+                Assert.AreEqual(2 * rows.Length / 2 * columnFamilies.Length * columnQualifiers.Length, c); // MaxRows applies to each row interval individual
             }
         }
 

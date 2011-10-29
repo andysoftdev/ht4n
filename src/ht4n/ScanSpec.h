@@ -140,7 +140,10 @@ namespace Hypertable {
 			/// <summary>
 			/// Gets or sets the maximum number of rows to return in the scan.
 			/// </summary>
-			/// <remarks>Set to zero (default) for unlimited numbers of rows.</remarks>
+			/// <remarks>
+			/// Set to zero (default) for unlimited numbers of rows.
+			/// Applies to each row interval individual.
+			/// </remarks>
 			property int MaxRows;
 
 			/// <summary>
@@ -150,10 +153,19 @@ namespace Hypertable {
 			property int MaxVersions;
 
 			/// <summary>
-			/// Gets or sets the maximum number of cells to return per column family, per row.
+			/// Gets or sets the maximum number of cells to return.
+			/// </summary>
+			/// <remarks>
+			/// Set to zero (default) for unlimited numbers of cells.
+			/// Applies to each row interval individual.
+			/// </remarks>
+			property int MaxCells;
+
+			/// <summary>
+			/// Gets or sets the maximum number of cells to return per column family and row.
 			/// </summary>
 			/// <remarks>Set to zero (default) for unlimited numbers of cells.</remarks>
-			property int MaxCells;
+			property int MaxCellsColumnFamily;
 
 			/// <summary>
 			/// Gets or sets a value that indicates whether to return keys only or not.
