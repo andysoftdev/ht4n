@@ -43,21 +43,29 @@
 		<HasMSTest64 Condition="Exists('$(MSTest64)')">true</HasMSTest64>
 	</PropertyGroup>
 
+	<!-- Make configuration Debug or Release -->
+	<PropertyGroup>
+		<Debug>false</Debug>
+		<Debug Condition="'$(Configuration)' == '' Or '$(Configuration)' == 'Debug'">true</Debug>
+		<Release>false</Release>
+		<Release Condition="'$(Configuration)' == '' Or '$(Configuration)' == 'Release'">true</Release>
+	</PropertyGroup>
+
 	<!-- Configuration group -->
 	<ItemGroup>
-		<MakeConfiguration Include="." >
+		<MakeConfiguration Include="." Condition="$(Debug) == true" >
 			<Configuration>Debug</Configuration>
 			<Platform>Win32</Platform>
 		</MakeConfiguration>
-		<MakeConfiguration Include="." >
+		<MakeConfiguration Include="." Condition="$(Release) == true" >
 			<Configuration>Release</Configuration>
 			<Platform>Win32</Platform>
 		</MakeConfiguration>
-		<MakeConfiguration Include="." Condition="$(Is64Bit) == true" >
+		<MakeConfiguration Include="." Condition="$(Is64Bit) == true And $(Debug) == true" >
 			<Configuration>Debug</Configuration>
 			<Platform>x64</Platform>
 		</MakeConfiguration>
-		<MakeConfiguration Include="." Condition="$(Is64Bit) == true" >
+		<MakeConfiguration Include="." Condition="$(Is64Bit) == true And $(Release) == true" >
 			<Configuration>Release</Configuration>
 			<Platform>x64</Platform>
 		</MakeConfiguration>
@@ -169,7 +177,7 @@
 		<OnError ExecuteTargets="StopServers" />
 	</Target>
 
-	<!-- Ececute tests w'out statr/stop servers -->
+	<!-- Ececute tests w'out start/stop servers -->
 	<Target Name="InvokeTests"
 			Condition="$(HasMSBuildCommunityTasks) == true" >
 
@@ -215,7 +223,7 @@
 
 		<Exec
 			Command="if exist doc\api rd /S /Q doc\api" />
-			
+
 		<Exec
 			Command="if exist TestResults rd /S /Q TestResults" />
 	</Target>
