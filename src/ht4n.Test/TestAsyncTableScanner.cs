@@ -95,8 +95,8 @@ namespace Hypertable.Test
                     tables.ForEach(t => t.BeginScan(asyncResult, new ScanSpec().AddColumn("a")));
                     tables.ForEach(t => t.BeginScan(asyncResult, new ScanSpec().AddColumn("b")));
                     asyncResult.Join();
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                     Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                 }
                 Assert.AreEqual(CountTables * (CountA + CountB), c);
 
@@ -125,8 +125,8 @@ namespace Hypertable.Test
                                 return AsyncCallbackResult.Continue;
                             }));
                     asyncResult.Join();
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                     Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                 }
                 Assert.AreEqual(CountTables * (CountB + CountC), c);
             }
@@ -160,8 +160,8 @@ namespace Hypertable.Test
                             ++c;
                         }
                     }
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                     Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                 }
                 Assert.AreEqual(CountTables * (CountA + CountB), c);
 
@@ -176,8 +176,8 @@ namespace Hypertable.Test
                             ++c;
                         }
                     }
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                     Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                 }
                 Assert.AreEqual(CountTables * (CountB + CountC), c);
             }
@@ -206,8 +206,8 @@ namespace Hypertable.Test
                     table.BeginScan(asyncResult, new ScanSpec().AddColumn("a"));
                     table2.BeginScan(asyncResult, new ScanSpec().AddColumn("b"));
                     asyncResult.Join();
-                    Assert.IsTrue(asyncResult.IsCompleted);
                     Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                    Assert.IsTrue(asyncResult.IsCompleted);
                 }
                 Assert.AreEqual(CountA + CountB, c);
 
@@ -223,8 +223,8 @@ namespace Hypertable.Test
                     table2.BeginScan(asyncResult, new ScanSpec().AddColumn("b"));
                     table.BeginScan(asyncResult, new ScanSpec().AddColumn("c"));
                     asyncResult.Join();
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                     Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                 }
                 Assert.AreEqual(CountB + CountC, c);
             }
@@ -246,8 +246,8 @@ namespace Hypertable.Test
                             ++c;
                         }
                     }
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                     Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                 }
                 Assert.AreEqual(CountA + CountB, c);
 
@@ -262,8 +262,8 @@ namespace Hypertable.Test
                             ++c;
                         }
                     }
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                     Assert.IsTrue(asyncResult.IsCompleted);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                 }
                 Assert.AreEqual(CountB + CountC, c);
             }
@@ -300,8 +300,8 @@ namespace Hypertable.Test
                     });
 
                 asyncResult.Join();
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                 Assert.IsTrue(asyncResult.IsCompleted);
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                 Assert.AreEqual(CountA + CountB + CountC, c);
                 Assert.AreEqual(CountA + CountB + CountC, d);
                 Thread.Sleep(1000);
@@ -310,8 +310,8 @@ namespace Hypertable.Test
                 table.BeginScan(asyncResult, null, param);
                 Assert.IsFalse(asyncResult.IsCompleted);
                 asyncResult.Join();
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                 Assert.IsTrue(asyncResult.IsCompleted);
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                 Assert.AreEqual(CountA + CountB + CountC, c);
             }
         }
@@ -362,9 +362,9 @@ namespace Hypertable.Test
                     })) {
                     table.BeginScan(asyncResult);
                     asyncResult.Join();
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.IsTrue(asyncResult.IsCompleted);
                     Assert.IsTrue(asyncResult.IsCancelled);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.AreEqual(CountA, c);
 
                     // The official Hypertable version does not support re-using of the future object
@@ -379,9 +379,9 @@ namespace Hypertable.Test
                         Assert.IsFalse(asyncResult.IsCompleted);
                         Assert.IsFalse(asyncResult.IsCancelled);
                         asyncResult.Join();
+                        Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                         Assert.IsTrue(asyncResult.IsCompleted);
                         Assert.IsFalse(asyncResult.IsCancelled);
-                        Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                         Assert.AreEqual(CountA + CountB + CountC, c);
                     }
                 }
@@ -403,9 +403,9 @@ namespace Hypertable.Test
                             });
                         Assert.IsFalse(asyncResult.IsCancelled);
                         asyncResult.Join();
+                        Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                         Assert.IsTrue(asyncResult.IsCompleted);
                         Assert.IsFalse(asyncResult.IsCancelled);
-                        Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                         Assert.AreEqual(CountA + CountB + CountC, c);
                     }
                 }
@@ -458,9 +458,9 @@ namespace Hypertable.Test
                         });
 
                     asyncResult.Join();
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.IsTrue(asyncResult.IsCompleted);
                     Assert.IsFalse(asyncResult.IsCancelled);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.AreEqual(caTotal, ca);
                     Assert.AreEqual(cbTotal, cb);
                     Assert.AreEqual(CountB + CountC, cc);
@@ -506,9 +506,9 @@ namespace Hypertable.Test
                         });
 
                     asyncResult.Join();
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.IsTrue(asyncResult.IsCompleted);
                     Assert.IsFalse(asyncResult.IsCancelled);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.AreEqual(caTotal, ca);
                     Assert.AreEqual(cbTotal, cb);
                     Assert.AreEqual(CountB + CountC, cc);
@@ -583,7 +583,7 @@ namespace Hypertable.Test
 
                     AsyncScannerContext ctx;
                     IList<Cell> cells;
-                    while (asyncResult.TryGetCells(out ctx, out cells)) {
+                    while( asyncResult.TryGetCells(out ctx, out cells) ) {
                         c[ctx.ScanSpec] += cells.Count;
                         if (!total.ContainsKey(ctx.ScanSpec) && c[ctx.ScanSpec] > limit[ctx.ScanSpec]) {
                             total.Add(ctx.ScanSpec, c[ctx.ScanSpec]);
@@ -591,9 +591,9 @@ namespace Hypertable.Test
                         }
                     }
                     asyncResult.Join();
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.IsTrue(asyncResult.IsCompleted);
                     Assert.IsFalse(asyncResult.IsCancelled);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.AreEqual(total[scanSpecA], c[scanSpecA]);
                     Assert.AreEqual(total[scanSpecB], c[scanSpecB]);
                     Assert.AreEqual(CountB + CountC, c[scanSpecC]);
@@ -620,9 +620,9 @@ namespace Hypertable.Test
                         }
                     }
                     asyncResult.Join();
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                     Assert.IsTrue(asyncResult.IsCompleted);
                     Assert.IsFalse(asyncResult.IsCancelled);
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                     Assert.AreEqual(total[scanSpecA], c[scanSpecA]);
                     Assert.AreEqual(total[scanSpecB], c[scanSpecB]);
                     Assert.AreEqual(CountB + CountC, c[scanSpecC]);
@@ -652,8 +652,8 @@ namespace Hypertable.Test
                             table.BeginScan(asyncResult, new ScanSpec().AddColumn("a"));
                             tableOther.BeginScan(asyncResult, new ScanSpec().AddColumn("b"));
                             asyncResult.Join();
+                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                             Assert.IsTrue(asyncResult.IsCompleted);
-                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                         }
                         Assert.AreEqual(CountA + CountB, c);
 
@@ -669,8 +669,8 @@ namespace Hypertable.Test
                             table.BeginScan(asyncResult, new ScanSpec().AddColumn("b"));
                             tableOther.BeginScan(asyncResult, new ScanSpec().AddColumn("a"));
                             asyncResult.Join();
+                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                             Assert.IsTrue(asyncResult.IsCompleted);
-                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                         }
                         Assert.AreEqual(CountB + CountA, c);
                     }
@@ -702,8 +702,8 @@ namespace Hypertable.Test
                                     ++c;
                                 }
                             }
+                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                             Assert.IsTrue(asyncResult.IsCompleted);
-                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                         }
                         Assert.AreEqual(CountA + CountB, c);
 
@@ -718,8 +718,8 @@ namespace Hypertable.Test
                                     ++c;
                                 }
                             }
+                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                             Assert.IsTrue(asyncResult.IsCompleted);
-                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
                         }
                         Assert.AreEqual(CountB + CountA, c);
                     }
@@ -744,8 +744,8 @@ namespace Hypertable.Test
                 })) {
                 table.BeginScan(asyncResult, new ScanSpec { KeysOnly = true });
                 asyncResult.Join();
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                 Assert.IsTrue(asyncResult.IsCompleted);
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
             }
             Assert.AreEqual(CountA + CountB + CountC, c);
         }
@@ -763,8 +763,8 @@ namespace Hypertable.Test
                 })) {
                 table.BeginScan(asyncResult, new ScanSpec { MaxRows = CountC }.AddColumn("a"));
                 asyncResult.Join();
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                 Assert.IsTrue(asyncResult.IsCompleted);
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
             }
             Assert.AreEqual(CountC, c);
 
@@ -779,8 +779,8 @@ namespace Hypertable.Test
                 })) {
                 table.BeginScan(asyncResult, new ScanSpec { MaxRows = CountB }.AddColumn("a"));
                 asyncResult.Join();
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
                 Assert.IsTrue(asyncResult.IsCompleted);
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
             }
             Assert.AreEqual(CountB, c);
         }
