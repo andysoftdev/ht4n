@@ -48,8 +48,8 @@ namespace Hypertable.Test
             Assert.IsFalse(Ns.TableExists("test-1"));
 
             const string SchemaA =
-                "<Schema>" + "<AccessGroup name=\"default\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>" +
-                "</Schema>";
+                "<Schema>" + "<AccessGroup name=\"default\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>"
+                + "</Schema>";
 
             Ns.CreateTable("test-1", SchemaA);
             Assert.IsTrue(Ns.TableExists("test-1"));
@@ -60,8 +60,8 @@ namespace Hypertable.Test
             }
 
             const string SchemaB =
-                "<Schema>" + "<AccessGroup name=\"default\">" + "<ColumnFamily>" + "<Name>b</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>" +
-                "</Schema>";
+                "<Schema>" + "<AccessGroup name=\"default\">" + "<ColumnFamily>" + "<Name>b</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>"
+                + "</Schema>";
 
             Ns.AlterTable("test-1", SchemaB);
             string _schemaB = Ns.GetTableSchema("test-1");
@@ -91,8 +91,8 @@ namespace Hypertable.Test
             Assert.IsFalse(Ns.TableExists("test-3"));
 
             const string Schema =
-                "<Schema>" + "<AccessGroup name=\"default\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>" +
-                "</Schema>";
+                "<Schema>" + "<AccessGroup name=\"default\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>"
+                + "</Schema>";
 
             Ns.CreateTable("test-1", Schema);
             Assert.IsTrue(Ns.TableExists("test-1"));
@@ -127,8 +127,8 @@ namespace Hypertable.Test
             Assert.IsFalse(Ns.TableExists("Test-2"));
 
             const string Schema =
-                "<Schema>" + "<AccessGroup name=\"default\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>" +
-                "</Schema>";
+                "<Schema>" + "<AccessGroup name=\"default\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>"
+                + "</Schema>";
 
             Ns.CreateTable("test-1", Schema);
             Assert.IsTrue(Ns.TableExists("test-1"));
@@ -145,6 +145,7 @@ namespace Hypertable.Test
             using (var table = Ns.OpenTable("Test-2")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/Test-2");
             }
+
             Assert.IsTrue(Ns.TableExists("Test-2"));
         }
 

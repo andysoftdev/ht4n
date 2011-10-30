@@ -47,7 +47,7 @@ namespace Hypertable.Test
         [ClassInitialize]
         public static void AssemblyInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext) {
             host = ConfigurationManager.AppSettings["TestHost"].Trim();
-            Assert.IsFalse(String.IsNullOrEmpty(host));
+            Assert.IsFalse(string.IsNullOrEmpty(host));
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace Hypertable.Test
         public void CreateContext() {
             using (var ctx = Context.Create(ContextKind.Hyper)) {
                 Assert.AreEqual(ctx.ContextKind, ContextKind.Hyper);
-                Assert.IsInstanceOfType(ctx.Properties["hs-host"], typeof(IList<String>));
+                Assert.IsInstanceOfType(ctx.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)ctx.Properties["hs-host"]).Count);
                 Assert.AreEqual("localhost", ((IList<string>)ctx.Properties["hs-host"])[0]);
                 Assert.AreEqual((ushort)38040, ctx.Properties["hs-port"]);
@@ -105,6 +105,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(((IList<string>)ctx.Properties["hs-host"])[0], "localhost");
                 Assert.AreEqual(ctx.Properties["hs-port"], (ushort)1000);
             }
+
             using (var ctx = Context.Create(ContextKind.Thrift, "localhost", 1000)) {
                 Assert.AreEqual(ctx.ContextKind, ContextKind.Thrift);
                 Assert.AreEqual(ctx.Properties["thrift-host"], "localhost");
@@ -190,6 +191,7 @@ namespace Hypertable.Test
                         Assert.IsTrue(client.NamespaceExists("/sys"));
                     }
                 }
+
                 for (int i = 0; i < 5; ++i) {
                     using (var clientA = ctx.CreateClient())
                     using (var clientB = ctx.CreateClient()) {
@@ -198,6 +200,7 @@ namespace Hypertable.Test
                     }
                 }
             }
+
             Thread.Sleep(200);
 
             using (var ctx = Context.Create(ContextKind.Thrift, host)) {
@@ -206,6 +209,7 @@ namespace Hypertable.Test
                         Assert.IsTrue(client.NamespaceExists("/sys"));
                     }
                 }
+
                 for (int i = 0; i < 5; ++i) {
                     using (var clientA = ctx.CreateClient())
                     using (var clientB = ctx.CreateClient()) {
@@ -214,6 +218,7 @@ namespace Hypertable.Test
                     }
                 }
             }
+
             Thread.Sleep(200);
         }
 
@@ -225,6 +230,7 @@ namespace Hypertable.Test
                         Assert.IsTrue(client.NamespaceExists("/sys"));
                     }
                 }
+
                 Thread.Sleep(200);
 
                 using (var ctx = Context.Create(ContextKind.Thrift, host)) {
@@ -232,6 +238,7 @@ namespace Hypertable.Test
                         Assert.IsTrue(client.NamespaceExists("/sys"));
                     }
                 }
+
                 Thread.Sleep(200);
             }
         }

@@ -41,9 +41,9 @@ namespace Hypertable.Test
         private const int Count = 1000;
 
         private const string Schema =
-            "<Schema>" + "<AccessGroup name=\"default\" blksz=\"1024\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" +
-            "<Name>b</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>c</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" +
-            "</AccessGroup>" + "</Schema>";
+            "<Schema>" + "<AccessGroup name=\"default\" blksz=\"1024\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>"
+            + "<Name>b</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>c</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>"
+            + "</AccessGroup>" + "</Schema>";
 
         private static readonly MutatorSpec ChunkedMutatorSpec = MutatorSpec.CreateChunked();
 
@@ -83,12 +83,13 @@ namespace Hypertable.Test
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
-            var rowKeys = new SortedSet<String>();
+            var rowKeys = new SortedSet<string>();
             using (var scanner = table.CreateScanner()) {
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
@@ -98,14 +99,16 @@ namespace Hypertable.Test
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    foreach (String rowKey in rowKeys) {
+                    foreach (string rowKey in rowKeys) {
                         mutator.Delete(rowKey);
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             key = new Key { ColumnFamily = "a" };
@@ -116,12 +119,13 @@ namespace Hypertable.Test
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
-            rowKeys = new SortedSet<String>();
+            rowKeys = new SortedSet<string>();
             using (var scanner = table.CreateScanner()) {
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
@@ -132,15 +136,17 @@ namespace Hypertable.Test
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     key = new Key();
-                    foreach (String rowKey in rowKeys) {
+                    foreach (string rowKey in rowKeys) {
                         key.Row = rowKey;
                         mutator.Delete(key);
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             key = new Key { ColumnFamily = "a" };
@@ -153,8 +159,9 @@ namespace Hypertable.Test
                         keys.Add((Key)key.Clone());
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
@@ -162,10 +169,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(keys);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             key = new Key { ColumnFamily = "a" };
@@ -176,8 +185,9 @@ namespace Hypertable.Test
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
@@ -193,10 +203,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(cells);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             key = new Key();
@@ -208,18 +220,21 @@ namespace Hypertable.Test
                     key.ColumnFamily = "b";
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(2, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
@@ -229,6 +244,7 @@ namespace Hypertable.Test
                     Assert.AreEqual("a", cell.Key.ColumnFamily);
                 }
             }
+
             Assert.AreEqual(1, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
@@ -240,25 +256,29 @@ namespace Hypertable.Test
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                     key.ColumnQualifier = "3";
                     mutator.Set(key, Encoding.GetBytes(key.Row));
-                    key.ColumnQualifier = String.Empty;
+                    key.ColumnQualifier = string.Empty;
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                     key.ColumnQualifier = "4";
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(6, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(5, this.GetCellCount());
 
             key.ColumnQualifier = "1";
@@ -266,21 +286,25 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(4, this.GetCellCount());
 
-            key.ColumnQualifier = "";
+            key.ColumnQualifier = string.Empty;
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(3, this.GetCellCount());
 
             key.ColumnQualifier = null;
@@ -288,8 +312,9 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
@@ -299,22 +324,25 @@ namespace Hypertable.Test
                     Assert.AreEqual("a", cell.Key.ColumnFamily);
                 }
             }
+
             Assert.AreEqual(1, this.GetCellCount());
 
-            key.ColumnFamily = String.Empty; // usually use null
+            key.ColumnFamily = string.Empty; // usually use null
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             key = new Key();
-            //FIXME(remove this line), issue 'delete with unspecified timestamp applying to all future inserts'
 
+            // FIXME(remove this line), issue 'delete with unspecified timestamp applying to all future inserts'
             var dateTimes = new List<DateTime>();
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
@@ -349,10 +377,12 @@ namespace Hypertable.Test
                     mutator.Set(key, Encoding.GetBytes(key.DateTime.ToString()));
                     dateTimes.Add(key.DateTime);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(6, dateTimes.Count);
             Assert.AreEqual(6, this.GetCellCount());
 
@@ -361,10 +391,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(4, this.GetCellCount());
 
             key.ColumnQualifier = null;
@@ -373,10 +405,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(2, this.GetCellCount());
 
             key.ColumnFamily = null;
@@ -386,10 +420,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(1, this.GetCellCount());
 
             key.ColumnFamily = null;
@@ -399,10 +435,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Delete(key);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
         }
 
@@ -439,8 +477,9 @@ namespace Hypertable.Test
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
@@ -450,16 +489,19 @@ namespace Hypertable.Test
                     cells.Add(new Cell(new Key(cell.Key.Row), CellFlag.DeleteRow));
                 }
             }
+
             Assert.AreEqual(2 * Count, cells.Count);
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cells);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
@@ -472,8 +514,9 @@ namespace Hypertable.Test
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
@@ -483,16 +526,19 @@ namespace Hypertable.Test
                     cells.Add(new Cell(cell.Key, CellFlag.DeleteRow));
                 }
             }
+
             Assert.AreEqual(2 * Count, cells.Count);
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cells);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
@@ -505,8 +551,9 @@ namespace Hypertable.Test
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
@@ -516,16 +563,19 @@ namespace Hypertable.Test
                     cells.Add(new Cell(cell.Key, CellFlag.DeleteColumnFamily));
                 }
             }
+
             Assert.AreEqual(Count, cells.Count);
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cells);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(Count, this.GetCellCount());
 
             cells.Clear();
@@ -534,16 +584,19 @@ namespace Hypertable.Test
                     cells.Add(new Cell(cell.Key, CellFlag.DeleteCell));
                 }
             }
+
             Assert.AreEqual(Count, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cells);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             Cell cellDelete;
@@ -557,18 +610,21 @@ namespace Hypertable.Test
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                     cellDelete = new Cell(key, CellFlag.DeleteCell, true);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(2, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
@@ -577,6 +633,7 @@ namespace Hypertable.Test
                     Assert.AreEqual("a", cell.Key.ColumnFamily);
                 }
             }
+
             Assert.AreEqual(1, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
@@ -588,26 +645,30 @@ namespace Hypertable.Test
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                     key.ColumnQualifier = "3";
                     mutator.Set(key, Encoding.GetBytes(key.Row));
-                    key.ColumnQualifier = String.Empty;
+                    key.ColumnQualifier = string.Empty;
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                     key.ColumnQualifier = "4";
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                     cellDelete = new Cell(key, CellFlag.DeleteCell, true);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(6, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(5, this.GetCellCount());
 
             cellDelete.Key.ColumnQualifier = "1";
@@ -615,21 +676,25 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(4, this.GetCellCount());
 
-            cellDelete.Key.ColumnQualifier = "";
+            cellDelete.Key.ColumnQualifier = string.Empty;
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(3, this.GetCellCount());
 
             cellDelete.Key.ColumnQualifier = null;
@@ -637,8 +702,9 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
 
@@ -647,22 +713,25 @@ namespace Hypertable.Test
                     Assert.AreEqual("a", cell.Key.ColumnFamily);
                 }
             }
+
             Assert.AreEqual(1, this.GetCellCount());
 
-            cellDelete.Key.ColumnFamily = String.Empty; // usually use null
+            cellDelete.Key.ColumnFamily = string.Empty; // usually use null
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             key = new Key();
-            //FIXME(remove this line), issue 'delete with unspecified timestamp applying to all future inserts'
 
+            // FIXME(remove this line), issue 'delete with unspecified timestamp applying to all future inserts'
             var dateTimes = new List<DateTime>();
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
@@ -701,10 +770,12 @@ namespace Hypertable.Test
                     dateTimes.Add(key.DateTime);
                     cellDelete = new Cell(key, CellFlag.DeleteCell, true);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(8, this.GetCellCount());
             Assert.AreEqual(8, dateTimes.Count);
 
@@ -714,36 +785,43 @@ namespace Hypertable.Test
                     cells.Add(cell);
                 }
             }
+
             Assert.AreEqual(8, cells.Count);
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(new Cell(cells[7].Key, CellFlag.DeleteCellVersion, true));
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(7, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(new Cell(cells[1].Key, CellFlag.DeleteCellVersion, true));
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(6, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(new Cell(cells[0].Key, CellFlag.DeleteCellVersion, true));
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(5, this.GetCellCount());
 
             cellDelete.Key.DateTime = dateTimes[1];
@@ -751,10 +829,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(4, this.GetCellCount());
 
             cellDelete.Key.ColumnQualifier = null;
@@ -763,10 +843,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(2, this.GetCellCount());
 
             cellDelete.Key.ColumnFamily = null;
@@ -776,10 +858,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(1, this.GetCellCount());
 
             cellDelete.Key.ColumnFamily = null;
@@ -789,10 +873,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cellDelete);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
+
             Assert.AreEqual(0, this.GetCellCount());
         }
 
@@ -824,7 +910,7 @@ namespace Hypertable.Test
                     var key = new Key(Guid.NewGuid().ToString()) { ColumnFamily = "a" };
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                     asyncResult.Join();
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                     Assert.IsTrue(asyncResult.IsCompleted);
 
                     Cell cell1, cell2, cellNone;
@@ -833,11 +919,12 @@ namespace Hypertable.Test
                         Assert.IsTrue(scanner.Next(out cell1));
                         Assert.IsFalse(scanner.Next(out cellNone));
                     }
+
                     Assert.AreEqual(cell1.Key.Row, Encoding.GetString(cell1.Value));
 
                     mutator.Set(key, Encoding.GetBytes("abc"));
                     asyncResult.Join();
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                     Assert.IsTrue(asyncResult.IsCompleted);
 
                     using (var scanner = table.CreateScanner(new ScanSpec(key.Row).AddColumn("a"))) {
@@ -853,7 +940,7 @@ namespace Hypertable.Test
                     cell1.Value = Encoding.GetBytes("def");
                     mutator.Set(cell1); // does NOT create a new revision
                     asyncResult.Join();
-                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                    Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                     Assert.IsTrue(asyncResult.IsCompleted);
 
                     Cell cell1_1;
@@ -871,8 +958,9 @@ namespace Hypertable.Test
                     Assert.AreEqual("def", Encoding.GetString(cell1_1.Value));
                     Assert.AreEqual(cell2.Key.Row, Encoding.GetString(cell2.Value));
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
         }
@@ -906,8 +994,9 @@ namespace Hypertable.Test
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
                 Assert.AreEqual(Count, this.GetCellCount());
             }
@@ -919,8 +1008,9 @@ namespace Hypertable.Test
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
                 Assert.AreEqual(2 * Count, this.GetCellCount());
             }
@@ -948,12 +1038,14 @@ namespace Hypertable.Test
                 key.Row = Guid.NewGuid().ToString();
                 cells.Add(new Cell(key, Encoding.GetBytes(key.Row), true));
             }
+
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cells);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
                 Assert.AreEqual(Count, this.GetCellCount());
             }
@@ -980,16 +1072,19 @@ namespace Hypertable.Test
             for (int n = 0; n < Count; ++n) {
                 cells.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
+
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cells, true);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
                 foreach (var cell in cells) {
-                    Assert.IsFalse(String.IsNullOrEmpty(cell.Key.Row));
+                    Assert.IsFalse(string.IsNullOrEmpty(cell.Key.Row));
                 }
+
                 Assert.AreEqual(Count, this.GetCellCount());
             }
         }
@@ -1016,16 +1111,19 @@ namespace Hypertable.Test
                 key.Row = (n % 3) == 0 ? Guid.NewGuid().ToString() : null;
                 cells.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
+
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cells);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
                 foreach (var cell in cells) {
-                    Assert.IsFalse(String.IsNullOrEmpty(cell.Key.Row));
+                    Assert.IsFalse(string.IsNullOrEmpty(cell.Key.Row));
                 }
+
                 Assert.AreEqual(Count, this.GetCellCount());
             }
         }
@@ -1060,26 +1158,27 @@ namespace Hypertable.Test
             for (int n = 0; n < 0x40; ++n) {
                 sb.Append(Guid.NewGuid().ToString());
             }
+
             var largeValue = Encoding.GetBytes(sb.ToString());
             for (int n = 0; n < 0x4000; ++n) {
                 sb.Append(Guid.NewGuid().ToString());
             }
+
             var hugeValue = Encoding.GetBytes(sb.ToString());
             var smallValue = Encoding.GetBytes(Guid.NewGuid().ToString());
 
             var key = new Key { ColumnFamily = "a" };
-            var cells = new List<Cell>
-                {
-                    new Cell(key.Clone() as Key, smallValue),
-                    new Cell(key.Clone() as Key, null),
-                    new Cell(key.Clone() as Key, smallValue),
-                    new Cell(key.Clone() as Key, largeValue),
-                    new Cell(key.Clone() as Key, null),
-                    new Cell(key.Clone() as Key, smallValue),
-                    new Cell(key.Clone() as Key, largeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, null),
-                    new Cell(key.Clone() as Key, smallValue),
+            var cells = new List<Cell> {
+                    new Cell(key.Clone() as Key, smallValue), 
+                    new Cell(key.Clone() as Key, null), 
+                    new Cell(key.Clone() as Key, smallValue), 
+                    new Cell(key.Clone() as Key, largeValue), 
+                    new Cell(key.Clone() as Key, null), 
+                    new Cell(key.Clone() as Key, smallValue), 
+                    new Cell(key.Clone() as Key, largeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, null), 
+                    new Cell(key.Clone() as Key, smallValue), 
                     new Cell(key.Clone() as Key, largeValue)
                 };
 
@@ -1087,11 +1186,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cells, true);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
                 foreach (var cell in cells) {
-                    Assert.IsFalse(String.IsNullOrEmpty(cell.Key.Row));
+                    Assert.IsFalse(string.IsNullOrEmpty(cell.Key.Row));
                 }
             }
         }
@@ -1123,18 +1223,17 @@ namespace Hypertable.Test
             new Random().NextBytes(hugeValue);
 
             var key = new Key { ColumnFamily = "a" };
-            var cells = new List<Cell>
-                {
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
-                    new Cell(key.Clone() as Key, hugeValue),
+            var cells = new List<Cell> {
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue), 
                     new Cell(key.Clone() as Key, hugeValue)
                 };
 
@@ -1142,11 +1241,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     mutator.Set(cells, true);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
                 foreach (var cell in cells) {
-                    Assert.IsFalse(String.IsNullOrEmpty(cell.Key.Row));
+                    Assert.IsFalse(string.IsNullOrEmpty(cell.Key.Row));
                 }
             }
         }
@@ -1182,34 +1282,42 @@ namespace Hypertable.Test
             for (int n = 0; n < 16; ++n) {
                 cells1.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
+
             var cells2 = new List<Cell>();
             for (int n = 0; n < 16; ++n) {
                 cells2.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
+
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     int c1 = 0;
                     int c2 = 0;
 
                     var t1 = new Thread(
-                        () => {
-                            for (int n = 0; n < Count; ++n, ++c1) {
-                                mutator.Set(cells1, true);
-                                if (n == Count / 2) {
-                                    mutator.Flush();
+                        () =>
+                            {
+                                for (int n = 0; n < Count; ++n, ++c1) {
+                                    mutator.Set(cells1, true);
+                                    if (n == Count / 2) {
+                                        mutator.Flush();
+                                    }
                                 }
-                            }
-                        }) { IsBackground = true };
+                            }) {
+                                  IsBackground = true 
+                               };
 
                     var t2 = new Thread(
-                        () => {
-                            for (int n = 0; n < Count; ++n, ++c2) {
-                                mutator.Set(cells2, true);
-                                if (n == Count / 2) {
-                                    mutator.Flush();
+                        () =>
+                            {
+                                for (int n = 0; n < Count; ++n, ++c2) {
+                                    mutator.Set(cells2, true);
+                                    if (n == Count / 2) {
+                                        mutator.Flush();
+                                    }
                                 }
-                            }
-                        }) { IsBackground = true };
+                            }) {
+                                  IsBackground = true 
+                               };
 
                     t1.Start();
                     t2.Start();
@@ -1218,8 +1326,9 @@ namespace Hypertable.Test
                     Assert.IsTrue(c1 > 0);
                     Assert.IsTrue(c2 > 0);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
         }
@@ -1250,11 +1359,12 @@ namespace Hypertable.Test
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     for (int n = 0; n < Count; ++n) {
                         mutator.Set(key, Encoding.GetBytes(Guid.NewGuid().ToString()), true);
-                        Assert.IsFalse(String.IsNullOrEmpty(key.Row));
+                        Assert.IsFalse(string.IsNullOrEmpty(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
                 Assert.AreEqual(Count, this.GetCellCount());
             }
@@ -1281,11 +1391,12 @@ namespace Hypertable.Test
                     for (int n = 0; n < Count; ++n) {
                         var key = new Key { ColumnFamily = "b" };
                         mutator.Set(key, Encoding.GetBytes(Guid.NewGuid().ToString()));
-                        Assert.IsFalse(String.IsNullOrEmpty(key.Row));
+                        Assert.IsFalse(string.IsNullOrEmpty(key.Row));
                     }
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
                 Assert.AreEqual(Count, this.GetCellCount());
             }
@@ -1334,8 +1445,9 @@ namespace Hypertable.Test
                                     mutatorOther.Set(key, Encoding.GetBytes(key.Row));
                                 }
                             }
+
                             asyncResult.Join();
-                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                            Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                             Assert.IsTrue(asyncResult.IsCompleted);
                             Assert.AreEqual(Count, this.GetCellCount());
                             Assert.AreEqual(Count, GetCellCount(tableOther));
@@ -1373,7 +1485,7 @@ namespace Hypertable.Test
             var tables = new List<Table>();
             try {
                 for (int t = 0; t < CountTables; ++t) {
-                    var table2 = EnsureTable(String.Format("AsyncSetMultipleTables-{0}", t), Schema);
+                    var table2 = EnsureTable(string.Format("AsyncSetMultipleTables-{0}", t), Schema);
                     tables.Add(table2);
                 }
 
@@ -1385,8 +1497,9 @@ namespace Hypertable.Test
                         for (int n = 0; n < Count; ++n) {
                             mutators.ForEach(m => m.Set(key, Encoding.GetBytes(key.Row = Guid.NewGuid().ToString())));
                         }
+
                         asyncResult.Join();
-                        Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : "");
+                        Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                         Assert.IsTrue(asyncResult.IsCompleted);
                         tables.ForEach(t => Assert.AreEqual(Count, GetCellCount(t)));
                     }
@@ -1398,7 +1511,7 @@ namespace Hypertable.Test
             finally {
                 tables.ForEach(t => t.Dispose());
                 for (int t = 0; t < CountTables; ++t) {
-                    Ns.DropTable(String.Format("AsyncSetMultipleTables-{0}", t), DropDispositions.IfExists);
+                    Ns.DropTable(string.Format("AsyncSetMultipleTables-{0}", t), DropDispositions.IfExists);
                 }
             }
         }
@@ -1436,20 +1549,26 @@ namespace Hypertable.Test
                     int c2 = 0;
 
                     var t1 = new Thread(
-                        () => {
-                            for (int n = 0; n < Count; ++n, ++c1) {
-                                key.Row = Guid.NewGuid().ToString();
-                                mutator.Set(key, Encoding.GetBytes(key.Row));
-                            }
-                        }) { IsBackground = true };
+                        () =>
+                            {
+                                for (int n = 0; n < Count; ++n, ++c1) {
+                                    key.Row = Guid.NewGuid().ToString();
+                                    mutator.Set(key, Encoding.GetBytes(key.Row));
+                                }
+                            }) {
+                                  IsBackground = true 
+                               };
 
                     var t2 = new Thread(
-                        () => {
-                            for (int n = 0; n < Count; ++n, ++c2) {
-                                key.Row = Guid.NewGuid().ToString();
-                                mutator.Set(key, Encoding.GetBytes(key.Row));
-                            }
-                        }) { IsBackground = true };
+                        () =>
+                            {
+                                for (int n = 0; n < Count; ++n, ++c2) {
+                                    key.Row = Guid.NewGuid().ToString();
+                                    mutator.Set(key, Encoding.GetBytes(key.Row));
+                                }
+                            }) {
+                                  IsBackground = true 
+                               };
 
                     t1.Start();
                     t2.Start();
@@ -1458,8 +1577,9 @@ namespace Hypertable.Test
                     Assert.IsTrue(c1 > 0);
                     Assert.IsTrue(c2 > 0);
                 }
+
                 asyncResult.Join();
-                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : ""); 
+                Assert.IsNull(asyncResult.Error, asyncResult.Error != null ? asyncResult.Error.ToString() : string.Empty);
                 Assert.IsTrue(asyncResult.IsCompleted);
             }
         }
@@ -1492,6 +1612,7 @@ namespace Hypertable.Test
             if (t == null) {
                 throw new ArgumentNullException("t");
             }
+
             int c = 0;
             using (var scanner = t.CreateScanner()) {
                 var cell = new Cell();
@@ -1499,6 +1620,7 @@ namespace Hypertable.Test
                     ++c;
                 }
             }
+
             return c;
         }
 

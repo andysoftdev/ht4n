@@ -60,7 +60,7 @@ namespace Hypertable.Test
             Assert.IsFalse(comparer.Equals(x, y));
 
             x.ColumnFamily = null;
-            y.ColumnFamily = String.Empty;
+            y.ColumnFamily = string.Empty;
             Assert.IsFalse(comparer.Equals(x, y));
 
             x.ColumnFamily = "AB";
@@ -73,7 +73,7 @@ namespace Hypertable.Test
             Assert.IsFalse(comparer.Equals(x, y));
 
             x.ColumnQualifier = null;
-            y.ColumnQualifier = String.Empty;
+            y.ColumnQualifier = string.Empty;
             Assert.IsTrue(comparer.Equals(x, y));
             Assert.AreEqual(comparer.GetHashCode(x), comparer.GetHashCode(y));
 
@@ -118,7 +118,7 @@ namespace Hypertable.Test
             Assert.IsFalse(comparer.Equals(x, y));
 
             x.ColumnFamily = null;
-            y.ColumnFamily = String.Empty;
+            y.ColumnFamily = string.Empty;
             Assert.IsFalse(comparer.Equals(x, y));
 
             x.ColumnFamily = "AB";
@@ -131,7 +131,7 @@ namespace Hypertable.Test
             Assert.IsFalse(comparer.Equals(x, y));
 
             x.ColumnQualifier = null;
-            y.ColumnQualifier = String.Empty;
+            y.ColumnQualifier = string.Empty;
             Assert.IsTrue(comparer.Equals(x, y));
             Assert.AreEqual(comparer.GetHashCode(x), comparer.GetHashCode(y));
 

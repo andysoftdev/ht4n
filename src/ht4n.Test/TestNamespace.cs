@@ -61,6 +61,7 @@ namespace Hypertable.Test
                         Assert.AreEqual(0, ns.Namespaces.Count);
                         Assert.AreEqual(0, ns.Tables.Count);
                     }
+
                     client.DropNamespace(name);
                     Assert.IsFalse(client.NamespaceExists(name));
                 }
@@ -129,6 +130,7 @@ namespace Hypertable.Test
                         Assert.AreEqual(ns.Name, name.Trim('/'));
                     }
                 }
+
                 client.DropNamespace("/test-x", DropDispositions.Complete);
                 Assert.IsFalse(client.NamespaceExists("/test-x"));
             }
@@ -204,6 +206,7 @@ namespace Hypertable.Test
                         Assert.AreEqual(0, ns.Namespaces.Count);
                         Assert.AreEqual(0, ns.Tables.Count);
                     }
+
                     client.DropNamespace(name);
                     Assert.IsFalse(client.NamespaceExists(name));
                 }

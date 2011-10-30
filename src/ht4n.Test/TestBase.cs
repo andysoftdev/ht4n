@@ -105,10 +105,12 @@ namespace Hypertable.Test
                 ns.Dispose();
                 ns = null;
             }
+
             if (client != null) {
                 client.DropNamespace(NsName, DropDispositions.Complete);
                 client.Dispose();
             }
+
             if (ctx != null) {
                 ctx.Dispose();
             }
@@ -121,11 +123,11 @@ namespace Hypertable.Test
         [AssemblyInitialize]
         public static void AssemblyInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext) {
             NsName = ConfigurationManager.AppSettings["TestNamespace"].Trim();
-            Assert.IsFalse(String.IsNullOrEmpty(NsName));
+            Assert.IsFalse(string.IsNullOrEmpty(NsName));
             Assert.AreNotEqual(NsName, "/"); // avoid using root namespace
 
             Host = ConfigurationManager.AppSettings["TestHost"].Trim();
-            Assert.IsFalse(String.IsNullOrEmpty(Host));
+            Assert.IsFalse(string.IsNullOrEmpty(Host));
 
             CtxKind = (ContextKind)Enum.Parse(typeof(ContextKind), ConfigurationManager.AppSettings["TestContextKind"].Trim());
 

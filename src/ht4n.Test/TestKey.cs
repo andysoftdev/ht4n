@@ -41,7 +41,7 @@ namespace Hypertable.Test
             var x = new Key();
             Assert.IsTrue(x.CompareTo(null) > 0);
             Assert.IsFalse(x.Equals(null));
-            Assert.IsFalse(x.Equals(String.Empty));
+            Assert.IsFalse(x.Equals(string.Empty));
             Assert.IsTrue(x != null);
 
             var y = new Key();
@@ -75,7 +75,7 @@ namespace Hypertable.Test
             Assert.IsFalse(x > y);
 
             x.ColumnFamily = null;
-            y.ColumnFamily = String.Empty;
+            y.ColumnFamily = string.Empty;
             Assert.AreNotEqual(x, y);
             Assert.IsTrue(x.CompareTo(y) < 0);
             Assert.IsTrue(y.CompareTo(x) > 0);
@@ -97,7 +97,7 @@ namespace Hypertable.Test
             Assert.IsFalse(x > y);
 
             x.ColumnQualifier = null;
-            y.ColumnQualifier = String.Empty;
+            y.ColumnQualifier = string.Empty;
             Assert.AreNotEqual(x, y);
             Assert.IsTrue(x.CompareTo(y) < 0);
             Assert.IsTrue(y.CompareTo(x) > 0);

@@ -37,7 +37,7 @@ namespace Hypertable.Test
         #region Public Methods
 
         [TestMethod]
-        [Ignore] //FIXME, issue 'delete with unspecified timestamp applying to all future inserts'
+        [Ignore] // FIXME, issue 'delete with unspecified timestamp applying to all future inserts'
         public void CreateDeleteSingleCell() {
             Ns.Exec("CREATE TABLE fruit (tag)");
             Ns.Exec("INSERT INTO fruit VALUES" + "(\"2009-08-02 08:30:01\", \"banana\", \"tag\", \"Had with dinner\")");
@@ -76,6 +76,7 @@ namespace Hypertable.Test
             catch {
                 Assert.Fail();
             }
+
             Ns.Exec("DROP TABLE IF EXISTS table_does_not_exists");
 
             try {
@@ -87,6 +88,7 @@ namespace Hypertable.Test
             catch {
                 Assert.Fail();
             }
+
             Ns.Exec("DROP NAMESPACE IF EXISTS namespace_does_not_exists");
 
             Ns.Exec("CREATE NAMESPACE abc");
@@ -99,14 +101,15 @@ namespace Hypertable.Test
             catch {
                 Assert.Fail();
             }
+
             Ns.Exec("DROP NAMESPACE abc");
             Ns.Exec("CREATE TABLE t (a, description)");
             Ns.Exec("ALTER TABLE t ADD (e) RENAME COLUMN FAMILY (a, tag)");
             Ns.Exec("RENAME TABLE t TO fruit");
             Ns.Exec(
-                "INSERT INTO fruit VALUES" + "(\"cantelope\", \"tag:good\", \"Had with breakfast\")," +
-                "(\"2009-08-02 08:30:00\", \"cantelope\", \"description\", \"A cultivated variety of muskmelon with orange flesh\")," +
-                "(\"banana\", \"tag:great\", \"Had with lunch\")");
+                "INSERT INTO fruit VALUES" + "(\"cantelope\", \"tag:good\", \"Had with breakfast\"),"
+                + "(\"2009-08-02 08:30:00\", \"cantelope\", \"description\", \"A cultivated variety of muskmelon with orange flesh\"),"
+                + "(\"banana\", \"tag:great\", \"Had with lunch\")");
             Ns.Exec("DELETE * FROM fruit WHERE ROW=\"banana\";DROP TABLE fruit"); // multiple commands
         }
 
@@ -114,9 +117,9 @@ namespace Hypertable.Test
         public void Query() {
             Ns.Exec("CREATE TABLE fruit (tag, description)");
             Ns.Exec(
-                "INSERT INTO fruit VALUES" + "(\"cantelope\", \"tag:good\", \"Had with breakfast\")," +
-                "(\"2009-08-02 08:30:00\", \"cantelope\", \"description\", \"A cultivated variety of muskmelon with orange flesh\")," +
-                "(\"banana\", \"tag:great\", \"Had with lunch\")");
+                "INSERT INTO fruit VALUES" + "(\"cantelope\", \"tag:good\", \"Had with breakfast\"),"
+                + "(\"2009-08-02 08:30:00\", \"cantelope\", \"description\", \"A cultivated variety of muskmelon with orange flesh\"),"
+                + "(\"banana\", \"tag:great\", \"Had with lunch\")");
 
             var cells = Ns.Query("SELECT * FROM fruit");
             Assert.IsNotNull(cells);
@@ -131,7 +134,7 @@ namespace Hypertable.Test
             Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "Had with breakfast");
             Assert.AreEqual(cells[2].Key.Row, "cantelope");
             Assert.AreEqual(cells[2].Key.ColumnFamily, "description");
-            Assert.AreEqual(cells[2].Key.ColumnQualifier, String.Empty);
+            Assert.AreEqual(cells[2].Key.ColumnQualifier, string.Empty);
             Assert.AreEqual(cells[2].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Utc));
             Assert.AreEqual(Encoding.Default.GetString(cells[2].Value), "A cultivated variety of muskmelon with orange flesh");
 
@@ -156,7 +159,7 @@ namespace Hypertable.Test
             Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with breakfast");
             Assert.AreEqual(cells[1].Key.Row, "cantelope");
             Assert.AreEqual(cells[1].Key.ColumnFamily, "description");
-            Assert.AreEqual(cells[1].Key.ColumnQualifier, String.Empty);
+            Assert.AreEqual(cells[1].Key.ColumnQualifier, string.Empty);
             Assert.AreEqual(cells[1].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Utc));
             Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "A cultivated variety of muskmelon with orange flesh");
 
