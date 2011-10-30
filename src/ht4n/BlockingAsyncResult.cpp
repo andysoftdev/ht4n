@@ -141,23 +141,27 @@ namespace Hypertable {
 
 		BlockingAsyncResultSink* asyncResultSink = 0;
 		HT4C_TRY {
-			int isNull = 0;
 			List<Cell^>^ l = gcnew List<Cell^>();
 			cells = l;
 			asyncResultSink = new BlockingAsyncResultSink( l );
-			for( bool checkEmpty = true; isNull < size; checkEmpty = false ) {
+			std::vector<bool> completed(size, false);
+			for( int probe = 0; probe < 2; ++probe ) {
 				for( int n = 0; n < size; ++n ) {
-					Common::BlockingAsyncResult* blockingAsyncResult = GetAsyncResult<Common::BlockingAsyncResult>( n );
-					if( blockingAsyncResult ) {
-						if( !checkEmpty || !blockingAsyncResult->isEmpty() ) {
-							bool result = blockingAsyncResult->getCells( asyncResultSink );
-							msclr::lock sync( syncRoot );
-							map->TryGetValue( asyncResultSink->getAsyncScannerId(), asyncScannerContext );
-							return result;
+					if( !completed[n] ) {
+						Common::BlockingAsyncResult* blockingAsyncResult = GetAsyncResult<Common::BlockingAsyncResult>( n );
+						if( blockingAsyncResult ) {
+							if( probe > 0 || !blockingAsyncResult->isEmpty() ) {
+								if( blockingAsyncResult->getCells(asyncResultSink) ) {
+									msclr::lock sync( syncRoot );
+									map->TryGetValue( asyncResultSink->getAsyncScannerId(), asyncScannerContext );
+									return true;
+								}
+								completed[n] = true;
+							}
 						}
-					}
-					else {
-						++isNull;
+						else {
+							completed[n] = true;
+						}
 					}
 				}
 			}
@@ -179,28 +183,33 @@ namespace Hypertable {
 
 		BlockingAsyncResultSink* asyncResultSink = 0;
 		HT4C_TRY {
-			int isNull = 0;
 			List<Cell^>^ l = gcnew List<Cell^>();
 			cells = l;
 			asyncResultSink = new BlockingAsyncResultSink( l );
-			for( bool checkEmpty = true; isNull < size; checkEmpty = false ) {
+			std::vector<bool> completed(size, false);
+			for( int probe = 0; probe < 2; ++probe ) {
 				for( int n = 0; n < size; ++n ) {
-					Common::BlockingAsyncResult* blockingAsyncResult = GetAsyncResult<Common::BlockingAsyncResult>( n );
-					if( blockingAsyncResult ) {
-						if( !checkEmpty || !blockingAsyncResult->isEmpty() ) {
-							int32_t _timeout = (int32_t)timeout.TotalMilliseconds;
-							bool timedOut;
-							bool result = blockingAsyncResult->getCells( asyncResultSink, _timeout, timedOut );
-							if( timedOut ) {
-								throw gcnew Hypertable::TimeoutException( L"Asynchronous operations have timed out" );
+					if( !completed[n] ) {
+						Common::BlockingAsyncResult* blockingAsyncResult = GetAsyncResult<Common::BlockingAsyncResult>( n );
+						if( blockingAsyncResult ) {
+							if( probe > 0 || !blockingAsyncResult->isEmpty() ) {
+								int32_t _timeout = (int32_t)timeout.TotalMilliseconds;
+								bool timedOut;
+								bool result = blockingAsyncResult->getCells( asyncResultSink, _timeout, timedOut );
+								if( timedOut ) {
+									throw gcnew Hypertable::TimeoutException( L"Asynchronous operations have timed out" );
+								}
+								if( result ) {
+									msclr::lock sync( syncRoot );
+									map->TryGetValue( asyncResultSink->getAsyncScannerId(), asyncScannerContext );
+									return true;
+								}
+								completed[n] = true;
 							}
-							msclr::lock sync( syncRoot );
-							map->TryGetValue( asyncResultSink->getAsyncScannerId(), asyncScannerContext );
-							return result;
 						}
-					}
-					else {
-						++isNull;
+						else {
+							completed[n] = true;
+						}
 					}
 				}
 			}
