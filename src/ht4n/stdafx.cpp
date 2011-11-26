@@ -46,6 +46,7 @@
 #pragma comment( lib, "Hypertools.lib" )
 #pragma comment( lib, "Hyperspace.lib" )
 #pragma comment( lib, "Hypertable.lib" )
+#pragma comment( lib, "HyperAppHelper.lib" )
 #pragma comment( lib, "ThriftBroker.lib" )
 
 #pragma comment( lib, "ht4c.Common.lib" )
