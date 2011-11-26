@@ -142,7 +142,7 @@ namespace Hypertable {
 			/// </summary>
 			/// <remarks>
 			/// Set to zero (default) for unlimited numbers of rows.
-			/// Applies to each row interval individual.
+			/// Applies to each row/cell interval individual.
 			/// </remarks>
 			property int MaxRows;
 
@@ -157,7 +157,7 @@ namespace Hypertable {
 			/// </summary>
 			/// <remarks>
 			/// Set to zero (default) for unlimited numbers of cells.
-			/// Applies to each row interval individual.
+			/// Applies to each row/cell interval individual.
 			/// </remarks>
 			property int MaxCells;
 
@@ -166,6 +166,22 @@ namespace Hypertable {
 			/// </summary>
 			/// <remarks>Set to zero (default) for unlimited numbers of cells.</remarks>
 			property int MaxCellsColumnFamily;
+
+			/// <summary>
+			/// Sets or gets the number of rows to be skipped at the beginning of the query.
+			/// </summary>
+			/// <remarks>
+			/// Not valid in combination of cell offset. Applies to each row/cell interval individual.
+			/// </remarks>
+			property int RowOffset;
+
+			/// <summary>
+			/// Gets or sets the number of cells to be skipped at the beginning of the query.
+			/// </summary>
+			/// <remarks>
+			/// Not valid in combination of row offset. Applies to each row/cell interval individual.
+			/// </remarks>
+			property int CellOffset;
 
 			/// <summary>
 			/// Gets or sets a value that indicates whether to return keys only or not.

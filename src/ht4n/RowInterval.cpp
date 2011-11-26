@@ -30,9 +30,6 @@ namespace Hypertable {
 	}
 
 	RowInterval::RowInterval( String^ startRow, String^ endRow ) {
-		if( String::IsNullOrEmpty(startRow) ) throw gcnew ArgumentNullException( L"startRow" );
-		if( String::IsNullOrEmpty(endRow) ) throw gcnew ArgumentNullException( L"endRow" );
-		
 		StartRow = startRow;
 		IncludeStartRow = true;
 		EndRow = endRow;
@@ -40,9 +37,6 @@ namespace Hypertable {
 	}
 
 	RowInterval::RowInterval( String^ startRow, bool includeStartRow, String^ endRow, bool includeEndRow ) {
-		if( String::IsNullOrEmpty(startRow) ) throw gcnew ArgumentNullException( L"startRow" );
-		if( String::IsNullOrEmpty(endRow) ) throw gcnew ArgumentNullException( L"endRow" );
-		
 		StartRow = startRow;
 		IncludeStartRow = includeStartRow;
 		EndRow = endRow;

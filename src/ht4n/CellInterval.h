@@ -46,19 +46,19 @@ namespace Hypertable {
 			/// <summary>
 			/// Initializes a new instance of the CellInterval class using start/end row and start/end column family.
 			/// </summary>
-			/// <param name="startRow">Start row.</param>
+			/// <param name="startRow">Start row, might be null if unspecified.</param>
 			/// <param name="startColumnFamily">Start column family.</param>
-			/// <param name="endRow">End row.</param>
+			/// <param name="endRow">End row, might be null if unspecified.</param>
 			/// <param name="endColumnFamily">End column family.</param>
 			CellInterval( String^ startRow, String^ startColumnFamily, String^ endRow, String^ endColumnFamily );
 
 			/// <summary>
 			/// Initializes a new instance of the CellInterval class using start/end cell.
 			/// </summary>
-			/// <param name="startRow">Start row.</param>
+			/// <param name="startRow">Start row, might be null if unspecified.</param>
 			/// <param name="startColumnFamily">Start column family.</param>
 			/// <param name="startColumnQualifier">Start column qualifier.</param>
-			/// <param name="endRow">End row.</param>
+			/// <param name="endRow">End row, might be null if unspecified.</param>
 			/// <param name="endColumnFamily">End column family.</param>
 			/// <param name="endColumnQualifier">End column qualifier.</param>
 			CellInterval( String^ startRow, String^ startColumnFamily, String^ startColumnQualifier, String^ endRow, String^ endColumnFamily, String^ endColumnQualifier );
@@ -66,11 +66,11 @@ namespace Hypertable {
 			/// <summary>
 			/// Initializes a new instance of the CellInterval class using start/end cell.
 			/// </summary>
-			/// <param name="startRow">Start row.</param>
+			/// <param name="startRow">Start row, might be null if unspecified.</param>
 			/// <param name="startColumnFamily">Start column family.</param>
 			/// <param name="startColumnQualifier">Start column qualifier.</param>
 			/// <param name="includeStartRow">Value that indicates whether the start row should be included.</param>
-			/// <param name="endRow">End row.</param>
+			/// <param name="endRow">End row, might be null if unspecified.</param>
 			/// <param name="endColumnFamily">End column family.</param>
 			/// <param name="endColumnQualifier">End column qualifier.</param>
 			/// <param name="includeEndRow">Value that indicates whether the end row should be included.</param>

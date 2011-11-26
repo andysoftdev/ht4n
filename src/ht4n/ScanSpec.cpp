@@ -191,8 +191,6 @@ namespace Hypertable {
 
 	ScanSpec^ ScanSpec::AddRowInterval( RowInterval^ rowInterval ) {
 		if( rowInterval == nullptr ) throw gcnew ArgumentNullException( L"rowInterval" );
-		if( String::IsNullOrEmpty(rowInterval->StartRow) ) throw gcnew ArgumentException( L"Invalid parameter rowInterval (rowInterval.StartRow null or empty)", L"rowInterval" );
-		if( String::IsNullOrEmpty(rowInterval->EndRow) ) throw gcnew ArgumentException( L"Invalid parameter rowInterval (rowInterval.EndRow null or empty)", L"rowInterval" );
 
 		if( rowIntervals == nullptr ) {
 			rowIntervals = CreateCollection<RowInterval^>();
@@ -203,8 +201,6 @@ namespace Hypertable {
 
 	ScanSpec^ ScanSpec::RemoveRowInterval( RowInterval^ rowInterval ) {
 		if( rowInterval == nullptr ) throw gcnew ArgumentNullException( L"rowInterval" );
-		if( String::IsNullOrEmpty(rowInterval->StartRow) ) throw gcnew ArgumentException( L"Invalid parameter rowInterval (rowInterval.StartRow null or empty)", L"rowInterval" );
-		if( String::IsNullOrEmpty(rowInterval->EndRow) ) throw gcnew ArgumentException( L"Invalid parameter rowInterval (rowInterval.EndRow null or empty)", L"rowInterval" );
 
 		if( rowIntervals != nullptr ) {
 			rowIntervals->Remove( rowInterval );
@@ -214,9 +210,7 @@ namespace Hypertable {
 
 	ScanSpec^ ScanSpec::AddCellInterval( CellInterval^ cellInterval ) {
 		if( cellInterval == nullptr ) throw gcnew ArgumentNullException( L"cellInterval" );
-		if( String::IsNullOrEmpty(cellInterval->StartRow) ) throw gcnew ArgumentException( L"Invalid parameter cellInterval (cellInterval.StartRow null or empty)", L"cellInterval" );
 		if( String::IsNullOrEmpty(cellInterval->StartColumnFamily) ) throw gcnew ArgumentException( L"Invalid parameter cellInterval (cellInterval.StartColumnFamily null or empty)", L"cellInterval" );
-		if( String::IsNullOrEmpty(cellInterval->EndRow) ) throw gcnew ArgumentException( L"Invalid parameter cellInterval (cellInterval.EndRow null or empty)", L"cellInterval" );
 		if( String::IsNullOrEmpty(cellInterval->EndColumnFamily) ) throw gcnew ArgumentException( L"Invalid parameter cellInterval (cellInterval.EndColumnFamily null or empty)", L"cellInterval" );
 
 		if( cellIntervals == nullptr ) {
@@ -251,6 +245,12 @@ namespace Hypertable {
 		}
 		if( MaxCellsColumnFamily > 0 ) {
 			scanSpec.maxCellsColumnFamily( MaxCellsColumnFamily );
+		}
+		if( RowOffset > 0 ) {
+			scanSpec.rowOffset( RowOffset );
+		}
+		else if( CellOffset > 0 ) {
+			scanSpec.cellOffset( CellOffset );
 		}
 		scanSpec.keysOnly( KeysOnly );
 		scanSpec.scanAndFilter( ScanAndFilter );
