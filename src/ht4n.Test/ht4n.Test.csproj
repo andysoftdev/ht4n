@@ -130,6 +130,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="conf\TestConfiguration.cfg" />
+    <None Include="Settings.StyleCop" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ht4n\ht4n.vcxproj">
