@@ -181,7 +181,7 @@ namespace Hypertable.Test
         /// <summary>
         /// Creates and opens a table in the 'test' namespace, drops existing table. Using the specified type name as the table name.
         /// </summary>
-        /// <param name = "type">Tabel name (type.Name).</param>
+        /// <param name = "type">Table name (type.Name).</param>
         /// <param name = "schema">Table xml schema.</param>
         /// <returns>Opend table.</returns>
         protected static Table EnsureTable(Type type, string schema) {
