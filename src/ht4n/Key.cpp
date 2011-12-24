@@ -98,9 +98,19 @@ namespace Hypertable {
 		return Timestamp.CompareTo( other->Timestamp );
 	}
 
+	bool Key::Equals( Key^ other ) {
+		if( Object::ReferenceEquals(other, this) ) return true;
+		if( Object::ReferenceEquals(other, nullptr) ) return false;
+
+		return String::Equals(Row, other->Row)
+				&& String::Equals(ColumnFamily, other->ColumnFamily)
+				&& String::Equals(ColumnQualifier, other->ColumnQualifier)
+				&& Timestamp ==  other->Timestamp;
+	}
+
 	bool Key::Equals( Object^ obj ) {
 		if( obj == nullptr || obj->GetType() != Key::typeid ) return false;
-		return CompareTo( dynamic_cast<Key^>(obj) ) == 0;
+		return Equals( dynamic_cast<Key^>(obj) );
 	}
 
 	int Key::GetHashCode() {

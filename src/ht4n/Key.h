@@ -46,7 +46,7 @@ namespace Hypertable {
 	/// See also <a href="http://code.google.com/p/hypertable/wiki/ArchitecturalOverview" target="_blank">architectural overview</a>.
 	/// </remarks>
 	[Serializable]
-	public ref class Key sealed : public IComparable<Key^>, public ICloneable {
+	public ref class Key sealed : public IComparable<Key^>, public IEquatable<Key^>, public ICloneable {
 
 		public:
 
@@ -136,6 +136,13 @@ namespace Hypertable {
 			/// </table>
 			/// </returns>
 			virtual int CompareTo( Key^ other );
+
+			/// <summary>
+			/// Determines whether this instance and an other Key object equals.
+			/// </summary>
+			/// <param name="other">Key to compare, or null.</param>
+			/// <returns>true if the value of obj is the same as the value of this instance, otherwise false.</returns>
+			virtual bool Equals( Key^ other );
 
 			/// <summary>
 			/// Determines whether this instance and a specified object, which must also be a Key object, equals.
