@@ -16,3 +16,5 @@ CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Security", "CA2123:OverrideLinkDemandsShou
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Usage", "CA2217:DoNotMarkEnumsWithFlags", Scope="type", Target="Hypertable.OpenDispositions");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId="rows", Scope="member", Target="Hypertable.ScanSpec.#AddRows(System.Collections.Generic.IEnumerable`1<System.String>)");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA2210:AssembliesShouldHaveValidStrongNames");
+CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId="Hypertable.Logging.TraceEvent(System.Diagnostics.TraceEventType,System.String)", Scope="member", Target="Hypertable.Context.#.cctor()");
+CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Security", "CA2102:CatchNonClsCompliantExceptionsInGeneralHandlers", Scope="member", Target="Hypertable.QueuedTableMutator.#SetCell()");

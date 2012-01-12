@@ -282,7 +282,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(CountA + CountB + CountC - cellOffset, c);
             }
 
-            using( var scanner = table.CreateScanner(new ScanSpec { CellOffset = cellOffset }.AddColumn("a")) ) {
+            using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = cellOffset }.AddColumn("a"))) {
                 int c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
@@ -307,7 +307,9 @@ namespace Hypertable.Test
                 }
             }
 
-            using( var scanner = table.CreateScanner(new ScanSpec { CellOffset = rows.Length * columnFamilies.Length * columnQualifiers.Length / 2, ScanAndFilter = true }.AddRows(rows)) ) {
+            using (
+                var scanner =
+                    table.CreateScanner(new ScanSpec { CellOffset = rows.Length * columnFamilies.Length * columnQualifiers.Length / 2, ScanAndFilter = true }.AddRows(rows))) {
                 int c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -317,7 +319,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(rows.Length * columnFamilies.Length * columnQualifiers.Length / 2, c);
             }
 
-            using( var scanner = table.CreateScanner(new ScanSpec { CellOffset = 1 }.AddRowInterval(new RowInterval("AA", "BB")).AddRowInterval(new RowInterval("CC", "DD"))) ) {
+            using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = 1 }.AddRowInterval(new RowInterval("AA", "BB")).AddRowInterval(new RowInterval("CC", "DD")))) {
                 int c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
