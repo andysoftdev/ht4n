@@ -89,6 +89,15 @@ namespace Hypertable {
 		HT4C_RETHROW
 	}
 
+	void Namespace::CreateTable( String^ name, String^ schema, CreateDispositions dispo ) {
+		if( (dispo & CreateDispositions::CreateIfNotExist) == CreateDispositions::CreateIfNotExist ) {
+			if( TableExists(name) ) {
+				return;
+			}
+		}
+		CreateTable( name, schema );
+	}
+
 	void Namespace::CreateTableLike( String^ name, String^ like ) {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(like) ) throw gcnew ArgumentNullException( L"like" );
@@ -96,6 +105,15 @@ namespace Hypertable {
 			ns->createTableLike( CM2A(name), CM2A(like) );
 		}
 		HT4C_RETHROW
+	}
+
+	void Namespace::CreateTableLike( String^ name, String^ like, CreateDispositions dispo ) {
+		if( (dispo & CreateDispositions::CreateIfNotExist) == CreateDispositions::CreateIfNotExist ) {
+			if( TableExists(name) ) {
+				return;
+			}
+		}
+		CreateTableLike( name, like );
 	}
 
 	void Namespace::AlterTable( String^ name, String^ schema ) {

@@ -53,6 +53,7 @@ namespace Hypertable.Test
 
             Ns.CreateTable("test-1", SchemaA);
             Assert.IsTrue(Ns.TableExists("test-1"));
+            Ns.CreateTable("test-1", SchemaA, CreateDispositions.CreateIfNotExist);
             string _schemaA = Ns.GetTableSchema("test-1");
             using (var table = Ns.OpenTable("test-1")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");
@@ -102,12 +103,13 @@ namespace Hypertable.Test
 
             Ns.CreateTableLike("Test-2", "test-1");
             Assert.IsTrue(Ns.TableExists("Test-2"));
+            Ns.CreateTableLike("Test-2", "test-1", CreateDispositions.CreateIfNotExist);
             Assert.IsFalse(Ns.TableExists("test-2")); // case sensitive
             using (var table = Ns.OpenTable("Test-2")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/Test-2");
             }
 
-            Ns.CreateTable("test-3", Ns.GetTableSchema("test-1"));
+            Ns.CreateTable("test-3", Ns.GetTableSchema("test-1"), CreateDispositions.CreateIfNotExist);
             Assert.IsTrue(Ns.TableExists("test-3"));
             using (var table = Ns.OpenTable("test-3")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-3");
@@ -130,7 +132,7 @@ namespace Hypertable.Test
                 "<Schema>" + "<AccessGroup name=\"default\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>"
                 + "</Schema>";
 
-            Ns.CreateTable("test-1", Schema);
+            Ns.CreateTable("test-1", Schema, CreateDispositions.CreateIfNotExist);
             Assert.IsTrue(Ns.TableExists("test-1"));
             using (var table = Ns.OpenTable("test-1")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");

@@ -133,8 +133,17 @@ namespace Hypertable {
 			/// Creates a new table.
 			/// </summary>
 			/// <param name="name">Table name</param>
-			/// <param name="schema">Xml table schema</param>
+			/// <param name="schema">XML table schema</param>
 			void CreateTable( String^ name, String^ schema );
+
+			/// <summary>
+			/// Creates a new table.
+			/// </summary>
+			/// <param name="name">Table name</param>
+			/// <param name="schema">XML table schema</param>
+			/// <param name="dispo">An action to take if the table exists or does not exist.</param>
+			/// <seealso cref="CreateDispositions"/>
+			void CreateTable( String^ name, String^ schema, CreateDispositions dispo );
 
 			/// <summary>
 			/// Creates a new table like another existing.
@@ -144,10 +153,19 @@ namespace Hypertable {
 			void CreateTableLike( String^ name, String^ like );
 
 			/// <summary>
+			/// Creates a new table like another existing.
+			/// </summary>
+			/// <param name="name">Table name</param>
+			/// <param name="like">Name of another existing table</param>
+			/// <param name="dispo">An action to take if the table exists or does not exist.</param>
+			/// <seealso cref="CreateDispositions"/>
+			void CreateTableLike( String^ name, String^ like, CreateDispositions dispo );
+
+			/// <summary>
 			/// Alter an existing table.
 			/// </summary>
 			/// <param name="name">Table name</param>
-			/// <param name="schema">Xml table schema</param>
+			/// <param name="schema">XML table schema</param>
 			void AlterTable( String^ name, String^ schema );
 
 			/// <summary>
@@ -177,7 +195,7 @@ namespace Hypertable {
 			/// Opens or create a table.
 			/// </summary>
 			/// <param name="name">Table name</param>
-			/// <param name="schema">Xml table schema</param>
+			/// <param name="schema">XML table schema</param>
 			/// <param name="dispo">An action to take if the table exists or does not exist.</param>
 			/// <returns>Opened table.</returns>
 			/// <seealso cref="OpenDispositions"/>
@@ -221,7 +239,7 @@ namespace Hypertable {
 			/// Returns the xml table schema for the specified table.
 			/// </summary>
 			/// <param name="name">Table name.</param>
-			/// <returns>Xml table schema.</returns>
+			/// <returns>XML table schema.</returns>
 			String^ GetTableSchema( String^ name );
 
 			/// <summary>
@@ -229,7 +247,7 @@ namespace Hypertable {
 			/// </summary>
 			/// <param name="name">Table name.</param>
 			/// <param name="withIds">Include generation and column family ID attributes.</param>
-			/// <returns>Xml table schema.</returns>
+			/// <returns>XML table schema.</returns>
 			String^ GetTableSchema( String^ name, bool withIds );
 
 			/// <summary>

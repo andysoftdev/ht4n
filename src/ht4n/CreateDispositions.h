@@ -35,7 +35,7 @@ namespace Hypertable {
 	/// Specifies possible create disposition values.
 	/// </summary>
 	/// <remarks>
-	/// Create dispositions are used if creating namespaces.
+	/// Create dispositions are used if creating namespaces or tables.
 	/// </remarks>
 	/// <seealso cref="Client" />
 	[Serializable, Flags]
