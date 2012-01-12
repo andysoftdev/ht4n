@@ -65,7 +65,7 @@ namespace Hypertable {
 			}
 
 			/// <summary>
-			/// Removes current application domain from the associative container.
+			/// Removes the current application domain from the associative container.
 			/// </summary>
 			/// <remarks>Calls T::finalize if the last application domain has been removed.</remarks>
 			static bool remove( ) {
@@ -81,6 +81,19 @@ namespace Hypertable {
 							appDomains = 0;
 							T::finalize();
 						}
+						return true;
+					}
+				}
+				return false;
+			}
+
+			/// <summary>
+			/// Returns true if the associative container contains the current application domain.
+			/// </summary>
+			static bool contains( ) {
+				if( appDomains ) {
+					map_t::iterator it = appDomains->find( AppDomain::CurrentDomain->Id );
+					if( it != appDomains->end() ) {
 						return true;
 					}
 				}

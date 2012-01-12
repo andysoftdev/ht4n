@@ -25,6 +25,7 @@
 #include "Context.h"
 #include "Client.h"
 #include "Exception.h"
+#include "Logging.h"
 #include "AppDomainHandler.h"
 #include "CM2A.h"
 
@@ -33,6 +34,9 @@
 
 namespace Hypertable { 
 	using namespace System;
+	using namespace System::Globalization;
+	using namespace System::Reflection;
+	using namespace System::Diagnostics;
 
 	class ShutdownHandler : public AppDomainHandler<ShutdownHandler> {
 
@@ -237,6 +241,20 @@ namespace Hypertable {
 		return ctx;
 	}
 
+	static Context::Context( ) {
+		Assembly^ assembly = Assembly::GetAssembly(Context::typeid);
+		cli::array<Object^>^ company = assembly->GetCustomAttributes(AssemblyCompanyAttribute::typeid, false);
+		cli::array<Object^>^ copyright = assembly->GetCustomAttributes(AssemblyCopyrightAttribute::typeid, false);
+		Logging::TraceEvent(
+			System::Diagnostics::TraceEventType::Information, 
+			String::Format(CultureInfo::InvariantCulture,
+										 L"{0} v{1} ({2}, {3})",
+										 assembly->GetName()->Name,
+										 assembly->GetName()->Version, 
+										 ((AssemblyCompanyAttribute^)company[0])->Company,
+										 ((AssemblyCopyrightAttribute^)copyright[0])->Copyright));
+	}
+
 	Context::Context( Hypertable::ContextKind ctxKind, String^ host, uint16_t port, IDictionary<String^, Object^>^ properties )
 	: ctx( 0 )
 	, disposed( false )
@@ -252,7 +270,9 @@ namespace Hypertable {
 				System::Net::Dns::GetHostEntry( host ); // resolve host name
 			}
 		}
+
 		RegisterUnload();
+
 		ht4c::Common::Properties* prop = 0;
 		HT4C_TRY {
 			prop = ht4c::Common::Properties::create();
@@ -261,7 +281,8 @@ namespace Hypertable {
 					prop_insert( prop, item.Key, item.Value );
 				}
 			}
-			ctx = ht4c::Context::create( (ht4c::Common::ContextKind)ctxKind, CM2A(host), port, *prop );
+
+			ctx = ht4c::Context::create( (ht4c::Common::ContextKind)ctxKind, CM2A(host), port, *prop, LoggingLevel() );
 		}
 		HT4C_RETHROW
 		finally {
@@ -277,7 +298,7 @@ namespace Hypertable {
 	{
 		RegisterUnload();
 		HT4C_TRY {
-			ctx = ht4c::Context::create( (ht4c::Common::ContextKind)ctxKind, CM2A(commandLine), includesModuleFileName );
+			ctx = ht4c::Context::create( (ht4c::Common::ContextKind)ctxKind, CM2A(commandLine), includesModuleFileName, LoggingLevel() );
 		}
 		HT4C_RETHROW
 	}
@@ -287,6 +308,23 @@ namespace Hypertable {
 		if( ShutdownHandler::add(0) ) {
 			AppDomain::CurrentDomain->DomainUnload += gcnew EventHandler(&Hypertable::Context::Unload);
 		}
+	}
+
+	const char* Context::LoggingLevel( ) {
+		if( Logging::IsEnabled(TraceEventType::Verbose) ) {
+			return "info";
+		}
+		if( Logging::IsEnabled(TraceEventType::Information) ) {
+			return "notice";
+		}
+		if( Logging::IsEnabled(TraceEventType::Warning) ) {
+			return "warn";
+		}
+		if( Logging::IsEnabled(TraceEventType::Error) ) {
+			return "error";
+		}
+
+		return "crit";
 	}
 
 	void Context::Unload( Object^ sender, EventArgs^ ) {

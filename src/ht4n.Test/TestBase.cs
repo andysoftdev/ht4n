@@ -132,7 +132,7 @@ namespace Hypertable.Test
             CtxKind = (ContextKind)Enum.Parse(typeof(ContextKind), ConfigurationManager.AppSettings["TestContextKind"].Trim());
 
             Logging.Logfile = Assembly.GetAssembly(typeof(TestBase)).Location + ".log";
-            Logging.LogEntryPublished += log => Debug.Write(log);
+            Logging.LogMessagePublished = message => Trace.WriteLine(message);
         }
 
         #endregion

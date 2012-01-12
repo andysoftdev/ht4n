@@ -31,82 +31,243 @@
 
 namespace Hypertable { 
 	using namespace System;
+	using namespace System::Linq;
+	using namespace System::Diagnostics;
+	using namespace System::Collections::Generic;
 
 	class LoggingSink : public AppDomainHandler<LoggingSink>
 										, public ht4c::LoggingSink
+										, public CrossAppDomainAction<Action<TraceEventType, String^>^, const std::pair<int, const char*>*>::Invoker
 										, public CrossAppDomainAction<Action<String^>^, const char*>::Invoker
 	{
 		public:
 
-			static bool add( Action<String^>^ action ) {
-				return AppDomainHandler<LoggingSink>::add( new LoggingSink(action) );
+			static bool add( Action<TraceEventType, String^>^ logEventAction, Action<String^>^ logMessageAction ) {
+				return AppDomainHandler<LoggingSink>::add( new LoggingSink(logEventAction, logMessageAction) );
 			}
 
 			static void finalize( ) {
 			}
 
 			virtual ~LoggingSink( ) {
-				ht4c::Logging::removeLogsink( this );
+				ht4c::Logging::removeLoggingSink( this );
 			}
 
 		private:
 
-			explicit LoggingSink( Action<String^>^ _action )
-				: action( this, _action )
+			explicit LoggingSink( Action<TraceEventType, String^>^ _logEventAction, Action<String^>^ _logMessageAction )
+				: logEventAction( this, _logEventAction )
+				, logMessageAction( this, _logMessageAction )
 			{
-				ht4c::Logging::addLogsink( this );
+				ht4c::Logging::addLoggingSink( this );
 			}
 
 			LoggingSink( const LoggingSink& );
 			LoggingSink& operator= ( const LoggingSink& );
 
-			virtual void logEvent( const std::string& log ) {
-				action.invoke( log.c_str() );
+			virtual void logEvent( int priority, const std::string& message ) {
+				std::pair<int, const char*> logEvent = std::make_pair( priority, message.c_str() );
+				logEventAction.invoke( &logEvent );
 			}
 
-			virtual void invoke( Action<String^>^ action, const char* log ) {
-				action->Invoke( gcnew String(log) );
+			virtual void invoke( Action<TraceEventType, String^>^ action, const std::pair<int, const char*>* logEvent ) {
+
+				enum {
+					Critical    = 200,
+					Error       = 300,
+					Warning     = 400,
+					Notice      = 500,
+				};
+
+				TraceEventType traceEventType = TraceEventType::Verbose;
+				if( logEvent-> first <= Critical ) {
+					traceEventType = TraceEventType::Critical;
+				}
+				else if( logEvent-> first <= Error ) {
+					traceEventType = TraceEventType::Error;
+				}
+				else if( logEvent-> first <= Warning ) {
+					traceEventType = TraceEventType::Warning;
+				}
+				else if( logEvent-> first <= Notice ) {
+					traceEventType = TraceEventType::Information;
+				}
+
+				action->Invoke( traceEventType, gcnew String(logEvent->second) );
 			}
 
-			CrossAppDomainAction<Action<String^>^, const char*> action;
+			virtual void logMessage( const std::string& message ) {
+				logMessageAction.invoke( message.c_str() );
+			}
+
+			virtual void invoke( Action<String^>^ action, const char* message ) {
+				action->Invoke( gcnew String(message) );
+			}
+
+			CrossAppDomainAction<Action<TraceEventType, String^>^, const std::pair<int, const char*>*> logEventAction;
+			CrossAppDomainAction<Action<String^>^, const char*> logMessageAction;
 	};
 
 	LoggingSink::map_t* LoggingSink::appDomains = 0;
 
+	System::Diagnostics::TraceSource^ Logging::TraceSource::get( ) {
+		msclr::lock sync( syncRoot );
+		return GetTraceSource();
+	}
+
+	void Logging::TraceSource::set( System::Diagnostics::TraceSource^ _traceSource ) {
+		if( _traceSource == nullptr ) throw gcnew ArgumentNullException( L"traceSource" );
+		msclr::lock sync( syncRoot );
+		traceSource = _traceSource;
+		SetupLoggingSink();
+	}
+
+	Action<String^>^ Logging::LogMessagePublished::get( ) {
+		msclr::lock sync( syncRoot );
+		return logMessagePublished;
+	}
+
+	void Logging::LogMessagePublished::set( Action<String^>^ _logMessagePublished ) {
+		msclr::lock sync( syncRoot );
+		if( _logMessagePublished != nullptr ) {
+			SetupLoggingSink();
+		}
+		logMessagePublished = _logMessagePublished;
+	}
+
 	String^ Logging::Logfile::get( ) {
-		return gcnew String( ht4c::Logging::getLogfile().c_str() );
+		HT4C_TRY {
+			msclr::lock sync( syncRoot );
+			return gcnew String( ht4c::Logging::getLogfile().c_str() );
+		}
+		HT4C_RETHROW
 	}
 
 	void Logging::Logfile::set( String^ logfile ) {
 		HT4C_TRY {
+			msclr::lock sync( syncRoot );
 			ht4c::Logging::setLogfile( CM2A(logfile) );
 		}
 		HT4C_RETHROW
 	}
 
-	void Logging::LogEntryPublished::add( Action<String^>^ _action ) {
-		if( _action != nullptr ) {
-			if( action == nullptr ) {
-				msclr::lock sync( syncRoot );
-				if( LoggingSink::add(gcnew Action<String^>(&Hypertable::Logging::LogEntryPublished::raise)) ) {
-					AppDomain::CurrentDomain->DomainUnload += gcnew EventHandler(&Hypertable::Logging::Unload);
+	bool Logging::IsEnabled( System::Diagnostics::TraceEventType traceEventType ) {
+		msclr::lock sync( syncRoot );
+		System::Diagnostics::TraceSource^ ts = GetTraceSource();
+		if( ts != nullptr && ts->Switch != nullptr ) {
+			try {
+				return ts->Switch->ShouldTrace( traceEventType );
+			}
+			catch( Object^ ) {
+			}
+		}
+
+		return false;
+	}
+
+	void Logging::TraceEvent( System::Diagnostics::TraceEventType traceEventType, String^ message ) {
+		if( message != nullptr ) {
+			msclr::lock sync( syncRoot );
+			System::Diagnostics::TraceSource^ ts = GetTraceSource();
+			if( ts != nullptr && ts->Switch != nullptr ) {
+				try {
+					if( ts->Switch->ShouldTrace(traceEventType) ) {
+						ts->TraceEvent( traceEventType, 0, message );
+					}
+				}
+				catch( Object^ ) {
 				}
 			}
-			action = static_cast<Action<String^>^>( Delegate::Combine(action, _action) );
 		}
 	}
 
-	void Logging::LogEntryPublished::remove( Action<String^>^ _action ) {
-		action = static_cast<Action<String^>^>( Delegate::Remove(action, _action) );
-	}
-
-	void Logging::LogEntryPublished::raise( String^ log ) {
-		if( action != nullptr ) {
-			action->Invoke( log );
+	void Logging::TraceEvent( System::Diagnostics::TraceEventType traceEventType, Func<String^>^ func ) {
+		if( func != nullptr ) {
+			msclr::lock sync( syncRoot );
+			System::Diagnostics::TraceSource^ ts = GetTraceSource();
+			if( ts != nullptr && ts->Switch != nullptr ) {
+				try {
+					if( ts->Switch->ShouldTrace(traceEventType) ) {
+						ts->TraceEvent( traceEventType, 0, func() );
+					}
+				}
+				catch( Object^ ) {
+				}
+			}
 		}
 	}
 
-	void Logging::Unload( Object^ sender, EventArgs^ ) {
+	void Logging::TraceException( Exception^ exception ) {
+		if( exception != nullptr ) {
+			msclr::lock sync( syncRoot );
+			System::Diagnostics::TraceSource^ ts = GetTraceSource();
+			if( ts != nullptr && ts->Switch != nullptr ) {
+				try {
+					if( ts->Switch->ShouldTrace(TraceEventType::Error) ) {
+						ts->TraceEvent( TraceEventType::Error, 0, exception->ToString() );
+					}
+				}
+				catch( Object^ ) {
+				}
+			}
+		}
+	}
+
+	static Logging::Logging( ) {
+		SetupLoggingSink();
+	}
+
+	System::Diagnostics::TraceSource^ Logging::GetTraceSource( ) {
+		if( traceSource == nullptr ) {
+			traceSource = gcnew System::Diagnostics::TraceSource( L"ht4n", System::Diagnostics::SourceLevels::All );
+
+#ifdef _DEBUG
+
+			List<TraceListener^>^ listeners = gcnew List<TraceListener^>();
+			listeners->AddRange(Enumerable::Cast<TraceListener^>(Trace::Listeners));
+			listeners->AddRange(Enumerable::Cast<TraceListener^>(Debug::Listeners));
+
+			HashSet<String^> names = gcnew HashSet<String^>();
+			for each( TraceListener^ listener in traceSource->Listeners ) {
+				names.Add( listener->Name );
+			}
+
+			for each( TraceListener^ listener in listeners ) {
+				if( !names.Contains(listener->Name) ) {
+					traceSource->Listeners->Add(listener);
+					names.Add( listener->Name );
+				}
+			}
+
+#endif
+
+			SetupLoggingSink();
+		}
+
+		return traceSource;
+	}
+
+	void Logging::PublishLogMessage( String^ message ) {
+		msclr::lock sync( syncRoot );
+		if( logMessagePublished != nullptr ) {
+			try {
+				logMessagePublished->Invoke( message );
+			}
+			catch( Object^ ) {
+			}
+		}
+	}
+
+	void Logging::SetupLoggingSink( ) {
+		if( !LoggingSink::contains() ) {
+			if( LoggingSink::add(gcnew Action<TraceEventType, String^>(&Hypertable::Logging::TraceEvent)
+													,gcnew Action<String^>(&Hypertable::Logging::PublishLogMessage)) ) {
+				AppDomain::CurrentDomain->DomainUnload += gcnew EventHandler(&Hypertable::Logging::DomainUnload);
+			}
+		}
+	}
+
+	void Logging::DomainUnload( Object^ sender, EventArgs^ ) {
 		msclr::lock sync( syncRoot );
 		LoggingSink::remove( );
 	}

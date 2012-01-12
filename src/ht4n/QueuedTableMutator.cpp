@@ -24,11 +24,13 @@
 #include "QueuedTableMutator.h"
 #include "Key.h"
 #include "Cell.h"
+#include "Logging.h"
 
 #include "ht4c.Common/KeyBuilder.h"
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Diagnostics;
 
 	QueuedTableMutator::~QueuedTableMutator( ) {
 		disposed = true;
@@ -150,6 +152,16 @@ namespace Hypertable {
 			}
 		}
 		catch( InvalidOperationException^ ) {
+		}
+		catch( AggregateException^ aggregateException ) {
+				for each( Exception^ e in aggregateException->Flatten()->InnerExceptions ) {
+						Logging::TraceException( e );
+				}
+				throw;
+		}
+		catch( Exception^ e ) {
+			Logging::TraceException( e );
+			throw;
 		}
 	}
 

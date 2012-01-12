@@ -253,10 +253,12 @@ namespace Hypertable {
 
 		private:
 
-			Context(  Hypertable::ContextKind ctxKind, String^ host, UInt16 port, IDictionary<String^, Object^>^ properties );
+			static Context( );
+			Context( Hypertable::ContextKind ctxKind, String^ host, UInt16 port, IDictionary<String^, Object^>^ properties );
 			Context( Hypertable::ContextKind ctxKind, String^ commandLine, bool includesModuleFileName );
 
 			static void RegisterUnload( );
+			static const char* LoggingLevel( );
 			static void Unload( Object^, EventArgs^ );
 
 			ht4c::Context* ctx;
