@@ -141,7 +141,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(schema) ) throw gcnew ArgumentNullException( L"schema" );
 		HT4C_TRY {
-			switch( dispo & OpenDispositions::Cases ) {
+			switch( dispo & (OpenDispositions::OpenExisting|OpenDispositions::OpenAlways|OpenDispositions::CreateAlways) ) {
 			case OpenDispositions::OpenAlways:
 				if( !TableExists(name) ) {
 					CreateTable( name, schema );

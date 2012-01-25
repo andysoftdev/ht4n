@@ -81,12 +81,10 @@ namespace Hypertable {
 	void Client::CreateNamespace( String^ name, Namespace^ nsBase, CreateDispositions dispo ) {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		HT4C_TRY {
-			if( (dispo & CreateDispositions::CreateIfNotExist) == CreateDispositions::CreateIfNotExist
-				&& client->existsNamespace(CM2A(name), nsBase != nullptr ? nsBase->get() : 0) ) {
-
-				return;
-			}
-			client->createNamespace( CM2A(name), nsBase != nullptr ? nsBase->get() : 0, (dispo & CreateDispositions::CreateIntermediate) == CreateDispositions::CreateIntermediate );
+			client->createNamespace( CM2A(name)
+														 , nsBase != nullptr ? nsBase->get() : 0
+														 , (dispo & CreateDispositions::CreateIntermediate) == CreateDispositions::CreateIntermediate
+														 , (dispo & CreateDispositions::CreateIfNotExist) == CreateDispositions::CreateIfNotExist );
 		}
 		HT4C_RETHROW
 	}
@@ -106,7 +104,7 @@ namespace Hypertable {
 	Namespace^ Client::OpenNamespace( String^ name, Namespace^ nsBase, OpenDispositions dispo ) {
 		if( name == nullptr ) throw gcnew ArgumentNullException( L"name" );
 		HT4C_TRY {
-			switch( dispo & OpenDispositions::Cases ) {
+			switch( dispo & (OpenDispositions::OpenExisting|OpenDispositions::OpenAlways|OpenDispositions::CreateAlways) ) {
 			case OpenDispositions::OpenAlways:
 				if( !NamespaceExists(name, nsBase) ) {
 					CreateNamespace( name, nsBase, (dispo & OpenDispositions::CreateIntermediate) == OpenDispositions::CreateIntermediate ? CreateDispositions::CreateIntermediate : CreateDispositions::None );
@@ -149,6 +147,7 @@ namespace Hypertable {
 
 	void Client::DropNamespace( String^ name, Namespace^ nsBase, DropDispositions dispo ) {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
+		if( nsBase == nullptr && name == "/" ) throw gcnew ArgumentException( L"Cannot drop root namespace", L"name" );
 		HT4C_TRY {
 			client->dropNamespace( CM2A(name)
 								 , nsBase != nullptr ? nsBase->get() : 0

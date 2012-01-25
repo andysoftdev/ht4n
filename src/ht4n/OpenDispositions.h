@@ -65,12 +65,7 @@ namespace Hypertable {
 		/// <summary>
 		/// Bypass any table cache, only relevant if opening tables.
 		/// </summary>
-		Force = 0x20,
-
-		/// <summary>
-		/// Value to retrieve the cases (low-order byte).
-		/// </summary>
-		Cases = 0x0f,
+		Force = 0x20
 	};
 
 }
