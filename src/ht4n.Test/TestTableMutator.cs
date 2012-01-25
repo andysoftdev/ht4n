@@ -1160,9 +1160,7 @@ namespace Hypertable.Test
                                     mutator.Flush();
                                 }
                             }
-                        }) {
-                              IsBackground = true 
-                           };
+                        });
 
                 var t2 = new Thread(
                     () =>
@@ -1173,9 +1171,7 @@ namespace Hypertable.Test
                                     mutator.Flush();
                                 }
                             }
-                        }) {
-                              IsBackground = true 
-                           };
+                        });
 
                 t1.Start();
                 t2.Start();
@@ -1319,7 +1315,6 @@ namespace Hypertable.Test
         }
 
         public void SetThreaded(MutatorSpec mutatorSpec) {
-            var key = new Key { ColumnFamily = "a" };
             using (var mutator = table.CreateMutator(mutatorSpec)) {
                 int c1 = 0;
                 int c2 = 0;
@@ -1327,24 +1322,22 @@ namespace Hypertable.Test
                 var t1 = new Thread(
                     () =>
                         {
+                            var key = new Key { ColumnFamily = "a" };
                             for (int n = 0; n < Count; ++n, ++c1) {
                                 key.Row = Guid.NewGuid().ToString();
                                 mutator.Set(key, Encoding.GetBytes(key.Row));
                             }
-                        }) {
-                              IsBackground = true 
-                           };
+                        });
 
                 var t2 = new Thread(
                     () =>
                         {
+                            var key = new Key { ColumnFamily = "a" };
                             for (int n = 0; n < Count; ++n, ++c2) {
                                 key.Row = Guid.NewGuid().ToString();
                                 mutator.Set(key, Encoding.GetBytes(key.Row));
                             }
-                        }) {
-                              IsBackground = true 
-                           };
+                        });
 
                 t1.Start();
                 t2.Start();

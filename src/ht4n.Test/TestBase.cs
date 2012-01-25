@@ -152,6 +152,16 @@ namespace Hypertable.Test
                     }
                 }
             }
+
+            int c = 0;
+            using( var scanner = table.CreateScanner() ) {
+                var cell = new Cell();
+                while( scanner.Next(cell) ) {
+                    ++c;
+                }
+            }
+
+            Assert.AreEqual(0, c);
         }
 
         /// <summary>

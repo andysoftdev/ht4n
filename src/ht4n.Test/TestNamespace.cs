@@ -21,6 +21,7 @@
 
 namespace Hypertable.Test
 {
+    using System;
     using System.Linq;
 
     using Hypertable;
@@ -34,6 +35,33 @@ namespace Hypertable.Test
     public class TestNamespace : TestBase
     {
         #region Public Methods
+
+        [TestMethod]
+        public void CreateIntermediate() {
+            using (var client = Ctx.CreateClient()) {
+                Assert.IsFalse(client.NamespaceExists("test/abc/def/ghi"));
+                client.CreateNamespace("test/abc/def/ghi", CreateDispositions.CreateIntermediate);
+                using (client.OpenNamespace("test/abc/def/ghi/jkl/mno", OpenDispositions.OpenAlways | OpenDispositions.CreateIntermediate)) {
+                    try {
+                        client.CreateNamespace("test/abc/def/ghi/jkl/mno/xxx/yyy/yy/y");
+                        Assert.Fail();
+                    }
+                    catch (NamespaceDoesNotExistsException) {
+                    }
+
+                    client.CreateNamespace("test/abc/def/ghi/jkl/mno", CreateDispositions.CreateIfNotExist);
+                    Assert.IsTrue(client.NamespaceExists("test/abc"));
+                    Assert.IsTrue(client.NamespaceExists("test/abc/def"));
+                    Assert.IsTrue(client.NamespaceExists("test/abc/def/ghi"));
+                    Assert.IsTrue(client.NamespaceExists("test/abc/def/ghi/jkl"));
+                    Assert.IsTrue(client.NamespaceExists("test/abc/def/ghi/jkl/mno"));
+                }
+
+                client.DropNamespace("test/abc", DropDispositions.Deep);
+                Assert.IsFalse(client.NamespaceExists("test/abc/def/ghi/jkl/mno"));
+                Assert.IsFalse(client.NamespaceExists("test/abc"));
+            }
+        }
 
         [TestMethod]
         public void CreateOpenDropNamespaceA() {
@@ -209,6 +237,33 @@ namespace Hypertable.Test
 
                     client.DropNamespace(name);
                     Assert.IsFalse(client.NamespaceExists(name));
+                }
+            }
+        }
+
+        [TestMethod]
+        public void CreateOpenDropRoot() {
+            using (var client = Ctx.CreateClient()) {
+                try {
+                    client.CreateNamespace("/");
+                    Assert.Fail();
+                }
+                catch (NamespaceExistsException) {
+                }
+                catch {
+                    Assert.Fail();
+                }
+
+                client.OpenNamespace("/");
+
+                try {
+                    client.DropNamespace("/");
+                    Assert.Fail();
+                }
+                catch (ArgumentException) {
+                }
+                catch {
+                    Assert.Fail();
                 }
             }
         }

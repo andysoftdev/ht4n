@@ -1302,9 +1302,7 @@ namespace Hypertable.Test
                                         mutator.Flush();
                                     }
                                 }
-                            }) {
-                                  IsBackground = true 
-                               };
+                            });
 
                     var t2 = new Thread(
                         () =>
@@ -1315,9 +1313,7 @@ namespace Hypertable.Test
                                         mutator.Flush();
                                     }
                                 }
-                            }) {
-                                  IsBackground = true 
-                               };
+                            });
 
                     t1.Start();
                     t2.Start();
@@ -1555,9 +1551,7 @@ namespace Hypertable.Test
                                     key.Row = Guid.NewGuid().ToString();
                                     mutator.Set(key, Encoding.GetBytes(key.Row));
                                 }
-                            }) {
-                                  IsBackground = true 
-                               };
+                            });
 
                     var t2 = new Thread(
                         () =>
@@ -1566,9 +1560,7 @@ namespace Hypertable.Test
                                     key.Row = Guid.NewGuid().ToString();
                                     mutator.Set(key, Encoding.GetBytes(key.Row));
                                 }
-                            }) {
-                                  IsBackground = true 
-                               };
+                            });
 
                     t1.Start();
                     t2.Start();
