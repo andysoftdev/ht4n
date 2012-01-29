@@ -32,7 +32,7 @@ namespace Hypertable {
 	/// Represents a row interval.
 	/// </summary>
 	[Serializable]
-	public ref class RowInterval : public IComparable<RowInterval^>, public ICloneable {
+	public ref class RowInterval : public IComparable<RowInterval^>, public IEquatable<RowInterval^>, public ICloneable {
 
 		public:
 
@@ -99,6 +99,13 @@ namespace Hypertable {
 			virtual int CompareTo( RowInterval^ other );
 
 			/// <summary>
+			/// Determines whether this instance and an other RowInterval object equals.
+			/// </summary>
+			/// <param name="other">RowInterval to compare, or null.</param>
+			/// <returns>true if the value of obj is the same as the value of this instance, otherwise false.</returns>
+			virtual bool Equals( RowInterval^ other );
+
+			/// <summary>
 			/// Determines whether this instance and a specified object, which must also be a RowInterval object, equals.
 			/// </summary>
 			/// <param name="obj">Row interval to compare, or null.</param>
@@ -110,6 +117,18 @@ namespace Hypertable {
 			/// </summary>
 			/// <returns>Signed hash code.</returns>
 			virtual int GetHashCode() override;
+
+			/// <summary>
+			/// Returns a string that represents the current object.
+			/// </summary>
+			/// <returns>A string that represents the current object.</returns>
+			virtual String^ ToString() override;
+
+			/// <summary>
+			/// Creates a new object that is a copy of this instance.
+			/// </summary>
+			/// <returns>A new RowInterval instance equal to this instance.</returns>
+			virtual Object^ Clone( );
 
 			/// <summary>
 			/// Compares two specified row intervals and returns an integer that indicates their relative position in the sort order.
@@ -157,12 +176,6 @@ namespace Hypertable {
 			/// <param name="y">The second row interval to compare, or null.</param>
 			/// <returns>true if the value of x is greater than the value of y, otherwise false.</returns>
 			static bool operator > ( RowInterval^ x, RowInterval^ y );
-
-			/// <summary>
-			/// Creates a new object that is a copy of this instance.
-			/// </summary>
-			/// <returns>A new RowInterval instance equal to this instance.</returns>
-			virtual Object^ Clone( );
 	};
 
 }

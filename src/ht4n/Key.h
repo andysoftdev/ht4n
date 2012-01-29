@@ -158,6 +158,18 @@ namespace Hypertable {
 			virtual int GetHashCode() override;
 
 			/// <summary>
+			/// Returns a string that represents the current object.
+			/// </summary>
+			/// <returns>A string that represents the current object.</returns>
+			virtual String^ ToString() override;
+
+			/// <summary>
+			/// Creates a new object that is a copy of this instance.
+			/// </summary>
+			/// <returns>A new Key instance equal to this instance.</returns>
+			virtual Object^ Clone( );
+
+			/// <summary>
 			/// Compares two specified keys and returns an integer that indicates their relative position in the sort order.
 			/// </summary>
 			/// <param name="x">The first key to compare, or null.</param>
@@ -203,12 +215,6 @@ namespace Hypertable {
 			/// <param name="y">The second key to compare, or null.</param>
 			/// <returns>true if the value of x is greater than the value of y, otherwise false.</returns>
 			static bool operator > ( Key^ x, Key^ y );
-
-			/// <summary>
-			/// Creates a new object that is a copy of this instance.
-			/// </summary>
-			/// <returns>A new Key instance equal to this instance.</returns>
-			virtual Object^ Clone( );
 
 			/// <summary>
 			/// Generates a base85 encoded GUID.

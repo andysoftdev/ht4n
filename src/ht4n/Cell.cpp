@@ -28,6 +28,7 @@
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Globalization;
 	using namespace System::Runtime::InteropServices;
 	using namespace ht4c;
 
@@ -73,6 +74,15 @@ namespace Hypertable {
 		Key = cloneKey ? dynamic_cast<Hypertable::Key^>(key->Clone()) : key;
 		Value = value;
 		Flag = flag;
+	}
+
+	String^ Cell::ToString() {
+		return String::Format( CultureInfo::InvariantCulture
+												 , L"{0}(Key={1}, Value.Length={2}, Flag={3})"
+												 , GetType()
+												 , Key != nullptr ? Key->ToString() : L"null"
+												 , Value != nullptr ? Value->Length : 0
+												 , Flag );
 	}
 
 	Cell::Cell( const Common::Cell* cell ) {

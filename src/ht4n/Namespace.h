@@ -369,6 +369,12 @@ namespace Hypertable {
 			/// </remarks>
 			IList<Cell^>^ Query( String^ hql );
 
+			/// <summary>
+			/// Returns a string that represents the current object.
+			/// </summary>
+			/// <returns>A string that represents the current object.</returns>
+			virtual String^ ToString() override;
+
 		internal:
 
 			Namespace( Client^ client, Common::Namespace* ns );

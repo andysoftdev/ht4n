@@ -34,7 +34,7 @@ namespace Hypertable {
 	/// Represents a cell interval.
 	/// </summary>
 	[Serializable]
-	public ref class CellInterval sealed : public RowInterval, public IComparable<CellInterval^> {
+	public ref class CellInterval sealed : public RowInterval, public IComparable<CellInterval^>, public IEquatable<RowInterval^> {
 
 		public:
 
@@ -118,6 +118,13 @@ namespace Hypertable {
 			virtual int CompareTo( CellInterval^ other );
 
 			/// <summary>
+			/// Determines whether this instance and an other CellInterval object equals.
+			/// </summary>
+			/// <param name="other">Cell interval to compare, or null.</param>
+			/// <returns>true if the value of obj is the same as the value of this instance, otherwise false.</returns>
+			virtual bool Equals( CellInterval^ other );
+
+			/// <summary>
 			/// Determines whether this instance and a specified object, which must also be a CellInterval object, equals.
 			/// </summary>
 			/// <param name="obj">Cell interval to compare, or null.</param>
@@ -129,6 +136,18 @@ namespace Hypertable {
 			/// </summary>
 			/// <returns>Signed hash code.</returns>
 			virtual int GetHashCode() override;
+
+			/// <summary>
+			/// Returns a string that represents the current object.
+			/// </summary>
+			/// <returns>A string that represents the current object.</returns>
+			virtual String^ ToString() override;
+
+			/// <summary>
+			/// Creates a new object that is a copy of this instance.
+			/// </summary>
+			/// <returns>A new CellInterval instance equal to this instance.</returns>
+			virtual Object^ Clone( ) override;
 
 			/// <summary>
 			/// Compares two specified cell intervals and returns an integer that indicates their relative position in the sort order.
@@ -176,12 +195,6 @@ namespace Hypertable {
 			/// <param name="y">The second cell interval to compare, or null.</param>
 			/// <returns>true if the value of x is greater than the value of y, otherwise false.</returns>
 			static bool operator > ( CellInterval^ x, CellInterval^ y );
-
-			/// <summary>
-			/// Creates a new object that is a copy of this instance.
-			/// </summary>
-			/// <returns>A new CellInterval instance equal to this instance.</returns>
-			virtual Object^ Clone( ) override;
 	};
 
 }

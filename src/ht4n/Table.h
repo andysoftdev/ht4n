@@ -245,6 +245,12 @@ namespace Hypertable {
 			/// <returns>Asynchronous scanner identifier.</returns>
 			int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, Object^ param, AsyncScannerCallback^ callback );
 
+			/// <summary>
+			/// Returns a string that represents the current object.
+			/// </summary>
+			/// <returns>A string that represents the current object.</returns>
+			virtual String^ ToString() override;
+
 		internal:
 
 			Table( Common::Table* table );

@@ -25,8 +25,9 @@
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Globalization;
 
-	CellInterval::CellInterval( )	{
+	CellInterval::CellInterval( ) {
 	}
 
 	CellInterval::CellInterval( String^ startRow, String^ startColumnFamily, String^ endRow, String^ endColumnFamily )
@@ -76,6 +77,7 @@ namespace Hypertable {
 
 	int CellInterval::CompareTo( CellInterval^ other ) {
 		if( Object::ReferenceEquals(other, nullptr) ) return 1;
+		if( Object::ReferenceEquals(other, this) ) return 0;
 
 		int result = RowInterval::CompareTo( other );
 		if( result != 0 ) return result;
@@ -88,10 +90,13 @@ namespace Hypertable {
 		return String::Compare( EndColumnQualifier, other->EndColumnQualifier, StringComparison::Ordinal );
 	}
 
+	bool CellInterval::Equals( CellInterval^ other ) {
+		return CompareTo( other ) == 0;
+	}
+
 	bool CellInterval::Equals( Object^ obj ) {
-		if( obj == nullptr || obj->GetType() != CellInterval::typeid ) return false;
-		return CompareTo( dynamic_cast<CellInterval^>(obj) ) == 0;
-	}  
+		return Equals( dynamic_cast<CellInterval^>(obj) ) == 0;
+	}
 
 	int CellInterval::GetHashCode() {
 		int result = 0;
@@ -100,19 +105,38 @@ namespace Hypertable {
 		result ^= IncludeStartRow.GetHashCode();
 		if( EndRow != nullptr ) result ^= EndRow->GetHashCode();
 		return result ^ IncludeEndRow.GetHashCode();
-	}  
-			
+	}
+
+	String^ CellInterval::ToString() {
+		return String::Format( CultureInfo::InvariantCulture
+												 , L"{0}(StartRow={1}, {2}StartColumnFamily={3}, StartColumnQualifier={4}, EndRow={5}, {6}EndColumnFamily={7}, EndColumnQualifier={8})"
+												 , GetType()
+												 , StartRow != nullptr ? StartRow : L"null"
+												 , IncludeStartRow ? L"IncludeStartRow, " : String::Empty
+												 , StartColumnFamily != nullptr ? StartColumnFamily : L"null"
+												 , StartColumnQualifier != nullptr ? StartColumnQualifier : L"null"
+												 , EndRow != nullptr ? EndRow : L"null"
+												 , IncludeEndRow ? L"IncludeEndRow, " : String::Empty
+												 , EndColumnFamily != nullptr ? EndColumnFamily : L"null"
+												 , EndColumnQualifier != nullptr ? EndColumnQualifier : L"null" );
+	}
+
+	Object^ CellInterval::Clone() {
+		return gcnew CellInterval( this );
+	}
+
 	int CellInterval::Compare( CellInterval^ x, CellInterval^ y ) {
 		if( Object::ReferenceEquals(x, y) ) return 0;
 		if( Object::ReferenceEquals(y, nullptr) ) return 1;
 		if( Object::ReferenceEquals(x, nullptr) ) return -1;
+
 		return x->CompareTo( y );
 	}
 
 	bool CellInterval::operator == ( CellInterval^ x, CellInterval^ y ) {
 		return Compare( x, y ) == 0;
-	}  
-		
+	}
+
 	bool CellInterval::operator != ( CellInterval^ x, CellInterval^ y ) {
 		return Compare( x, y ) != 0;
 	} 
@@ -123,10 +147,6 @@ namespace Hypertable {
 
 	bool CellInterval::operator > ( CellInterval^ x, CellInterval^ y ) {
 		return Compare( x, y ) > 0;
-	}  
-
-	Object^ CellInterval::Clone() {
-		return gcnew CellInterval( this );
 	}
 
 }

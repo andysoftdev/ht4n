@@ -44,6 +44,7 @@
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Globalization;
 	using namespace ht4c;
 
 	Table::~Table( ) {
@@ -223,6 +224,13 @@ namespace Hypertable {
 			if( _scanSpec ) delete _scanSpec;
 		}
 		return 0;
+	}
+
+	String^ Table::ToString() {
+		return String::Format( CultureInfo::InvariantCulture
+												 , L"{0}(Name={1})"
+												 , GetType()
+												 , Name != nullptr ? Name : L"null");
 	}
 
 	Table::Table( Common::Table* _table )

@@ -32,6 +32,7 @@
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Globalization;
 	using namespace System::Text;
 	using namespace ht4c;
 
@@ -231,6 +232,48 @@ namespace Hypertable {
 			cellIntervals->Remove( cellInterval );
 		}
 		return this;
+	}
+
+	String^ ScanSpec::ToString() {
+
+		#define APPEND_INT( what ) if( what > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+		#define APPEND_BOOL( what ) if( what ) sb->Append( L#what##L", " );
+		#define APPEND_STRING( what ) if( what != nullptr ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+		#define APPEND_DATETIME( what ) if( what != timestampOrigin ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+		#define APPEND_TIMESPAN( what ) if( what.Ticks > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+
+		StringBuilder^ sb = gcnew StringBuilder();
+		sb->Append( GetType() );
+		sb->Append( L"(" );
+
+		APPEND_INT( MaxRows )
+		APPEND_INT( MaxVersions )
+		APPEND_INT( MaxCells )
+		APPEND_INT( MaxCellsColumnFamily )
+		APPEND_INT( RowOffset )
+		APPEND_INT( CellOffset )
+		APPEND_BOOL( KeysOnly )
+		APPEND_BOOL( ScanAndFilter )
+		APPEND_DATETIME( StartDateTime )
+		APPEND_DATETIME( EndDateTime )
+		APPEND_STRING( RowRegex )
+		APPEND_STRING( ValueRegex )
+		APPEND_TIMESPAN( Timeout )
+		APPEND_INT( RowCount )
+		APPEND_INT( ColumnCount )
+		APPEND_INT( CellCount )
+		APPEND_INT( RowIntervalCount )
+		APPEND_INT( CellIntervalCount )
+		sb->Append( String::Format(CultureInfo::InvariantCulture, L"Flags={0}", Flags) );
+		sb->Append( L")" );
+
+		return sb->ToString();
+
+		#undef APPEND_TIMESPAN
+		#undef APPEND_DATETIME
+		#undef APPEND_STRING
+		#undef APPEND_BOOL
+		#undef APPEND_INT
 	}
 
 	void ScanSpec::To( Common::ScanSpec& scanSpec ) {

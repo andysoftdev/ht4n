@@ -422,6 +422,12 @@ namespace Hypertable {
 			/// <returns>This ScanSpec instance.</returns>
 			ScanSpec^ RemoveCellInterval( CellInterval^ cellInterval );
 
+			/// <summary>
+			/// Returns a string that represents the current object.
+			/// </summary>
+			/// <returns>A string that represents the current object.</returns>
+			virtual String^ ToString() override;
+
 		internal:
 
 			void To( Common::ScanSpec& scanSpec );

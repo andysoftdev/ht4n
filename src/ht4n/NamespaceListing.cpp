@@ -30,7 +30,18 @@
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Globalization;
 	using namespace ht4c;
+
+	String^ NamespaceListing::ToString() {
+		return String::Format( CultureInfo::InvariantCulture
+												 , L"{0}(Name={1}, FullName={2}, Namespaces.Count={3}, Tables.Count={4})"
+												 , GetType()
+												 , Name != nullptr ? Name : L"null"
+												 , FullName != nullptr ? FullName : L"null"
+												 , Namespaces != nullptr ? Namespaces->Count : 0
+												 , Tables != nullptr ? Tables->Count : 0 );
+	}
 
 	NamespaceListing::NamespaceListing( Namespace^ ns, const ht4c::Common::NamespaceListing& nsListing )
 	: name( gcnew String(nsListing.getName().c_str()) )

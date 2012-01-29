@@ -25,6 +25,7 @@
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Globalization;
 
 	RowInterval::RowInterval( ) {
 	}
@@ -54,6 +55,7 @@ namespace Hypertable {
 
 	int RowInterval::CompareTo( RowInterval^ other ) {
 		if( Object::ReferenceEquals(other, nullptr) ) return 1;
+		if( Object::ReferenceEquals(other, this) ) return 0;
 
 		int result = String::Compare( StartRow, other->StartRow, StringComparison::Ordinal );
 		if( result != 0 ) return result;
@@ -64,10 +66,13 @@ namespace Hypertable {
 		return IncludeEndRow.CompareTo( other->IncludeEndRow );
 	}
 
+	bool RowInterval::Equals( RowInterval^ other ) {
+		return CompareTo( other ) == 0;
+	}
+
 	bool RowInterval::Equals( Object^ obj ) {
-		if( obj == nullptr || obj->GetType() != RowInterval::typeid ) return false;
-		return CompareTo( dynamic_cast<RowInterval^>(obj) ) == 0;
-	}  
+		return Equals( dynamic_cast<RowInterval^>(obj) );
+	}
 
 	int RowInterval::GetHashCode() {
 		int result = 0;
@@ -76,33 +81,43 @@ namespace Hypertable {
 		result ^= IncludeStartRow.GetHashCode();
 		if( EndRow != nullptr ) result ^= EndRow->GetHashCode();
 		return result ^ IncludeEndRow.GetHashCode();
-	}  
-			
+	}
+
+	String^ RowInterval::ToString() {
+		return String::Format( CultureInfo::InvariantCulture
+												 , L"{0}(StartRow={1}, {2}EndRow={3}{4})"
+												 , StartRow != nullptr ? StartRow : L"null"
+												 , IncludeStartRow ? L"IncludeStartRow, " : String::Empty
+												 , EndRow != nullptr ? EndRow : L"null"
+												 , IncludeEndRow ? L", IncludeEndRow" : String::Empty );
+	}
+
+	Object^ RowInterval::Clone() {
+		return gcnew RowInterval( this );
+	}
+
 	int RowInterval::Compare( RowInterval^ x, RowInterval^ y ) {
 		if( Object::ReferenceEquals(x, y) ) return 0;
 		if( Object::ReferenceEquals(y, nullptr) ) return 1;
 		if( Object::ReferenceEquals(x, nullptr) ) return -1;
+
 		return x->CompareTo( y );
 	}
 
 	bool RowInterval::operator == ( RowInterval^ x, RowInterval^ y ) {
 		return Compare( x, y ) == 0;
-	}  
-		
+	}
+
 	bool RowInterval::operator != ( RowInterval^ x, RowInterval^ y ) {
 		return Compare( x, y ) != 0;
-	} 
+	}
 
 	bool RowInterval::operator < ( RowInterval^ x, RowInterval^ y ) {
 		return Compare( x, y ) < 0;
-	} 
+	}
 
 	bool RowInterval::operator > ( RowInterval^ x, RowInterval^ y ) {
 		return Compare( x, y ) > 0;
-	}  
-
-	Object^ RowInterval::Clone() {
-		return gcnew RowInterval( this );
 	}
 
 }

@@ -25,6 +25,8 @@
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Text;
+	using namespace System::Globalization;
 
 	MutatorSpec::MutatorSpec( ) {
 		MaxChunkSize = MaxChunkSizeDefault;
@@ -35,6 +37,33 @@ namespace Hypertable {
 		MutatorKind = mutatorKind;
 		MaxChunkSize = MaxChunkSizeDefault;
 		MaxCellCount = MaxCellCountDefault;
+	}
+
+	String^ MutatorSpec::ToString() {
+
+		#define APPEND_INT( what ) if( what > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+		#define APPEND_BOOL( what ) if( what ) sb->Append( L#what##L", " );
+		#define APPEND_TIMESPAN( what ) if( what.Ticks > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+
+		StringBuilder^ sb = gcnew StringBuilder();
+		sb->Append( GetType() );
+		sb->Append( L"(" );
+
+		APPEND_TIMESPAN( Timeout )
+		APPEND_TIMESPAN( FlushInterval )
+		APPEND_INT( MaxChunkSize )
+		APPEND_INT( MaxCellCount )
+		APPEND_BOOL( FlushEachChunk )
+		APPEND_BOOL( Queued )
+		APPEND_INT( Capacity )
+		sb->Append( String::Format(CultureInfo::InvariantCulture, L"Flags={0}", Flags) );
+		sb->Append( L")" );
+
+		return sb->ToString();
+
+		#undef APPEND_TIMESPAN
+		#undef APPEND_BOOL
+		#undef APPEND_INT
 	}
 
 	MutatorSpec^ MutatorSpec::Create() {

@@ -149,6 +149,12 @@ namespace Hypertable {
 			/// <seealso cref="CellFlag"/>
 			property CellFlag Flag;
 
+			/// <summary>
+			/// Returns a string that represents the current object.
+			/// </summary>
+			/// <returns>A string that represents the current object.</returns>
+			virtual String^ ToString() override;
+
 		internal:
 
 			Cell( const Common::Cell* cell );

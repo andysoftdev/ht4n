@@ -145,6 +145,12 @@ namespace Hypertable {
 			MutatorSpec( Hypertable::MutatorKind mutatorKind );
 
 			/// <summary>
+			/// Returns a string that represents the current object.
+			/// </summary>
+			/// <returns>A string that represents the current object.</returns>
+			virtual String^ ToString() override;
+
+			/// <summary>
 			/// Creates a new default MutatorSpec instance.
 			/// </summary>
 			/// <returns>New MutatorSpec instance.</returns>

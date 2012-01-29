@@ -34,6 +34,7 @@
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Globalization;
 	using namespace ht4c;
 
 	Namespace::~Namespace( ) {
@@ -323,6 +324,13 @@ namespace Hypertable {
 			return cells;
 		}
 		HT4C_RETHROW
+	}
+
+	String^ Namespace::ToString() {
+		return String::Format( CultureInfo::InvariantCulture
+												 , L"{0}(Name={1})"
+												 , GetType()
+												 , Name != nullptr ? Name : L"null");
 	}
 
 	Namespace::Namespace( Client^ _client, Common::Namespace* _ns )

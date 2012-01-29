@@ -30,9 +30,11 @@
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Text;
+	using namespace System::Globalization;
 	using namespace ht4c;
 
-	Key::Key( )	{
+	Key::Key( ) {
 	}
 
 	Key::Key( String^ row ) {
@@ -88,6 +90,7 @@ namespace Hypertable {
 
 	int Key::CompareTo( Key^ other ) {
 		if( Object::ReferenceEquals(other, nullptr) ) return 1;
+		if( Object::ReferenceEquals(other, this) ) return 0;
 
 		int result = String::Compare( Row, other->Row, StringComparison::Ordinal );
 		if( result != 0 ) return result;
@@ -105,11 +108,10 @@ namespace Hypertable {
 		return String::Equals(Row, other->Row)
 				&& String::Equals(ColumnFamily, other->ColumnFamily)
 				&& String::Equals(ColumnQualifier, other->ColumnQualifier)
-				&& Timestamp ==  other->Timestamp;
+				&& Timestamp == other->Timestamp;
 	}
 
 	bool Key::Equals( Object^ obj ) {
-		if( obj == nullptr || obj->GetType() != Key::typeid ) return false;
 		return Equals( dynamic_cast<Key^>(obj) );
 	}
 
@@ -122,6 +124,35 @@ namespace Hypertable {
 		return result ^ Timestamp.GetHashCode();
 	}
 
+	String^ Key::ToString() {
+		if( Row == nullptr && ColumnFamily == nullptr && ColumnQualifier == nullptr && DateTime == timestampOrigin ) {
+			return String::Format( CultureInfo::InvariantCulture, L"{0}(Empty)", GetType() );
+		}
+
+		#define APPEND_STRING( what ) if( what != nullptr ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+		#define APPEND_DATETIME( what ) if( what != timestampOrigin ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+
+		StringBuilder^ sb = gcnew StringBuilder();
+		sb->Append( GetType() );
+		sb->Append( L"(" );
+
+		APPEND_STRING( Row )
+		APPEND_STRING( ColumnFamily )
+		APPEND_STRING( ColumnQualifier )
+		APPEND_DATETIME( DateTime )
+
+		sb->Remove( sb->Length - 2, 2 );
+		sb->Append( L")" );
+		return sb->ToString();
+
+		#undef APPEND_DATETIME
+		#undef APPEND_STRING
+	}
+
+	Object^ Key::Clone() {
+		return gcnew Key( this );
+	}
+
 	int Key::Compare( Key^ keyA, Key^ keyB ) {
 		if( Object::ReferenceEquals(keyA, keyB) ) return 0;
 		if( Object::ReferenceEquals(keyB, nullptr) ) return 1;
@@ -132,7 +163,7 @@ namespace Hypertable {
 	bool Key::operator == ( Key^ keyA, Key^ keyB ) {
 		return Compare( keyA, keyB ) == 0;
 	}
-		
+
 	bool Key::operator != ( Key^ keyA, Key^ keyB ) {
 		return Compare( keyA, keyB ) != 0;
 	}
@@ -143,10 +174,6 @@ namespace Hypertable {
 
 	bool Key::operator > ( Key^ keyA, Key^ keyB ) {
 		return Compare( keyA, keyB ) > 0;
-	}
-
-	Object^ Key::Clone() {
-		return gcnew Key( this );
 	}
 
 	String^ Key::Generate( ) {
@@ -165,7 +192,7 @@ namespace Hypertable {
 
 		Common::uint8_t _guid[Common::KeyBuilder::sizeGuid];
 		Common::KeyBuilder::decode( CM2A(value), _guid );
-		cli::array<Byte>^ guid = gcnew cli::array<Byte>(Common::KeyBuilder::sizeGuid);
+		cli::array<Byte>^ guid = gcnew cli::array<Byte>( Common::KeyBuilder::sizeGuid );
 		pin_ptr<Byte> pguid = &guid[0];
 		memcpy( pguid, _guid, sizeof(_guid) );
 		return System::Guid( guid );
