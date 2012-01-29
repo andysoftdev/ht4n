@@ -86,6 +86,7 @@ namespace Hypertable {
 	String^ RowInterval::ToString() {
 		return String::Format( CultureInfo::InvariantCulture
 												 , L"{0}(StartRow={1}, {2}EndRow={3}{4})"
+												 , GetType()
 												 , StartRow != nullptr ? StartRow : L"null"
 												 , IncludeStartRow ? L"IncludeStartRow, " : String::Empty
 												 , EndRow != nullptr ? EndRow : L"null"
