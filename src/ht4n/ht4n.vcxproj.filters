@@ -104,9 +104,6 @@
     <ClInclude Include="AsyncScannerCallback.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="CellKeyComparer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="ScannerFlags.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -123,6 +120,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="AsyncCallbackResult.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyComparer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -193,10 +193,10 @@
     <ClCompile Include="BlockingAsyncResult.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CellKeyComparer.cpp">
+    <ClCompile Include="QueuedTableMutator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="QueuedTableMutator.cpp">
+    <ClCompile Include="KeyComparer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

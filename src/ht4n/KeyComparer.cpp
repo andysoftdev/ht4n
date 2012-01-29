@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 
-#include "CellKeyComparer.h"
+#include "KeyComparer.h"
 #include "Key.h"
 
 #define EMPTY_IF_NULL( s ) \
@@ -30,17 +30,17 @@
 namespace Hypertable {
 	using namespace System;
 
-	CellKeyComparer::CellKeyComparer( ) 
+	KeyComparer::KeyComparer( )
 	: includeTimestamp( false )
 	{
 	}
 
-	CellKeyComparer::CellKeyComparer( bool _includeTimestamp ) 
+	KeyComparer::KeyComparer( bool _includeTimestamp )
 	: includeTimestamp( _includeTimestamp )
 	{
 	}
 
-	bool CellKeyComparer::Equals( Key^ x, Key^ y ) {
+	bool KeyComparer::Equals( Key^ x, Key^ y ) {
 		if( Object::ReferenceEquals(x, y) ) {
 			return true;
 		}
@@ -53,7 +53,7 @@ namespace Hypertable {
 				&& (!includeTimestamp || x->Timestamp == y->Timestamp);
 	}
 
-	int CellKeyComparer::GetHashCode( Key^ obj ) {
+	int KeyComparer::GetHashCode( Key^ obj ) {
 		if( obj == nullptr ) throw gcnew ArgumentNullException( L"obj" );
 
 		int result = 0;
@@ -69,11 +69,11 @@ namespace Hypertable {
 		return result;
 	}
 
-	bool CellKeyComparer::Equals( Object^ x, Object^ y ) {
-		return Equals(dynamic_cast<Key^>(x), dynamic_cast<Key^>(y));
+	bool KeyComparer::Equals( Object^ x, Object^ y ) {
+		return Equals( dynamic_cast<Key^>(x), dynamic_cast<Key^>(y) );
 	}
 
-	int CellKeyComparer::GetHashCode( Object^ obj ) {
-		return GetHashCode(dynamic_cast<Key^>(obj));
+	int KeyComparer::GetHashCode( Object^ obj ) {
+		return GetHashCode( dynamic_cast<Key^>(obj) );
 	}
 }

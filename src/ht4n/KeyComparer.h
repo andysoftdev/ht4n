@@ -38,20 +38,20 @@ namespace Hypertable {
 	/// An undefined column qualifier will be treated the same as an empty column qualifier.
 	/// </remarks>
 	[Serializable]
-	public ref class CellKeyComparer sealed : public IEqualityComparer<Key^>, public System::Collections::IEqualityComparer {
+	public ref class KeyComparer sealed : public IEqualityComparer<Key^>, public System::Collections::IEqualityComparer {
 
 		public:
 
 			/// <summary>
-			/// Initializes a new instance of the CellKeyComparer class.
+			/// Initializes a new instance of the KeyComparer class.
 			/// </summary>
-			CellKeyComparer( );
+			KeyComparer( );
 
 			/// <summary>
-			/// Initializes a new instance of the CellKeyComparer class using a value that indicates whether to include the timestamp in the comparison or not.
+			/// Initializes a new instance of the KeyComparer class using a value that indicates whether to include the timestamp in the comparison or not.
 			/// </summary>
 			/// <param name="includeTimestamp">A value that indicates whether to include the timestamp in the comparison or not.</param>
-			CellKeyComparer( bool includeTimestamp );
+			KeyComparer( bool includeTimestamp );
 
 			#pragma region IEqualityComparer<Key^> methods
 

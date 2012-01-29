@@ -28,16 +28,16 @@ namespace Hypertable.Test
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
-    /// Test CellKeyComparer.
+    /// Test KeyComparer.
     /// </summary>
     [TestClass]
-    public class TestCellKeyComparer
+    public class TestKeyComparer
     {
         #region Public Methods
 
         [TestMethod]
         public void CompareExcludeTimestamp() {
-            var comparer = new CellKeyComparer(false);
+            var comparer = new KeyComparer(false);
             var x = new Key();
             Assert.IsFalse(comparer.Equals(x, null));
             Assert.IsFalse(comparer.Equals(null, x));
@@ -95,7 +95,7 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void CompareIncludeTimestamp() {
-            var comparer = new CellKeyComparer(true);
+            var comparer = new KeyComparer(true);
             var x = new Key();
             Assert.IsFalse(comparer.Equals(x, null));
             Assert.IsFalse(comparer.Equals(null, x));

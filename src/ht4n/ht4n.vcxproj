@@ -285,7 +285,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="ITableMutator.h" />
     <ClInclude Include="ITableScanner.h" />
     <ClInclude Include="Key.h" />
-    <ClInclude Include="CellKeyComparer.h" />
+    <ClInclude Include="KeyComparer.h" />
     <ClInclude Include="Logging.h" />
     <ClInclude Include="MutatorKind.h" />
     <ClInclude Include="MutatorSpec.h" />
@@ -338,7 +338,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Key.cpp" />
-    <ClCompile Include="CellKeyComparer.cpp" />
+    <ClCompile Include="KeyComparer.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="MutatorSpec.cpp" />
     <ClCompile Include="Namespace.cpp" />
