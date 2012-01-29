@@ -264,6 +264,231 @@ namespace Hypertable.Test
 
                     Assert.AreEqual(51, c);
                 }
+
+                key.ColumnQualifier = null;
+                using( var mutator = _table.CreateMutator() ) {
+                    key.Row = "10";
+                    key.ColumnFamily = "a";
+                    mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily));
+                    key.ColumnFamily = "b";
+                    mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily));
+                    key.ColumnFamily = "e";
+                    mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily));
+                    key.Row = "11";
+                    key.ColumnFamily = "a";
+                    mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily));
+                    key.ColumnFamily = "b";
+                    mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily));
+                    key.ColumnFamily = "e";
+                    mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily));
+                }
+
+                using( var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "11", "d"))) ) {
+                    Cell cell;
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(10, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual("1", cell.Key.ColumnQualifier);
+                    Assert.AreEqual(10, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("d", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(10, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("e", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("10e", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("11a", Encoding.GetString(cell.Value));
+                    Assert.AreEqual("a", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("b", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("11b", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual("1", cell.Key.ColumnQualifier);
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("d", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsFalse(scanner.Next(out cell));
+                }
+
+                key.ColumnQualifier = "1";
+                using( var mutator = _table.CreateMutator() ) {
+                    key.Row = "11";
+                    key.ColumnFamily = "d";
+                    mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily + key.ColumnQualifier));
+                }
+
+                using( var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", "11", "d", "1"))) ) {
+                    Cell cell;
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual("1", cell.Key.ColumnQualifier);
+                    Assert.AreEqual(10, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("d", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(10, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("e", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("10e", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("a", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("11a", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("b", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("11b", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual("1", cell.Key.ColumnQualifier);
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("d", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("d", cell.Key.ColumnFamily);
+                    Assert.AreEqual("1", cell.Key.ColumnQualifier);
+                    Assert.AreEqual("11d1", Encoding.GetString(cell.Value));
+
+                    Assert.IsFalse(scanner.Next(out cell));
+                }
+
+                using( var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", false, "11", "d", "1", false))) ) {
+                    Cell cell;
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("d", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(10, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("e", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("10e", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("a", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("11a", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("b", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("11b", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual("1", cell.Key.ColumnQualifier);
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("d", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+
+                    Assert.IsFalse(scanner.Next(out cell));
+                }
+
+                using( var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", false, "11", "d", null, false))) ) {
+                    Cell cell;
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual(10, BitConverter.ToInt32(cell.Value, 0));
+                    Assert.AreEqual("d", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10e", Encoding.GetString(cell.Value));
+                    Assert.AreEqual("e", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11a", Encoding.GetString(cell.Value));
+                    Assert.AreEqual("a", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11b", Encoding.GetString(cell.Value));
+                    Assert.AreEqual("b", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
+                    Assert.AreEqual("c", cell.Key.ColumnFamily);
+                    Assert.AreEqual("1", cell.Key.ColumnQualifier);
+
+                    Assert.IsFalse(scanner.Next(out cell));
+                }
             }
         }
 
