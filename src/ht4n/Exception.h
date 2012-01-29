@@ -386,8 +386,3 @@ namespace Hypertable {
 	} catch( ... ) { \
 		throw gcnew Hypertable::HypertableException( String::Format(CultureInfo::InvariantCulture, "Caught unknown exception {0} {1}, {2}", __LINE__, __FILE__, __FUNCTION__)); \
 	}
-
-#define HT4C_NO_RETHROW \
-	} catch( Object^ ) { \
-	} catch( ... ) { \
-	}
