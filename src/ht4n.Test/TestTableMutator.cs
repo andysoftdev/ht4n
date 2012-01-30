@@ -255,6 +255,12 @@ namespace Hypertable.Test
 
         public void Delete(MutatorSpec mutatorSpec) {
             var key = new Key { ColumnFamily = "a" };
+
+            using( var mutator = table.CreateMutator(mutatorSpec) ) {
+                key.Row = "Row does not exist";
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+            }
+
             using (var mutator = table.CreateMutator(mutatorSpec)) {
                 for (int n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
