@@ -51,10 +51,15 @@
 		<Release Condition="'$(Configuration)' == '' Or '$(Configuration)' == 'Release'">true</Release>
 	</PropertyGroup>
 
-  <!-- Provider uri -->
-  <PropertyGroup>
-    <ProviderUri Condition="'$(ProviderUri)' == ''">net.tcp://localhost</ProviderUri>
-  </PropertyGroup>
+	<!-- Default provider uri -->
+	<PropertyGroup>
+		<ProviderUri Condition="'$(ProviderUri)' == ''">net.tcp://localhost</ProviderUri>
+	</PropertyGroup>
+
+	<!-- Embedded db support -->
+	<PropertyGroup>
+		<SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
+	</PropertyGroup>
 
 	<!-- Configuration group -->
 	<ItemGroup>
@@ -186,6 +191,7 @@
 	<Target Name="InvokeTests"
 			Condition="$(HasMSBuildCommunityTasks) == true" >
 
+		<!-- Hyper tests -->
 		<XmlPoke
 			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
 			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
@@ -199,6 +205,7 @@
 			Condition="'%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
 			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
+		<!-- Thrift tests -->
 		<XmlPoke
 			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
 			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
@@ -210,6 +217,21 @@
 
 		<Exec
 			Condition="'%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
+			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<!-- Hamster tests -->
+		<XmlPoke
+			Condition="$(SupportHamsterDb) == true"
+			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
+			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
+			Value="--Provider=Hamster --Hamster.Filename=test.db" />
+
+		<Exec
+			Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
+			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<Exec
+			Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
 			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<Exec

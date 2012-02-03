@@ -287,7 +287,15 @@ namespace Hypertable {
 		}
 
 		if(  String::Equals(providerName, gcnew String(Common::Config::ProviderHyper))
-			|| String::Equals(providerName, gcnew String(Common::Config::ProviderThrift)) ) {
+			|| String::Equals(providerName, gcnew String(Common::Config::ProviderThrift))
+
+#ifdef SUPPORT_HAMSTERDB
+
+			|| String::Equals(providerName, gcnew String(Common::Config::ProviderHamster))
+
+#endif
+
+			) {
 
 			return gcnew Context( properties );
 		}
@@ -364,6 +372,29 @@ namespace Hypertable {
 					System::Net::Dns::GetHostEntry( uri->DnsSafeHost ); // resolve host name
 				}
 			}
+
+			String^ providerName = GetProviderName( properties );
+			if(  String::Equals(providerName, gcnew String(Common::Config::ProviderHyper))
+				|| String::Equals(providerName, gcnew String(Common::Config::ProviderThrift)) ) {
+
+				if( uri->IsFile ) {
+					throw gcnew ArgumentException( L"Invalid uri scheme, net.tcp://hostname[:port] required", L"properties" );
+				}
+			}
+
+#ifdef SUPPORT_HAMSTERDB
+
+			else if( String::Equals(providerName, gcnew String(Common::Config::ProviderHamster)) ) {
+				if(		 !uri->IsFile
+						&& !properties->ContainsKey(gcnew String(Common::Config::HamsterFilename))
+						&& !properties->ContainsKey(gcnew String(Common::Config::HamsterFilenameAlias)) ) {
+
+					throw gcnew ArgumentException( L"Invalid uri scheme, file://[drive][/path/]filename required", L"properties" );
+				}
+			}
+
+#endif
+
 		}
 	}
 

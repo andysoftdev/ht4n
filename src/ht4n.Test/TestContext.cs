@@ -182,6 +182,41 @@ namespace Hypertable.Test
                 Assert.AreEqual((ushort)52345, context.Properties["thrift-port"]);
                 Assert.AreEqual(true, context.Properties["Hypertable.Verbose"]);
             }
+
+#if SUPPORT_HAMSTERDB
+
+            using( var context = Context.Create("Provider=Hamster; Uri=file://test.db") ) {
+                Assert.AreEqual("Hamster", context.Properties["Provider"]);
+                Assert.AreEqual("test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
+                Assert.AreEqual("test.db", context.Properties["Hamster.Filename"]);
+            }
+
+            using( var context = Context.Create("Provider=Hamster; Uri=file://Temp/test.db") ) {
+                Assert.AreEqual("Hamster", context.Properties["Provider"]);
+                Assert.AreEqual("Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
+                Assert.AreEqual("Temp\\test.db", context.Properties["Hamster.Filename"]);
+            }
+
+            using( var context = Context.Create("Provider=Hamster; Uri=file://%TEMP%/test.db") ) {
+                Assert.AreEqual("Hamster", context.Properties["Provider"]);
+                Assert.IsTrue(((string)context.Properties["Hypertable.Client.Hamster.Filename"]).EndsWith("\\test.db"));
+                Assert.IsTrue(((string)context.Properties["Hamster.Filename"]).EndsWith("\\test.db"));
+            }
+
+            using( var context = Context.Create("--Provider Hamster --Hypertable.Client.Hamster.Filename \"My Documents/test.db\"") ) {
+                Assert.AreEqual("Hamster", context.Properties["Provider"]);
+                Assert.AreEqual("My Documents/test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
+                Assert.AreEqual("My Documents/test.db", context.Properties["Hamster.Filename"]);
+            }
+
+            using( var context = Context.Create("--Provider Hamster --Hamster.Filename \"C:\\My Documents\\test.db\"") ) {
+                Assert.AreEqual("Hamster", context.Properties["Provider"]);
+                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
+                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["Hamster.Filename"]);
+            }
+
+#endif
+
         }
 
         [TestMethod]

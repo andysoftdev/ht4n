@@ -53,3 +53,11 @@
 #pragma comment( lib, "ht4c.Context.lib" )
 #pragma comment( lib, "ht4c.Hyper.lib" )
 #pragma comment( lib, "ht4c.Thrift.lib" )
+
+#ifdef SUPPORT_HAMSTERDB
+
+#pragma comment( lib, "re2.lib" )						// New BSD
+#pragma comment( lib, "hamsterdb.lib" )			// GPL & commercial
+#pragma comment( lib, "ht4c.Hamster.lib" )
+
+#endif
