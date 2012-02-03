@@ -55,7 +55,7 @@ namespace Hypertable.Test
 
         private static readonly UTF8Encoding Encoding = new UTF8Encoding();
 
-        private static Table table;
+        private static ITable table;
 
         #endregion
 
@@ -266,7 +266,7 @@ namespace Hypertable.Test
                 }
 
                 key.ColumnQualifier = null;
-                using( var mutator = _table.CreateMutator() ) {
+                using (var mutator = _table.CreateMutator()) {
                     key.Row = "10";
                     key.ColumnFamily = "a";
                     mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily));
@@ -283,7 +283,7 @@ namespace Hypertable.Test
                     mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily));
                 }
 
-                using( var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "11", "d"))) ) {
+                using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "11", "d")))) {
                     Cell cell;
                     Assert.IsTrue(scanner.Next(out cell));
                     Assert.AreEqual("10", cell.Key.Row);
@@ -343,13 +343,13 @@ namespace Hypertable.Test
                 }
 
                 key.ColumnQualifier = "1";
-                using( var mutator = _table.CreateMutator() ) {
+                using (var mutator = _table.CreateMutator()) {
                     key.Row = "11";
                     key.ColumnFamily = "d";
                     mutator.Set(key, Encoding.GetBytes(key.Row + key.ColumnFamily + key.ColumnQualifier));
                 }
 
-                using( var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", "11", "d", "1"))) ) {
+                using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", "11", "d", "1")))) {
                     Cell cell;
                     Assert.IsTrue(scanner.Next(out cell));
                     Assert.AreEqual("10", cell.Key.Row);
@@ -408,7 +408,7 @@ namespace Hypertable.Test
                     Assert.IsFalse(scanner.Next(out cell));
                 }
 
-                using( var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", false, "11", "d", "1", false))) ) {
+                using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", false, "11", "d", "1", false)))) {
                     Cell cell;
                     Assert.IsTrue(scanner.Next(out cell));
                     Assert.AreEqual("10", cell.Key.Row);
@@ -455,7 +455,7 @@ namespace Hypertable.Test
                     Assert.IsFalse(scanner.Next(out cell));
                 }
 
-                using( var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", false, "11", "d", null, false))) ) {
+                using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", false, "11", "d", null, false)))) {
                     Cell cell;
                     Assert.IsTrue(scanner.Next(out cell));
                     Assert.AreEqual(10, BitConverter.ToInt32(cell.Value, 0));
@@ -1659,7 +1659,7 @@ namespace Hypertable.Test
 
         #region Methods
 
-        private static void InitializeTableData(Table _table) {
+        private static void InitializeTableData(ITable _table) {
             var key = new Key();
             using (var mutator = _table.CreateMutator(MutatorSpec.CreateChunked())) {
                 for (int n = 0; n < CountA; ++n) {

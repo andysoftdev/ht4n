@@ -43,10 +43,10 @@ namespace Hypertable {
 	using namespace System::Collections::Generic;
 	using namespace ht4c;
 
+	interface class ITable;
 	interface class ITableMutator;
 
 	ref class Cell;
-	ref class Table;
 	ref class ScanSpec;
 	ref class MutatorSpec;
 	ref class AsyncScannerContext;
@@ -61,7 +61,7 @@ namespace Hypertable {
 	/// <example>
 	/// The following example shows how to scan a multiple tables asynchronously.
 	/// <code>
-	/// using( AsyncResult asynResult = new AsyncResult(
+	/// using( var asynResult = new AsyncResult(
 	///    delegate( AsyncScannerContext asyncScannerContext, IList&lt;Cell&gt; cells ) {
 	///       // process cells
 	///       return true; // continue, return false to cancel
@@ -129,8 +129,8 @@ namespace Hypertable {
 			/// <summary>
 			/// Gets a value indicating which error occurred during an asynchronous operation.
 			/// </summary>
-			property HypertableException^ Error {
-				HypertableException^ get( );
+			property System::Exception^ Error {
+				System::Exception^ get( );
 			}
 
 			/// <summary>
@@ -193,8 +193,8 @@ namespace Hypertable {
 
 			Common::AsyncResult& get( Common::ContextKind contextKind );
 
-			virtual void AttachAsyncScanner( Common::ContextKind contextKind, AsyncScannerContext^ asyncScannerContext, AsyncScannerCallback^ callback );
-			virtual void AttachAsyncMutator( Common::ContextKind contextKind, AsyncMutatorContext^ asyncMutatorContext, ITableMutator^ mutator );
+			virtual void AttachAsyncScanner( AsyncScannerContext^ asyncScannerContext, AsyncScannerCallback^ callback );
+			virtual void AttachAsyncMutator( AsyncMutatorContext^ asyncMutatorContext, ITableMutator^ mutator );
 
 			virtual Common::AsyncResult* CreateAsyncResult( Common::ContextKind contextKind, Common::AsyncResultSink* asyncResultSink );
 
@@ -203,13 +203,11 @@ namespace Hypertable {
 				return n < size ? dynamic_cast<T*>( asyncResult[n] ) : 0;
 			}
 
-			static const int size = Common::CK_Thrift + 1;
-
-		protected:
-
 			void AddAsyncMutatorWeakReference( ITableMutator^ mutator ) {
 				mutators->Add( gcnew WeakReference(mutator) );
 			}
+
+			static const int size = Common::CK_Last; //TODO re-design, support also custom providers
 
 		private:
 

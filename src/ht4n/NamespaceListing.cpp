@@ -22,7 +22,7 @@
 #include "stdafx.h"
 
 #include "NamespaceListing.h"
-#include "Namespace.h"
+#include "INamespace.h"
 #include "Exception.h"
 #include "CM2A.h"
 
@@ -43,7 +43,7 @@ namespace Hypertable {
 												 , Tables != nullptr ? Tables->Count : 0 );
 	}
 
-	NamespaceListing::NamespaceListing( Namespace^ ns, const ht4c::Common::NamespaceListing& nsListing )
+	NamespaceListing::NamespaceListing( INamespace^ ns, const ht4c::Common::NamespaceListing& nsListing )
 	: name( gcnew String(nsListing.getName().c_str()) )
 	, namespaces( gcnew List<NamespaceListing^>() )
 	, tables( gcnew List<String^>() )

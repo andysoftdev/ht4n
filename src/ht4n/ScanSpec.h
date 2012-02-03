@@ -56,7 +56,7 @@ namespace Hypertable {
 	///                        .AddColumn("cf3:/abc[0-9]/")  // all cells in cf3 where column qualifier matches the regex
 	///                        .AddColumn("cf4:");           // all cells in cf4 where no column qualifier exists
 	///
-	/// using( ITablScanner scanner = table.CreateScanner(scanSpec) ) {
+	/// using( var scanner = table.CreateScanner(scanSpec) ) {
 	///    foreach( cell cell in scanner ) {
 	///       // process cell
 	///    }
@@ -65,10 +65,9 @@ namespace Hypertable {
 	/// The following example shows how to use scan and filter rows.
 	/// <code>
 	/// IEnumerable&lt;string&gt; manyRows = ...; // 10% or more rows in table
-	/// ScanSpec scanSpec = new ScanSpec() { ScanAndFilter = true }
-	///                        .AddRows(manyRows);
+	/// var scanSpec = new ScanSpec() { ScanAndFilter = true }.AddRows(manyRows);
 	///
-	/// using( ITablScanner scanner = table.CreateScanner(scanSpec) ) {
+	/// using( var scanner = table.CreateScanner(scanSpec) ) {
 	///    foreach( cell cell in scanner ) {
 	///       // process cell
 	///    }
@@ -76,9 +75,9 @@ namespace Hypertable {
 	/// </code>
 	/// The following example shows how to add a row interval.
 	/// <code>
-	/// ScanSpec scanSpec = new ScanSpec(new RowInterval("a", "z"));
+	/// var scanSpec = new ScanSpec(new RowInterval("a", "z"));
 	///
-	/// using( ITablScanner scanner = table.CreateScanner(scanSpec) ) {
+	/// using( var scanner = table.CreateScanner(scanSpec) ) {
 	///    foreach( cell cell in scanner ) {
 	///       // process cell
 	///    }
@@ -86,8 +85,7 @@ namespace Hypertable {
 	/// </code>
 	/// The following example shows how to filter rows by a regular expression.
 	/// <code>
-	/// ScanSpec scanSpec = new ScanSpec() { RowRegex = "a.*" }
-	///                        .AddColumn("cf");
+	/// var scanSpec = new ScanSpec() { RowRegex = "a.*" }.AddColumn("cf");
 	///
 	/// using( ITablScanner scanner = table.CreateScanner(scanSpec) ) {
 	///    foreach( cell cell in scanner ) {
@@ -96,7 +94,7 @@ namespace Hypertable {
 	/// }
 	/// </code>
 	/// </example>
-	/// <seealso cref="Table"/>
+	/// <seealso cref="ITable"/>
 	[Serializable]
 	public ref class ScanSpec sealed {
 

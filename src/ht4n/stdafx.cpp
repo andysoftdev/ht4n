@@ -26,13 +26,13 @@
 #pragma comment( lib, "advapi32.lib" )
 #pragma comment( lib, "version.lib" )
 
-#pragma comment( lib, "log4cpp.lib" )		// LGPL v2.1
-#pragma comment( lib, "zlib.lib" )			// free of charge
-#pragma comment( lib, "expat.lib" )			// free of charge
-#pragma comment( lib, "pthread.lib" )		// LGPL v2.1
-#pragma comment( lib, "thrift.lib" )		// Apache License 2.0
+#pragma comment( lib, "log4cpp.lib" )				// LGPL v2.1
+#pragma comment( lib, "zlib.lib" )					// free of charge
+#pragma comment( lib, "expat.lib" )					// free of charge
+#pragma comment( lib, "pthread.lib" )				// LGPL v2.1
+#pragma comment( lib, "thrift.lib" )				// Apache License 2.0
 #ifdef _USE_SIGAR
-#pragma comment( lib, "sigar.lib" )			// GPL v2
+#pragma comment( lib, "sigar.lib" )					// GPL v2
 #endif
 
 #pragma comment( lib, "Common.lib" )

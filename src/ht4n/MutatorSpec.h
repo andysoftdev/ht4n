@@ -42,18 +42,18 @@ namespace Hypertable {
 	/// <code>
 	/// MutatorSpec mutatorSpec = MutatorSpec.CreateChunked();
 	/// mutatorSpec.FlushEachChunk = true;
-	/// using( ITableMutator mutator = table.CreateMutator(mutatorSpec) ) {
+	/// using( var mutator = table.CreateMutator(mutatorSpec) ) {
 	///    // do something
 	/// }
 	/// </code>
 	/// The following example shows how to create a queued mutator.
 	/// <code>
-	/// using( ITableMutator mutator = table.CreateMutator(MutatorSpec.CreateQueued()) ) {
+	/// using( var mutator = table.CreateMutator(MutatorSpec.CreateQueued()) ) {
 	///    // do something
 	/// }
 	/// </code>
 	/// </example>
-	/// <seealso cref="Table"/>
+	/// <seealso cref="ITable"/>
 	[Serializable]
 	public ref class MutatorSpec sealed {
 

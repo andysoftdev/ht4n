@@ -25,37 +25,25 @@
 #error "requires /clr"
 #endif
 
-#include "ht4c.Common/MutatorFlags.h"
+#include "stdafx.h"
 
-#pragma warning( push )
-#pragma warning( disable : 4638 ) // reference to unknown symbol 'MutatorSpec'
+#include "ContextFactory.h"
+#include "../Context.h"
 
-namespace Hypertable {
+namespace Hypertable { namespace Composition {
 	using namespace System;
+	using namespace System::Collections::Generic;
 
-	/// <summary>
-	/// Specifies possible table mutator flag values.
-	/// </summary>
-	/// <seealso cref="MutatorSpec" />
-	[Serializable, Flags]
-	public enum class MutatorFlags {
+	Hypertable::IContext^ ContextFactory::Create( String^ connectionString ) {
+		return Context::Create( connectionString );
+	}
 
-		/// <summary>
-		/// Default behaviour.
-		/// </summary>
-		Default = ht4c::Common::MF_Default,
+	Hypertable::IContext^ ContextFactory::Create( IDictionary<String^, Object^>^ properties ) {
+		return Context::Create( properties );
+	}
 
-		/// <summary>
-		/// Indicates whether to force a commit log sync on update or not.
-		/// </summary>
-		NoLogSync = ht4c::Common::MF_NoLogSync,
+	Hypertable::IContext^ ContextFactory::Create( String^ connectionString, IDictionary<String^, Object^>^ properties ) {
+		return Context::Create( connectionString, properties );
+	}
 
-		/// <summary>
-		/// Indicates whether to ignore unknown column families or not.
-		/// </summary>
-		IgnoreUnknownCf = ht4c::Common::MF_IgnoreUnknownCf
-	};
-
-}
-
-#pragma warning( pop )
+} }

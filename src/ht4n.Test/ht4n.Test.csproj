@@ -83,6 +83,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -91,6 +92,7 @@
   <ItemGroup>
     <Compile Include="TestAsyncTableMutator.cs" />
     <Compile Include="TestAsyncTableScanner.cs" />
+    <Compile Include="TestComposition.cs" />
     <Compile Include="TestKeyComparer.cs" />
     <Compile Include="TestHql.cs" />
     <Compile Include="TestBase.cs" />

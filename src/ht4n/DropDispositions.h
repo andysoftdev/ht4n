@@ -37,8 +37,8 @@ namespace Hypertable {
 	/// <remarks>
 	/// Drop dispositions are used if dropping namespaces or tables.
 	/// </remarks>
-	/// <seealso cref="Client" />
-	/// <seealso cref="Namespace" />
+	/// <seealso cref="IClient" />
+	/// <seealso cref="INamespace" />
 	[Serializable, Flags]
 	public enum class DropDispositions {
 

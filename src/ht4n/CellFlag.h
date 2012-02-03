@@ -45,7 +45,7 @@ namespace Hypertable {
 	/// IList&lt;Cell&gt; cells = new List&lt;Cell&gt;();
 	/// cells.Add( new Cell(new Key("A"), CellFlag.DeleteRow) );
 	/// cells.Add( new Cell(new Key("B"), CellFlag.DeleteRow) );
-	/// using( ITableMutator mutator = table.CreateMutator() ) {
+	/// using( var mutator = table.CreateMutator() ) {
 	///    mutator.Set(cells);
 	/// }
 	/// </code>

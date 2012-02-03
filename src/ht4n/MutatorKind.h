@@ -38,7 +38,7 @@ namespace Hypertable {
 	/// Mutator kind is used if creating a table mutator.
 	/// </remarks>
 	/// <seealso cref="MutatorSpec" />
-	/// <seealso cref="Table" />
+	/// <seealso cref="ITable" />
 	[Serializable]
 	public enum class MutatorKind {
 

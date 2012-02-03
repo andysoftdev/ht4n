@@ -140,7 +140,7 @@ namespace Hypertable {
 		asyncScannerContext = nullptr;
 
 		BlockingAsyncResultSink* asyncResultSink = 0;
-		HT4C_TRY {
+		HT4N_TRY {
 			List<Cell^>^ l = gcnew List<Cell^>();
 			cells = l;
 			asyncResultSink = new BlockingAsyncResultSink( l );
@@ -166,7 +166,7 @@ namespace Hypertable {
 				}
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 		finally {
 			if( asyncResultSink ) delete asyncResultSink;
 		}
@@ -182,7 +182,7 @@ namespace Hypertable {
 		asyncScannerContext = nullptr;
 
 		BlockingAsyncResultSink* asyncResultSink = 0;
-		HT4C_TRY {
+		HT4N_TRY {
 			List<Cell^>^ l = gcnew List<Cell^>();
 			cells = l;
 			asyncResultSink = new BlockingAsyncResultSink( l );
@@ -214,40 +214,40 @@ namespace Hypertable {
 				}
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 		finally {
 			if( asyncResultSink ) delete asyncResultSink;
 		}
 		return false;
 	}
 
-	void BlockingAsyncResult::AttachAsyncScanner( Common::ContextKind contextKind, AsyncScannerContext^ asyncScannerContext, AsyncScannerCallback^ ) {
+	void BlockingAsyncResult::AttachAsyncScanner( AsyncScannerContext^ asyncScannerContext, AsyncScannerCallback^ ) {
 		if( asyncScannerContext == nullptr ) throw gcnew ArgumentNullException( L"asyncScannerContext" );
 		msclr::lock sync( syncRoot );
 		map[asyncScannerContext->Id] = asyncScannerContext;
-		Common::BlockingAsyncResult* blockingAsyncResult = GetAsyncResult<Common::BlockingAsyncResult>( contextKind );
+		Common::BlockingAsyncResult* blockingAsyncResult = GetAsyncResult<Common::BlockingAsyncResult>( asyncScannerContext->ContextKind );
 		if( blockingAsyncResult ) {
 			blockingAsyncResult->attachAsyncScanner( asyncScannerContext->Id );
 		}
 	}
 
-	void BlockingAsyncResult::AttachAsyncMutator( Common::ContextKind contextKind, AsyncMutatorContext^ asyncMutatorContext, ITableMutator^ mutator ) {
+	void BlockingAsyncResult::AttachAsyncMutator( AsyncMutatorContext^ asyncMutatorContext, ITableMutator^ mutator ) {
 		if( asyncMutatorContext == nullptr ) throw gcnew ArgumentNullException( L"asyncMutatorContext" );
 		if( mutator == nullptr ) throw gcnew ArgumentNullException( L"mutator" );
 		AddAsyncMutatorWeakReference( mutator );
-		Common::BlockingAsyncResult* blockingAsyncResult = GetAsyncResult<Common::BlockingAsyncResult>( contextKind );
+		Common::BlockingAsyncResult* blockingAsyncResult = GetAsyncResult<Common::BlockingAsyncResult>( asyncMutatorContext->ContextKind );
 		if( blockingAsyncResult ) {
 			blockingAsyncResult->attachAsyncMutator( asyncMutatorContext->Id );
 		}
 	}
 
 	Common::AsyncResult* BlockingAsyncResult::CreateAsyncResult( Common::ContextKind contextKind, Common::AsyncResultSink* asyncResultSink ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			return		contextKind == Common::CK_Hyper
 							? static_cast<Common::AsyncResult*>(Hyper::HyperBlockingAsyncResult::create(capacity) )
 							: static_cast<Common::AsyncResult*>(Thrift::ThriftBlockingAsyncResult::create(capacity) );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 }

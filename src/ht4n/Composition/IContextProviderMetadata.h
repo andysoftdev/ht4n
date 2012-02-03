@@ -25,37 +25,28 @@
 #error "requires /clr"
 #endif
 
-#include "ht4c.Common/MutatorFlags.h"
-
-#pragma warning( push )
-#pragma warning( disable : 4638 ) // reference to unknown symbol 'MutatorSpec'
-
-namespace Hypertable {
+namespace Hypertable { namespace Composition {
 	using namespace System;
 
+	interface class IContextProvider;
+	ref class ExportContextProviderAttribute;
+
 	/// <summary>
-	/// Specifies possible table mutator flag values.
+	/// Represents metadata for the context provider export.
 	/// </summary>
-	/// <seealso cref="MutatorSpec" />
-	[Serializable, Flags]
-	public enum class MutatorFlags {
+	/// <seealso cref="IContextProvider"/>
+	/// <seealso cref="ExportContextProviderAttribute"/>
+	public interface class IContextProviderMetadata {
 
-		/// <summary>
-		/// Default behaviour.
-		/// </summary>
-		Default = ht4c::Common::MF_Default,
+		public:
 
-		/// <summary>
-		/// Indicates whether to force a commit log sync on update or not.
-		/// </summary>
-		NoLogSync = ht4c::Common::MF_NoLogSync,
+			/// <summary>
+			/// Gets the context provider name.
+			/// </summary>
+			property String^ ProviderName {
+				String^ get( );
+			}
 
-		/// <summary>
-		/// Indicates whether to ignore unknown column families or not.
-		/// </summary>
-		IgnoreUnknownCf = ht4c::Common::MF_IgnoreUnknownCf
 	};
 
-}
-
-#pragma warning( pop )
+	} }

@@ -51,6 +51,11 @@
 		<Release Condition="'$(Configuration)' == '' Or '$(Configuration)' == 'Release'">true</Release>
 	</PropertyGroup>
 
+  <!-- Provider uri -->
+  <PropertyGroup>
+    <ProviderUri Condition="'$(ProviderUri)' == ''">net.tcp://localhost</ProviderUri>
+  </PropertyGroup>
+
 	<!-- Configuration group -->
 	<ItemGroup>
 		<MakeConfiguration Include="." Condition="$(Debug) == true" >
@@ -183,8 +188,8 @@
 
 		<XmlPoke
 			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
-			Query="/configuration/appSettings/add[@key='TestContextKind']/@value"
-			Value="Hyper" />
+			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
+			Value="--Provider=Hyper --Uri=$(ProviderUri)" />
 
 		<Exec
 			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
@@ -196,8 +201,8 @@
 
 		<XmlPoke
 			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
-			Query="/configuration/appSettings/add[@key='TestContextKind']/@value"
-			Value="Thrift" />
+			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
+			Value="--Provider=Thrift --Uri=$(ProviderUri)" />
 
 		<Exec
 			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"

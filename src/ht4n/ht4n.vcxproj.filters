@@ -5,6 +5,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Source Files\Composition">
+      <UniqueIdentifier>{875a41ee-2c45-40bd-8b0c-1191cc54af19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -95,9 +98,6 @@
     <ClInclude Include="BlockingAsyncResult.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="ContextKind.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="MutatorKind.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -124,6 +124,36 @@
     </ClInclude>
     <ClInclude Include="KeyComparer.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IContext.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextFeature.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ITable.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="INamespace.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IClient.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Composition\IContextFactory.h">
+      <Filter>Source Files\Composition</Filter>
+    </ClInclude>
+    <ClInclude Include="Composition\ContextFactory.h">
+      <Filter>Source Files\Composition</Filter>
+    </ClInclude>
+    <ClInclude Include="Composition\IContextProvider.h">
+      <Filter>Source Files\Composition</Filter>
+    </ClInclude>
+    <ClInclude Include="Composition\ExportContextProviderAttribute.h">
+      <Filter>Source Files\Composition</Filter>
+    </ClInclude>
+    <ClInclude Include="Composition\IContextProviderMetaData.h">
+      <Filter>Source Files\Composition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +228,12 @@
     </ClCompile>
     <ClCompile Include="KeyComparer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Composition\ContextFactory.cpp">
+      <Filter>Source Files\Composition</Filter>
+    </ClCompile>
+    <ClCompile Include="Composition\ExportContextProviderAttribute.cpp">
+      <Filter>Source Files\Composition</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

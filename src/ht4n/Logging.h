@@ -100,6 +100,7 @@ namespace Hypertable {
 			/// Determines whether the trace listener should trace the event of the type specified.
 			/// </summary>
 			/// <param name="traceEventType">The event type.</param>
+			/// <returns>true if the trace listener should trace the event of the type specified, otherwise false.</returns>
 			static bool IsEnabled( System::Diagnostics::TraceEventType traceEventType );
 
 			/// <summary>

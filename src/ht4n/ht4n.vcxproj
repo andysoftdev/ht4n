@@ -267,9 +267,18 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="AsyncScannerCallback.h" />
     <ClInclude Include="AsyncScannerContext.h" />
     <ClInclude Include="BlockingAsyncResult.h" />
-    <ClInclude Include="ContextKind.h" />
+    <ClInclude Include="Composition\ContextFactory.h" />
+    <ClInclude Include="Composition\ExportContextProviderAttribute.h" />
+    <ClInclude Include="Composition\IContextFactory.h" />
+    <ClInclude Include="Composition\IContextProvider.h" />
+    <ClInclude Include="Composition\IContextProviderMetaData.h" />
     <ClInclude Include="CrossAppDomainAction.h" />
     <ClInclude Include="AppDomainHandler.h" />
+    <ClInclude Include="IClient.h" />
+    <ClInclude Include="IContext.h" />
+    <ClInclude Include="ContextFeature.h" />
+    <ClInclude Include="INamespace.h" />
+    <ClInclude Include="ITable.h" />
     <ClInclude Include="QueuedTableMutator.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="CellFlag.h" />
@@ -305,6 +314,8 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="AsyncResult.cpp" />
+    <ClCompile Include="Composition\ContextFactory.cpp" />
+    <ClCompile Include="Composition\ExportContextProviderAttribute.cpp" />
     <ClCompile Include="QueuedTableMutator.cpp" />
     <ClCompile Include="BlockingAsyncResult.cpp" />
     <ClCompile Include="Cell.cpp" />
@@ -362,6 +373,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>

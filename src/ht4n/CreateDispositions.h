@@ -37,7 +37,7 @@ namespace Hypertable {
 	/// <remarks>
 	/// Create dispositions are used if creating namespaces or tables.
 	/// </remarks>
-	/// <seealso cref="Client" />
+	/// <seealso cref="IClient" />
 	[Serializable, Flags]
 	public enum class CreateDispositions {
 

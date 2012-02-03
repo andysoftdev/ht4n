@@ -47,7 +47,7 @@ namespace Hypertable {
 	/// <example>
 	/// The following example shows how to iterate through all cells of a table using only one Cell instance.
 	/// <code>
-	/// using( ITableScanner scanner = table.CreateScanner() ) {
+	/// using( var scanner = table.CreateScanner() ) {
 	///    Cell cell = new Cell();
 	///    while( scanner.Next(cell) ) {
 	///       // process cell

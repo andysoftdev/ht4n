@@ -25,8 +25,8 @@
 #error "requires /clr"
 #endif
 
+#include "ITable.h"
 #include "AsyncScannerCallback.h"
-#include "ContextKind.h"
 
 namespace ht4c { namespace Common {
 	class Table;
@@ -48,65 +48,8 @@ namespace Hypertable {
 	/// <summary>
 	/// Represents a Hypertable table.
 	/// </summary>
-	/// <example>
-	/// The following example shows how to create an asynchronous table mutator.
-	/// <code>
-	/// using( ITableMutator mutator = table.CreateMutator(MutatorSpec.CreateAsync()) ) {
-	///   // use mutator
-	/// }
-	/// </code>
-	/// The following example shows how to scan a few individual rows.
-	/// <code>
-	/// ScanSpec scanSpec = new ScanSpec()
-	///                        .AddRow("r1")
-	///                        .AddRow("r2")
-	///                        .AddRow("r3");
-	///
-	/// using( ITablScanner scanner = table.CreateScanner(scanSpec) ) {
-	///    foreach( cell cell in scanner ) {
-	///       // process cell
-	///    }
-	/// }
-	/// </code>
-	/// The following example shows how to scan a single table asynchronously.
-	/// <code>
-	/// using( AsyncResult asynResult = table.BeginScan(param,
-	///    delegate( AsyncScannerContext asyncScannerContext, IList&lt;Cell&gt; cells ) {
-	///       // process cells
-	///       return true; // continue, return false to cancel
-	///    }) ) {
-	///    asynResult.Join();
-	/// }
-	/// </code>
-	/// The following example shows how to scan a multiple tables asynchronously.
-	/// <code>
-	/// using( AsyncResult asynResult = new AsyncResult(
-	///    delegate( AsyncScannerContext asyncScannerContext, IList&lt;Cell&gt; cells ) {
-	///       // process cells
-	///       return true; // continue, return false to cancel
-	///    }) ) {
-	///    tableA.BeginScan(new ScanSpec().AddColumn("a"), asynResult);
-	///    tableB.BeginScan(new ScanSpec().AddColumn("b"), asynResult);
-	///    asynResult.Join();
-	///  }
-	/// </code>
-	/// The following example shows how to scan a multiple tables asynchronously
-	/// using a blocking asynchronous result.
-	/// <code>
-	/// using( BlockingAsyncResult asynResult = new BlockingAsyncResult() ) {
-	///    tableA.BeginScan(asynResult);
-	///    tableB.BeginScan(asynResult);
-	///    AsyncScannerContext asyncScannerContext;
-	///    IList&lt;Cell&gt; cells;
-	///    while( asynResult.TryGetCells(out asyncScannerContext;, out cells) ) {
-	///       foreach( Cell cell in cells ) {
-	///          // process cell
-	///       }
-	///    }
-	/// }
-	/// </code>
-	/// </example>
-	public ref class Table sealed : public IDisposable {
+	/// <seealso cref="ITable"/>
+	ref class Table sealed : public ITable {
 
 		public:
 
@@ -120,130 +63,39 @@ namespace Hypertable {
 			/// </summary>
 			!Table( );
 
-			/// <summary>
-			/// Gets the table name.
-			/// </summary>
+			#pragma region ITable properties
+
 			property String^ Name {
-				String^ get();
+				virtual String^ get( );
 			}
 
-			/// <summary>
-			/// Gets the table xml schema.
-			/// </summary>
 			property String^ Schema {
-				String^ get();
+				virtual String^ get( );
 			}
 
-			/// <summary>
-			/// Gets the context kind.
-			/// </summary>
-			/// <seealso cref="ContextKind"/>
-			property Hypertable::ContextKind ContextKind {
-				Hypertable::ContextKind get();
-			}
-
-			/// <summary>
-			/// Gets a value indicating whether the object has been disposed.
-			/// </summary>
-			/// <remarks>true if the object has been disposed, otherwise false.</remarks>
 			property bool IsDisposed {
-				bool get( ) {
+				virtual bool get( ) {
 					return disposed;
 				}
 			}
 
-			/// <summary>
-			/// Creates a new table mutator on this table.
-			/// </summary>
-			/// <returns>Newly created table mutator.</returns>
-			ITableMutator^ CreateMutator( );
+			#pragma endregion
 
-			/// <summary>
-			/// Creates a new table mutator on this table using the specified mutator specification.
-			/// </summary>
-			/// <param name="mutatorSpec">Table mutator specification.</param>
-			/// <returns>Newly created table mutator instance.</returns>
-			ITableMutator^ CreateMutator( MutatorSpec^ mutatorSpec );
+			#pragma region ITable methods
 
-			/// <summary>
-			/// Creates a new asynchronous table mutator on this table using the specified mutator specification.
-			/// </summary>
-			/// <param name="asyncResult">Asynchronous result instance.</param>
-			/// <param name="mutatorSpec">Table mutator specification.</param>
-			/// <returns>Newly created asynchronous table mutator instance.</returns>
-			ITableMutator^ CreateAsyncMutator( AsyncResult^ asyncResult, MutatorSpec^ mutatorSpec );
+			virtual ITableMutator^ CreateMutator( );
+			virtual ITableMutator^ CreateMutator( MutatorSpec^ mutatorSpec );
+			virtual ITableMutator^ CreateAsyncMutator( AsyncResult^ asyncResult, MutatorSpec^ mutatorSpec );
+			virtual ITableScanner^ CreateScanner( );
+			virtual ITableScanner^ CreateScanner( ScanSpec^ scanSpec );
+			virtual int64_t BeginScan( AsyncResult^ asyncResult );
+			virtual int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec );
+			virtual int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, Object^ param );
+			virtual int64_t BeginScan( AsyncResult^ asyncResult, AsyncScannerCallback^ callback );
+			virtual int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, AsyncScannerCallback^ callback );
+			virtual int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, Object^ param, AsyncScannerCallback^ callback );
 
-			/// <summary>
-			/// Creates a new table scanner on this table.
-			/// </summary>
-			/// <returns>Newly created table scanner instance.</returns>
-			ITableScanner^ CreateScanner( );
-
-			/// <summary>
-			/// Creates a new table scanner on this table using the specified scanner specification.
-			/// </summary>
-			/// <param name="scanSpec">Table scanner specification.</param>
-			/// <returns>Newly created table mutator instance.</returns>
-			ITableScanner^ CreateScanner( ScanSpec^ scanSpec );
-
-			/// <summary>
-			/// Creates a new asynchronous scanner on this table and attach it
-			/// to the specified asynchronous result instance.
-			/// </summary>
-			/// <param name="asyncResult">Asynchronous result instance.</param>
-			/// <returns>Asynchronous scanner identifier.</returns>
-			/// <remarks>Scans the entire table.</remarks>
-			int64_t BeginScan( AsyncResult^ asyncResult );
-
-			/// <summary>
-			/// Creates a new asynchronous scanner on this table using the specified scanner specification
-			/// and attach it to the specified asynchronous result instance.
-			/// </summary>
-			/// <param name="asyncResult">Asynchronous result instance.</param>
-			/// <param name="scanSpec">Table scanner specification.</param>
-			/// <returns>Asynchronous scanner identifier.</returns>
-			int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec );
-
-			/// <summary>
-			/// Creates a new asynchronous scanner on this table using the specified scanner specification
-			/// and attach to the specified asynchronous result instance.
-			/// </summary>
-			/// <param name="asyncResult">Asynchronous result instance.</param>
-			/// <param name="scanSpec">Table scanner specification.</param>
-			/// <param name="param">User defined parameter, which will be passed to the callback.</param>
-			/// <returns>Asynchronous scanner identifier.</returns>
-			int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, Object^ param );
-
-			/// <summary>
-			/// Creates a new asynchronous scanner on this table and attach it
-			/// to the specified asynchronous result instance.
-			/// </summary>
-			/// <param name="asyncResult">Asynchronous result instance.</param>
-			/// <param name="callback">Asynchronous scanner callback.</param>
-			/// <returns>Asynchronous scanner identifier.</returns>
-			/// <remarks>Scans the entire table.</remarks>
-			int64_t BeginScan( AsyncResult^ asyncResult, AsyncScannerCallback^ callback );
-
-			/// <summary>
-			/// Creates a new asynchronous scanner on this table using the specified scanner specification
-			/// and attach it to the specified asynchronous result instance.
-			/// </summary>
-			/// <param name="asyncResult">Asynchronous result instance.</param>
-			/// <param name="scanSpec">Table scanner specification.</param>
-			/// <param name="callback">Asynchronous scanner callback.</param>
-			/// <returns>Asynchronous scanner identifier.</returns>
-			int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, AsyncScannerCallback^ callback );
-
-			/// <summary>
-			/// Creates a new asynchronous scanner on this table using the specified scanner specification
-			/// and attach to the specified asynchronous result instance.
-			/// </summary>
-			/// <param name="asyncResult">Asynchronous result instance.</param>
-			/// <param name="scanSpec">Table scanner specification.</param>
-			/// <param name="param">User defined parameter, which will be passed to the callback.</param>
-			/// <param name="callback">Asynchronous scanner callback.</param>
-			/// <returns>Asynchronous scanner identifier.</returns>
-			int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, Object^ param, AsyncScannerCallback^ callback );
+			#pragma endregion
 
 			/// <summary>
 			/// Returns a string that represents the current object.

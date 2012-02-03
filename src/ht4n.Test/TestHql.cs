@@ -36,9 +36,21 @@ namespace Hypertable.Test
     {
         #region Public Methods
 
+        [ClassInitialize]
+        public static void ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext) {
+            if (!HasHQL) {
+                Assert.IsFalse(IsHyper);
+                Assert.IsFalse(IsThrift);
+            }
+        }
+
         [TestMethod]
         [Ignore] // FIXME, issue 'delete with unspecified timestamp applying to all future inserts'
         public void CreateDeleteSingleCell() {
+            if (!HasHQL) {
+                return;
+            }
+
             Ns.Exec("CREATE TABLE fruit (tag)");
             Ns.Exec("INSERT INTO fruit VALUES" + "(\"2009-08-02 08:30:01\", \"banana\", \"tag\", \"Had with dinner\")");
             var cells = Ns.Query("SELECT * FROM fruit");
@@ -57,6 +69,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void Exec() {
+            if (!HasHQL) {
+                return;
+            }
+
             try {
                 Ns.Exec("this is not hql");
                 Assert.Fail();
@@ -115,6 +131,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void Query() {
+            if (!HasHQL) {
+                return;
+            }
+
             Ns.Exec("CREATE TABLE fruit (tag, description)");
             Ns.Exec(
                 "INSERT INTO fruit VALUES" + "(\"cantelope\", \"tag:good\", \"Had with breakfast\"),"
@@ -186,6 +206,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void Revisions() {
+            if (!HasHQL) {
+                return;
+            }
+
             Ns.Exec("CREATE TABLE fruit (tag, description)");
             Ns.Exec("INSERT INTO fruit VALUES" + "(\"2009-08-02 08:30:00\", \"banana\", \"tag:great\", \"Had with lunch\")");
 
@@ -239,6 +263,20 @@ namespace Hypertable.Test
         public void TestInitialize() {
             Ns.DropTables();
             Ns.DropNamespaces(DropDispositions.Complete);
+        }
+
+        [TestMethod]
+        public void Unsupported() {
+            if (HasHQL) {
+                return;
+            }
+
+            try {
+                Ns.Exec("CREATE NAMESPACE abc");
+                Assert.Fail();
+            }
+            catch (NotImplementedException) {
+            }
         }
 
         #endregion

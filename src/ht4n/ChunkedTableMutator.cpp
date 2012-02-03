@@ -40,14 +40,14 @@ namespace Hypertable {
 	}
 
 	ChunkedTableMutator::!ChunkedTableMutator( ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			if( cellChunk ) {
 				SetChunk( true );
 				delete cellChunk;
 				cellChunk = 0;
 			}
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void ChunkedTableMutator::Set( Key^ key, cli::array<Byte>^ value, bool createRowKey ) {
@@ -55,7 +55,7 @@ namespace Hypertable {
 		if( createRowKey || String::IsNullOrEmpty(key->Row) ) {
 			key->Row = gcnew String( Common::KeyBuilder().c_str() );
 		}
-		HT4C_TRY {
+		HT4N_TRY {
 			UInt32 len = value != nullptr ? value->Length : 0;
 			msclr::lock sync( syncRoot );
 			pin_ptr<Byte> pv = len ? &value[0] : nullptr;
@@ -63,7 +63,7 @@ namespace Hypertable {
 			lenTotal += len;
 			SetChunk( false );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void ChunkedTableMutator::Set( Cell^ cell, bool createRowKey ) {
@@ -73,7 +73,7 @@ namespace Hypertable {
 		if( createRowKey || String::IsNullOrEmpty(key->Row) ) {
 			key->Row = gcnew String( Common::KeyBuilder().c_str() );
 		}
-		HT4C_TRY {
+		HT4N_TRY {
 			UInt32 len = cell->Value != nullptr ? cell->Value->Length : 0;
 			msclr::lock sync( syncRoot );
 			pin_ptr<Byte> pv = len ? &cell->Value[0] : nullptr;
@@ -81,12 +81,12 @@ namespace Hypertable {
 			lenTotal += len;
 			SetChunk( false );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void ChunkedTableMutator::Set( IEnumerable<Cell^>^ cells, bool createRowKey ) {
 		if( cells == nullptr ) throw gcnew ArgumentNullException( L"cells" );
-		HT4C_TRY {
+		HT4N_TRY {
 			for each( Cell^ cell in cells ) {
 				if( cell != nullptr ) {
 					Key^ key = cell->Key;
@@ -104,7 +104,7 @@ namespace Hypertable {
 				}
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 		void ChunkedTableMutator::Delete( String^ row ) {
@@ -155,14 +155,14 @@ namespace Hypertable {
 		if( force || lenTotal >= maxChunkSize || cellChunk->size() >= maxCellCount ) {
 			if( cellChunk->size() ) {
 				msclr::lock sync( syncRoot );
-				HT4C_TRY {
+				HT4N_TRY {
 					tableMutator->set( *cellChunk );
 					if( flushEachChunk ) {
 						TableMutator::Flush();
 						return true;
 					}
 				}
-				HT4C_RETHROW
+				HT4N_RETHROW
 				finally {
 					cellChunk->clear();
 					lenTotal = 0;

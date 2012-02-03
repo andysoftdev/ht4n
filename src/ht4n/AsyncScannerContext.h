@@ -25,10 +25,12 @@
 #error "requires /clr"
 #endif
 
+#include "ht4c.Common/ContextKind.h"
+
 namespace Hypertable {
 	using namespace System;
 
-	ref class Table;
+	interface class ITable;
 	ref class ScanSpec;
 
 	/// <summary>
@@ -41,7 +43,7 @@ namespace Hypertable {
 			/// <summary>
 			/// Gets the asynchronous table scanner identifier.
 			/// </summary>
-			/// <seealso cref="Table"/>
+			/// <seealso cref="ITable"/>
 			property int64_t Id {
 				int64_t get() { return id; }
 			}
@@ -49,9 +51,9 @@ namespace Hypertable {
 			/// <summary>
 			/// Gets the table.
 			/// </summary>
-			/// <seealso cref="Table"/>
-			property Hypertable::Table^ Table {
-				Hypertable::Table^ get() { return table; }
+			/// <seealso cref="ITable"/>
+			property Hypertable::ITable^ Table {
+				Hypertable::ITable^ get() { return table; }
 			}
 
 			/// <summary>
@@ -71,8 +73,13 @@ namespace Hypertable {
 
 		internal:
 
-			AsyncScannerContext( int64_t _id, Hypertable::Table^ _table, Hypertable::ScanSpec^ _scanSpec, Object^ _param )
-				: id( _id )
+			property Common::ContextKind ContextKind {
+				Common::ContextKind get() { return contextKind; }
+			}
+
+			AsyncScannerContext( Common::ContextKind _contextKind, int64_t _id, Hypertable::ITable^ _table, Hypertable::ScanSpec^ _scanSpec, Object^ _param )
+				: contextKind( _contextKind )
+				, id( _id )
 				, table( _table )
 				, scanSpec( _scanSpec )
 				, param( _param )
@@ -81,8 +88,9 @@ namespace Hypertable {
 
 		private:
 
+			Common::ContextKind contextKind; //TODO, re-design and remove
 			int64_t id;
-			Hypertable::Table^ table;
+			Hypertable::ITable^ table;
 			Hypertable::ScanSpec^ scanSpec;
 			Object^ param;
 	};

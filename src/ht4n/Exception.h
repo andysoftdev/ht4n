@@ -93,7 +93,7 @@ namespace Hypertable {
 			HypertableException( const ht4c::Common::HypertableException& e, System::Exception^ inner );
 			HypertableException( const std::exception& e );
 
-			static HypertableException^ Create( const ht4c::Common::HypertableException& e );
+			static System::Exception^ Create( const ht4c::Common::HypertableException& e );
 
 		protected:
 
@@ -110,25 +110,6 @@ namespace Hypertable {
 			int line;
 			String^ func;
 			String^ file;
-	};
-
-	/// <summary>
-	/// The exception that is thrown as the result of a failed cast.
-	/// </summary>
-	[Serializable]
-	public ref class BadCastException : public HypertableException {
-
-		internal:
-
-			BadCastException( String^ msg )
-				: HypertableException( msg )
-			{
-			}
-
-			BadCastException( SerializationInfo^ info, StreamingContext context )
-				: HypertableException( info, context )
-			{
-			}
 	};
 
 	#define HT4N_DECLARE_EXCEPTION( name ) \
@@ -244,11 +225,6 @@ namespace Hypertable {
 	/// The exception that is thrown as the result of an invalid scan spec.
 	/// </summary>
 	HT4N_DECLARE_EXCEPTION(BadScanSpec)
-
-	/// <summary>
-	/// The exception that is thrown if an operation has not been implemented.
-	/// </summary>
-	HT4N_DECLARE_EXCEPTION(NotImpl)
 
 	/// <summary>
 	/// The exception that is thrown as the result of a version mismatch.
@@ -371,14 +347,25 @@ namespace Hypertable {
 	HT4N_DECLARE_EXCEPTION(ThriftBroker)
 }
 
-#define HT4C_TRY \
+/// <summary>
+/// Defines the start of ht4n try/catch block.
+/// </summary>
+#define HT4N_TRY \
 	try
 
-#define HT4C_RETHROW \
-	catch( ht4c::Common::HypertableException& e ) { \
+/// <summary>
+/// Defines the catch clause of ht4n try/catch blocks.
+/// </summary>
+/// <remarks>Translates C++ exceptions into C++/CLI exceptions.</remarks>
+#define HT4N_RETHROW \
+	catch( ht4c::Common::HypertableArgumentNullException& e ) { \
+		throw gcnew System::ArgumentNullException( gcnew String(e.what()), Hypertable::HypertableException::Create(e) ); \
+	} catch( ht4c::Common::HypertableArgumentException& e ) { \
+		throw gcnew System::ArgumentException( gcnew String(e.what()), gcnew String(e.argument().c_str()), Hypertable::HypertableException::Create(e) ); \
+	} catch( ht4c::Common::HypertableException& e ) { \
 		throw Hypertable::HypertableException::Create( e ); \
 	} catch( std::bad_cast& e ) { \
-		throw gcnew Hypertable::BadCastException( gcnew String(e.what()) ); \
+		throw gcnew System::InvalidCastException( gcnew String(e.what()) ); \
 	} catch( std::exception& e ) { \
 		throw gcnew Hypertable::HypertableException( e ); \
 	} catch( Object^ ) { \
@@ -386,3 +373,9 @@ namespace Hypertable {
 	} catch( ... ) { \
 		throw gcnew Hypertable::HypertableException( String::Format(CultureInfo::InvariantCulture, "Caught unknown exception {0} {1}, {2}", __LINE__, __FILE__, __FUNCTION__)); \
 	}
+
+/// <summary>
+/// Throws an ObjectDisposed exception.
+/// </summary>
+#define HT4N_THROW_OBJECTDISPOSED( ) \
+	if( disposed ) throw gcnew System::ObjectDisposedException( GetType()->FullName );

@@ -33,7 +33,7 @@ namespace Hypertable {
 	using namespace System;
 	using namespace System::Collections::Generic;
 
-	ref class Namespace;
+	interface class INamespace;
 
 	/// <summary>
 	/// Represents a Hypertable namespace listing.
@@ -41,10 +41,10 @@ namespace Hypertable {
 	/// <example>
 	/// The following example shows how to get the entire databse namespace listing.
 	/// <code>
-	/// using( Context ctx = Context.Create(ContextKind.Hyper, "localhost") ) {
-	///    using( Client client = ctx.CreateClient() ) {
-	///       using( Namespace ns = client.OpenNamespace("/") ) {
-	///          NamespaceListing nsListing = ns.GetListing(true);
+	/// using( var ctx = Context.Create("Provider=Hyper; Uri=localhost") ) {
+	///    using( var client = ctx.CreateClient() ) {
+	///       using( var ns = client.OpenNamespace("/") ) {
+	///          var nsListing = ns.GetListing(true);
 	///           // use name space listing
 	///       }
 	///    }
@@ -54,7 +54,7 @@ namespace Hypertable {
 	/// 
 	/// </code>
 	/// </example>
-	/// <seealso cref="Namespace"/>
+	/// <seealso cref="INamespace"/>
 	[Serializable]
 	public ref class NamespaceListing sealed {
 
@@ -113,7 +113,7 @@ namespace Hypertable {
 
 		internal:
 
-			NamespaceListing( Namespace^ ns, const ht4c::Common::NamespaceListing& nsListing );
+			NamespaceListing( INamespace^ ns, const ht4c::Common::NamespaceListing& nsListing );
 
 		private:
 

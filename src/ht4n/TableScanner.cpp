@@ -79,18 +79,20 @@ namespace Hypertable {
 	}
 
 	TableScanner::!TableScanner( ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			if( tableScanner ) {
 				delete tableScanner;
 				tableScanner = 0;
 			}
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	bool TableScanner::Next( Cell^ cell ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( cell == nullptr ) throw gcnew ArgumentNullException( L"cell" );
-		HT4C_TRY {
+		HT4N_TRY {
 			Common::Cell* _cell;
 			msclr::lock sync( syncRoot );
 			if( tableScanner->next(_cell) ) {
@@ -99,7 +101,7 @@ namespace Hypertable {
 			}
 			return false;
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	bool TableScanner::Next( Cell^% cell ) {
@@ -107,6 +109,8 @@ namespace Hypertable {
 	}
 
 	IEnumerator<Cell^>^ TableScanner::generic_GetEnumerator( ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		return gcnew TableScannerEnumerator( this );
 	}
 
@@ -120,7 +124,9 @@ namespace Hypertable {
 	}
 
 	bool TableScanner::MoveNext( Cell^% cell ) {
-		HT4C_TRY {
+		HT4N_THROW_OBJECTDISPOSED( );
+
+		HT4N_TRY {
 			Common::Cell* _cell;
 			msclr::lock sync( syncRoot );
 			if( tableScanner->next(_cell) ) {
@@ -130,7 +136,7 @@ namespace Hypertable {
 			cell = nullptr;
 			return false;
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 }

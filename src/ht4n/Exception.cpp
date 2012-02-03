@@ -114,9 +114,12 @@ namespace Hypertable {
 		file = String::Empty;
 	}
 
-	HypertableException^ HypertableException::Create( const ht4c::Common::HypertableException& e ) {
-		HypertableException^ inner = e.inner() ? Create(*e.inner()) : nullptr;
+	System::Exception^ HypertableException::Create( const ht4c::Common::HypertableException& e ) {
+		System::Exception^ inner = e.inner() ? Create(*e.inner()) : nullptr;
 		switch( e.code() ) {
+			case Hypertable::Error::NOT_IMPLEMENTED:
+				return gcnew System::NotImplementedException( gcnew String(e.what()), inner );
+
 			HT4N_CREATE_EXCEPTION(Protocol, PROTOCOL_ERROR)
 			HT4N_CREATE_EXCEPTION(RequestTruncated, REQUEST_TRUNCATED)
 			HT4N_CREATE_EXCEPTION(ResponseTruncated, RESPONSE_TRUNCATED)
@@ -138,7 +141,6 @@ namespace Hypertable {
 			HT4N_CREATE_EXCEPTION(ConnectHyperspace, CONNECT_ERROR_HYPERSPACE)
 			HT4N_CREATE_EXCEPTION(BadMemoryAllocation, BAD_MEMORY_ALLOCATION)
 			HT4N_CREATE_EXCEPTION(BadScanSpec, BAD_SCAN_SPEC)
-			HT4N_CREATE_EXCEPTION(NotImpl, NOT_IMPLEMENTED)
 			HT4N_CREATE_EXCEPTION(VersionMismatch, VERSION_MISMATCH)
 			HT4N_CREATE_EXCEPTION(Cancelled, CANCELLED)
 			HT4N_CREATE_EXCEPTION(SchemaParse, SCHEMA_PARSE_ERROR)
@@ -200,7 +202,6 @@ namespace Hypertable {
 	HT4N_IMPLEMENT_EXCEPTION(ConnectHyperspace)
 	HT4N_IMPLEMENT_EXCEPTION(BadMemoryAllocation)
 	HT4N_IMPLEMENT_EXCEPTION(BadScanSpec)
-	HT4N_IMPLEMENT_EXCEPTION(NotImpl)
 	HT4N_IMPLEMENT_EXCEPTION(VersionMismatch)
 	HT4N_IMPLEMENT_EXCEPTION(Cancelled)
 	HT4N_IMPLEMENT_EXCEPTION(SchemaParse)

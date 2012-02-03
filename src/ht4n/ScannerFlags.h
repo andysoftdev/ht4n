@@ -37,7 +37,7 @@ namespace Hypertable {
 	/// Specifies possible table scanner flag values.
 	/// </summary>
 	/// <seealso cref="ScanSpec" />
-	[Flags, Serializable]
+	[Serializable, Flags]
 	public enum class ScannerFlags {
 
 		/// <summary>

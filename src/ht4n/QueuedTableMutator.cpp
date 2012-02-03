@@ -24,6 +24,7 @@
 #include "QueuedTableMutator.h"
 #include "Key.h"
 #include "Cell.h"
+#include "Exception.h"
 #include "Logging.h"
 
 #include "ht4c.Common/KeyBuilder.h"
@@ -52,6 +53,8 @@ namespace Hypertable {
 	}
 
 	void QueuedTableMutator::Set( Key^ key, cli::array<Byte>^ value, bool createRowKey ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
 		if( createRowKey || String::IsNullOrEmpty(key->Row) ) {
 			key->Row = gcnew String( Common::KeyBuilder().c_str() );
@@ -65,6 +68,8 @@ namespace Hypertable {
 	}
 
 	void QueuedTableMutator::Set( Cell^ cell, bool createRowKey ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( cell == nullptr ) throw gcnew ArgumentNullException( L"cell" );
 		Key^ key = cell->Key;
 		if( key == nullptr ) throw gcnew ArgumentException( L"Invalid parameter cell (cell.Key null)", L"cell" );
@@ -79,6 +84,8 @@ namespace Hypertable {
 	}
 
 	void QueuedTableMutator::Set( IEnumerable<Cell^>^ cells, bool createRowKey ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( cells == nullptr ) throw gcnew ArgumentNullException( L"cells" );
 		for each( Cell^ cell in cells ) {
 			if( cell != nullptr ) {
@@ -94,16 +101,22 @@ namespace Hypertable {
 	}
 
 	void QueuedTableMutator::Delete( String^ row ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( String::IsNullOrEmpty(row) ) throw gcnew ArgumentException( L"Invalid parameter row (null or empty)", L"row" );
 		AddCell( gcnew Cell(gcnew Key(row), CellFlag::DeleteRow) );
 	}
 
 	void QueuedTableMutator::Delete( Key^ key ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
 		AddCell( gcnew Cell(key, Cell::DeleteFlagFromKey(key), true) );
 	}
 
 	void QueuedTableMutator::Delete( IEnumerable<Key^>^ keys ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( keys == nullptr ) throw gcnew ArgumentNullException( L"keys" );
 		for each( Key^ key in keys ) {
 			if( key != nullptr ) {
@@ -113,6 +126,8 @@ namespace Hypertable {
 	}
 
 	void QueuedTableMutator::Delete( IEnumerable<Cell^>^ cells ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( cells == nullptr ) throw gcnew ArgumentNullException( L"cells" );
 		for each( Cell^ cell in cells ) {
 			if( cell != nullptr && cell->Key !=nullptr ) {
@@ -122,6 +137,8 @@ namespace Hypertable {
 	}
 
 	void QueuedTableMutator::Flush( ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		mre->WaitOne();
 		inner->Flush();
 	}

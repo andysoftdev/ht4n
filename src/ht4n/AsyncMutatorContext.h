@@ -25,10 +25,12 @@
 #error "requires /clr"
 #endif
 
+#include "ht4c.Common/ContextKind.h"
+
 namespace Hypertable {
 	using namespace System;
 
-	ref class Table;
+	interface class ITable;
 	ref class MutatorSpec;
 
 	/// <summary>
@@ -41,7 +43,7 @@ namespace Hypertable {
 			/// <summary>
 			/// Gets the asynchronous table mutator identifier.
 			/// </summary>
-			/// <seealso cref="Table"/>
+			/// <seealso cref="ITable"/>
 			property int64_t Id {
 				int64_t get() { return id; }
 			}
@@ -49,9 +51,9 @@ namespace Hypertable {
 			/// <summary>
 			/// Gets the table.
 			/// </summary>
-			/// <seealso cref="Table"/>
-			property Hypertable::Table^ Table {
-				Hypertable::Table^ get() { return table; }
+			/// <seealso cref="ITable"/>
+			property Hypertable::ITable^ Table {
+				Hypertable::ITable^ get() { return table; }
 			}
 
 			/// <summary>
@@ -64,8 +66,13 @@ namespace Hypertable {
 
 		internal:
 
-			AsyncMutatorContext( int64_t _id, Hypertable::Table^ _table, Hypertable::MutatorSpec^ _mutatorSpec )
-				: id( _id )
+			property Common::ContextKind ContextKind {
+				Common::ContextKind get() { return contextKind; }
+			}
+
+			AsyncMutatorContext( Common::ContextKind _contextKind, int64_t _id, Hypertable::ITable^ _table, Hypertable::MutatorSpec^ _mutatorSpec )
+				: contextKind( _contextKind )
+				, id( _id )
 				, table( _table )
 				, mutatorSpec( _mutatorSpec )
 			{
@@ -73,8 +80,9 @@ namespace Hypertable {
 
 		private:
 
+			Common::ContextKind contextKind; //TODO, re-design and remove
 			int64_t id;
-			Hypertable::Table^ table;
+			Hypertable::ITable^ table;
 			Hypertable::MutatorSpec^ mutatorSpec;
 	};
 

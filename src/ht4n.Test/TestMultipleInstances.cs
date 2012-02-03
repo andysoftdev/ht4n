@@ -45,19 +45,19 @@ namespace Hypertable.Test
 
         private const int CountC = 1000;
 
-        private const string HostB = "localhost";
+        private const string uriB = "localhost"; // TODO, check also with 2nd host different to localhost
 
         private static readonly UTF8Encoding Encoding = new UTF8Encoding();
 
-        private static Client clientB;
+        private static IClient clientB;
 
-        private static Context ctxB;
+        private static IContext contextB;
 
-        private static Namespace nsB;
+        private static INamespace nsB;
 
-        private static Table tableA;
+        private static ITable tableA;
 
-        private static Table tableB;
+        private static ITable tableB;
 
         #endregion
 
@@ -69,7 +69,7 @@ namespace Hypertable.Test
             nsB.Dispose();
             clientB.DropNamespace(NsName, DropDispositions.Complete);
             clientB.Dispose();
-            ctxB.Dispose();
+            contextB.Dispose();
 
             tableA.Dispose();
         }
@@ -83,8 +83,10 @@ namespace Hypertable.Test
 
             tableA = EnsureTable(typeof(TestMultipleInstances), Schema);
 
-            ctxB = Context.Create(CtxKind, HostB);
-            clientB = ctxB.CreateClient();
+            var properties = new Dictionary<string, object> { { "Uri", uriB } };
+
+            contextB = Hypertable.Context.Create(ConnectionString, properties);
+            clientB = contextB.CreateClient();
             nsB = clientB.OpenNamespace(NsName, OpenDispositions.OpenAlways);
             nsB.DropTable(typeof(TestMultipleInstances).Name, DropDispositions.IfExists);
             nsB.CreateTable(typeof(TestMultipleInstances).Name, Schema);
@@ -97,8 +99,8 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetAccrossInstances(MutatorSpec mutatorSpec) {
-            if (CtxKind == ContextKind.Thrift) {
-                return; // TODO
+            if (IsThrift) {
+                return; // TODO, check what is wrong
             }
 
             var key = new Key { ColumnFamily = "a" };
@@ -332,8 +334,8 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableAccrossInstancesAsync() {
-            if (CtxKind == ContextKind.Thrift) {
-                return; // TODO
+            if (IsThrift) {
+                return; // TODO, check what is wrong
             }
 
             InitializeTableData(tableA);
@@ -382,8 +384,8 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableAccrossInstancesBlockingAsync() {
-            if (CtxKind == ContextKind.Thrift) {
-                return; // TODO
+            if (IsThrift) {
+                return; // TODO, check what is wrong
             }
 
             InitializeTableData(tableA);
@@ -479,7 +481,7 @@ namespace Hypertable.Test
 
         #region Methods
 
-        private static int GetCellCount(Table _table) {
+        private static int GetCellCount(ITable _table) {
             int c = 0;
             using (var scanner = _table.CreateScanner()) {
                 var cell = new Cell();
@@ -491,7 +493,7 @@ namespace Hypertable.Test
             return c;
         }
 
-        private static void InitializeTableData(Table _table) {
+        private static void InitializeTableData(ITable _table) {
             var key = new Key();
             using (var mutator = _table.CreateMutator(MutatorSpec.CreateChunked())) {
                 for (int n = 0; n < CountA; ++n) {

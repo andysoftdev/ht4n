@@ -51,7 +51,7 @@ namespace Hypertable.Test
 
         private static readonly UTF8Encoding Encoding = new UTF8Encoding();
 
-        private static Table table;
+        private static ITable table;
 
         #endregion
 
@@ -67,6 +67,11 @@ namespace Hypertable.Test
         [ClassInitialize]
         public static void ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext) {
             table = EnsureTable(typeof(TestAsyncTableMutator), Schema);
+
+            if (!HasAsyncTableMutator) {
+                Assert.IsFalse(IsHyper);
+                Assert.IsFalse(IsThrift);
+            }
         }
 
         [TestMethod]
@@ -75,6 +80,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncDelete(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             var key = new Key { ColumnFamily = "a" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
@@ -465,6 +474,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncDeleteSet(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             Cell cell;
             var key = new Key();
             using (var asyncResult = new AsyncResult()) {
@@ -903,6 +916,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncRevisions(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             Assert.AreEqual(0, this.GetCellCount());
 
             using (var asyncResult = new AsyncResult()) {
@@ -986,6 +1003,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSet(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             var key = new Key { ColumnFamily = "a" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
@@ -1001,7 +1022,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(Count, this.GetCellCount());
             }
 
-            using (AsyncResult asyncResult = new BlockingAsyncResult()) {
+            using (var asyncResult = new BlockingAsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     for (int n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
@@ -1032,6 +1053,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetCollection(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell>();
             for (int n = 0; n < Count; ++n) {
@@ -1067,6 +1092,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetCollectionCreateKey(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell>();
             for (int n = 0; n < Count; ++n) {
@@ -1105,6 +1134,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetCollectionCreateKeyLazy(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell>();
             for (int n = 0; n < Count; ++n) {
@@ -1154,6 +1187,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetCollectionDifferentSizedValues(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             var sb = new StringBuilder();
             for (int n = 0; n < 0x40; ++n) {
                 sb.Append(Guid.NewGuid().ToString());
@@ -1217,6 +1254,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetCollectionHugeValues(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             const int K = 1024;
             const int M = K * K;
             var hugeValue = new byte[M];
@@ -1277,6 +1318,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetCollectionThreaded(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             var key = new Key { ColumnFamily = "a" };
             var cells1 = new List<Cell>();
             for (int n = 0; n < 16; ++n) {
@@ -1350,6 +1395,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetCreateKey(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             var key = new Key { ColumnFamily = "b" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
@@ -1382,6 +1431,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetCreateKeyLazy(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     for (int n = 0; n < Count; ++n) {
@@ -1424,7 +1477,17 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetDifferentContext(MutatorSpec mutatorSpec) {
-            using (var ctx = Context.Create(CtxKind == ContextKind.Hyper ? ContextKind.Thrift : ContextKind.Hyper, Host))
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
+            if (!IsHyper && !IsThrift) {
+                Assert.Fail("Check implementation below for the new provider {0}", ProviderName);
+            }
+
+            var properties = new Dictionary<string, object> { { "Provider", IsHyper ? "Thrift" : "Hyper" } };
+
+            using (var ctx = Hypertable.Context.Create(ConnectionString, properties))
             using (var client = ctx.CreateClient()) {
                 string nsNameOther = NsName + "/other";
                 try {
@@ -1477,8 +1540,12 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetMultipleTables(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             const int CountTables = 10;
-            var tables = new List<Table>();
+            var tables = new List<ITable>();
             try {
                 for (int t = 0; t < CountTables; ++t) {
                     var table2 = EnsureTable(string.Format("AsyncSetMultipleTables-{0}", t), Schema);
@@ -1538,6 +1605,10 @@ namespace Hypertable.Test
         }
 
         public void AsyncSetThreaded(MutatorSpec mutatorSpec) {
+            if (!HasAsyncTableMutator) {
+                return;
+            }
+
             var key = new Key { ColumnFamily = "a" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
@@ -1596,11 +1667,29 @@ namespace Hypertable.Test
             Delete(table);
         }
 
+        [TestMethod]
+        public void Unsupported() {
+            if (HasAsyncTableMutator) {
+                return;
+            }
+
+            try {
+                using (var asyncResult = new AsyncResult()) {
+                    using (table.CreateAsyncMutator(asyncResult, null)) {
+                    }
+
+                    asyncResult.Join();
+                }
+            }
+            catch (NotImplementedException) {
+            }
+        }
+
         #endregion
 
         #region Methods
 
-        private static int GetCellCount(Table t) {
+        private static int GetCellCount(ITable t) {
             if (t == null) {
                 throw new ArgumentNullException("t");
             }

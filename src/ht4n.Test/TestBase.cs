@@ -40,11 +40,11 @@ namespace Hypertable.Test
     {
         #region Constants and Fields
 
-        private static Client client;
+        private static IClient client;
 
-        private static Context ctx;
+        private static IContext context;
 
-        private static Namespace ns;
+        private static INamespace ns;
 
         #endregion
 
@@ -53,44 +53,102 @@ namespace Hypertable.Test
         /// <summary>
         /// Gets the Hypertable client.
         /// </summary>
-        protected static Client Client {
+        protected static IClient Client {
             get {
-                return client ?? (client = Ctx.CreateClient());
+                return client ?? (client = Context.CreateClient());
             }
         }
+
+        /// <summary>
+        /// Gets the connection string.
+        /// </summary>
+        protected static string ConnectionString { get; private set; }
 
         /// <summary>
         /// Gets the Hypertable context.
         /// </summary>
-        protected static Context Ctx {
+        protected static IContext Context {
             get {
-                return ctx ?? (ctx = Context.Create(CtxKind, Host));
+                return context ?? (context = Hypertable.Context.Create(ConnectionString));
             }
         }
 
         /// <summary>
-        ///   Gets the 'test' context kind.
+        /// Returns true if the actual privider supports asynchronous table mutator.
         /// </summary>
-        protected static ContextKind CtxKind { get; private set; }
+        protected static bool HasAsyncTableMutator {
+            get {
+                return Context.HasFeature(ContextFeature.AsyncTableMutator);
+            }
+        }
 
         /// <summary>
-        /// Gets the 'test' Hypertable host name.
+        /// Returns true if the actual privider supports asynchronous table scanner.
         /// </summary>
-        protected static string Host { get; private set; }
+        protected static bool HasAsyncTableScanner {
+            get {
+                return Context.HasFeature(ContextFeature.AsyncTableScanner);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the actual privider supports HQL.
+        /// </summary>
+        protected static bool HasHQL {
+            get {
+                return Context.HasFeature(ContextFeature.HQL);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the actual privider supports periodic flush table mutator.
+        /// </summary>
+        protected static bool HasPeriodicFlushTableMutator {
+            get {
+                return Context.HasFeature(ContextFeature.PeriodicFlushTableMutator);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the current provider is the hypertable native provider.
+        /// </summary>
+        protected static bool IsHyper {
+            get {
+                return Equals("Hyper", ProviderName);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the current provider is the hypertable thrift provider.
+        /// </summary>
+        protected static bool IsThrift {
+            get {
+                return Equals("Thrift", ProviderName);
+            }
+        }
 
         /// <summary>
         /// Gets the Hypertable namepace.
         /// </summary>
-        protected static Namespace Ns {
+        protected static INamespace Ns {
             get {
                 return ns ?? (ns = Client.OpenNamespace(NsName, OpenDispositions.OpenAlways));
             }
         }
 
         /// <summary>
-        /// Gets the 'test' namespace name.
+        /// Gets the namespace name.
         /// </summary>
         protected static string NsName { get; private set; }
+
+        /// <summary>
+        /// Returns the current provider name.
+        /// </summary>
+        protected static string ProviderName {
+            get {
+                return (string)context.Properties["Hypertable.Client.Provider"];
+            }
+        }
 
         #endregion
 
@@ -111,8 +169,8 @@ namespace Hypertable.Test
                 client.Dispose();
             }
 
-            if (ctx != null) {
-                ctx.Dispose();
+            if (context != null) {
+                context.Dispose();
             }
         }
 
@@ -122,15 +180,10 @@ namespace Hypertable.Test
         /// <param name = "testContext">The tets context.</param>
         [AssemblyInitialize]
         public static void AssemblyInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext) {
-            NsName = ConfigurationManager.AppSettings["TestNamespace"].Trim();
+            ConnectionString = ConfigurationManager.AppSettings["ConnectionString"].Trim();
+            NsName = ConfigurationManager.AppSettings["Namespace"].Trim();
             Assert.IsFalse(string.IsNullOrEmpty(NsName));
             Assert.AreNotEqual(NsName, "/"); // avoid using root namespace
-
-            Host = ConfigurationManager.AppSettings["TestHost"].Trim();
-            Assert.IsFalse(string.IsNullOrEmpty(Host));
-
-            CtxKind = (ContextKind)Enum.Parse(typeof(ContextKind), ConfigurationManager.AppSettings["TestContextKind"].Trim());
-
             Logging.Logfile = Assembly.GetAssembly(typeof(TestBase)).Location + ".log";
             Logging.LogMessagePublished = message => Trace.WriteLine(message);
         }
@@ -143,7 +196,7 @@ namespace Hypertable.Test
         /// Deletes all cells in the table specified.
         /// </summary>
         /// <param name = "table">Table.</param>
-        protected static void Delete(Table table) {
+        protected static void Delete(ITable table) {
             using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true })) {
                 using (var mutator = table.CreateMutator()) {
                     var cell = new Cell();
@@ -154,9 +207,9 @@ namespace Hypertable.Test
             }
 
             int c = 0;
-            using( var scanner = table.CreateScanner() ) {
+            using (var scanner = table.CreateScanner()) {
                 var cell = new Cell();
-                while( scanner.Next(cell) ) {
+                while (scanner.Next(cell)) {
                     ++c;
                 }
             }
@@ -169,7 +222,7 @@ namespace Hypertable.Test
         /// </summary>
         /// <param name = "table">Table.</param>
         /// <param name = "cf">Column family.</param>
-        protected static void DeleteColumnFamily(Table table, string cf) {
+        protected static void DeleteColumnFamily(ITable table, string cf) {
             using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true }.AddColumn(cf))) {
                 using (var mutator = table.CreateMutator()) {
                     var cell = new Cell();
@@ -194,7 +247,7 @@ namespace Hypertable.Test
         /// <param name = "type">Table name (type.Name).</param>
         /// <param name = "schema">Table xml schema.</param>
         /// <returns>Opend table.</returns>
-        protected static Table EnsureTable(Type type, string schema) {
+        protected static ITable EnsureTable(Type type, string schema) {
             return EnsureTable(type.Name, schema);
         }
 
@@ -204,7 +257,7 @@ namespace Hypertable.Test
         /// <param name = "tableName">Table name.</param>
         /// <param name = "schema">Table xml schema.</param>
         /// <returns>Opend table.</returns>
-        protected static Table EnsureTable(string tableName, string schema) {
+        protected static ITable EnsureTable(string tableName, string schema) {
             return Ns.OpenTable(tableName, schema, OpenDispositions.CreateAlways);
         }
 

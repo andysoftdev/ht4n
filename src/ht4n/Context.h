@@ -25,21 +25,26 @@
 #error "requires /clr"
 #endif
 
-#include "ContextKind.h"
+#include "IContext.h"
 #include "ht4c.Common/Types.h"
 
 namespace ht4c {
 	class Context;
 }
 
+namespace ht4c { namespace Common {
+	class Properties;
+} }
+
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Runtime::InteropServices;
 	using namespace System::Collections::Generic;
 
-	ref class Client;
+	interface class IClient;
 
 	/// <summary>
-	/// Represents a Hypertable context, handles connection to a Hypertable instance.
+	/// Represents a Hypertable context factory.
 	/// </summary>
 	/// <remarks>
 	/// Default initialization of the Hypertable context uses the configuration (conf/hypertable.cfg) of
@@ -48,8 +53,8 @@ namespace Hypertable {
 	/// <example>
 	/// The following example shows how to create a Hypertable context.
 	/// <code>
-	/// using( Context ctx = Context.Create(ContextKind.Hyper, "localhost") ) {
-	///    using( Client client = ctx.CreateClient() ) {
+	/// using( var ctx = Context.Create("Provider=Hyper; Uri=localhost") ) {
+	///    using( var client = ctx.CreateClient() ) {
 	///       // use client
 	///    }
 	/// }
@@ -58,55 +63,52 @@ namespace Hypertable {
 	/// <code>
 	/// IDictionary&lt;string, object&gt; properties = new Dictionary&lt;string, object&gt;();
 	/// properties.Add("Hypertable.Logging.Level", "info");
-	/// using( Context ctx = Context.Create(ContextKind.Hyper, "localhost", properties) ) {
-	///    using( Client client = ctx.CreateClient() ) {
+	/// using( var ctx = Context.Create("Provider=Hyper; Uri=localhost", properties) ) {
+	///    using( var client = ctx.CreateClient() ) {
 	///       // use client
 	///    }
 	/// }
 	/// </code>
 	/// The following example shows how to create a Hypertable context using an external configuration file.
 	/// <code>
-	/// using( Context ctx = Context.Create(ContextKind.Hyper, "--config TestConfiguration.cfg", false) ) {
-	///    using( Client client = ctx.CreateClient() ) {
+	/// using( var ctx = Context.Create("Provider=Hyper; Uri=localhost; config=TestConfiguration.cfg") ) {
+	///    using( var client = ctx.CreateClient() ) {
 	///       // use client
 	///    }
 	/// }
 	/// </code>
 	/// The following example shows how to access the configuration properties.
 	/// <code>
-	/// using( Context ctx = Context.Create(ContextKind.Thrift, "localhost") ) {
+	/// using( var ctx = Context.Create("Provider=Thrift; Uri=localhost") ) {
 	///    int thriftBrokerTimeout = (int)ctx.Properties["ThriftBroker.Timeout"];
 	/// }
 	/// </code>
 	/// </example>
-	public ref class Context sealed : public IDisposable {
+	/// <seealso cref="IContext"/>
+	public ref class Context sealed : public IContext {
 
 		public:
 
-			/// <summary>
-			/// Gets the context kind.
-			/// </summary>
-			/// <seealso cref="ContextKind"/>
-			property Hypertable::ContextKind ContextKind {
-				Hypertable::ContextKind get();
-			}
+			#pragma region IContext properties
 
 			/// <summary>
 			/// Gets the configuration properties.
 			/// </summary>
 			/// <remarks>
-			/// Property values support following types:
+			/// Following property types will be forwarded to the native ht4c providers:
 			/// <table class="comment">
-			/// <tr><td>string</td><td>IList&lt;string&gt;</td></tr>
-			/// <tr><td>int</td><td>IList&lt;int&gt;</td></tr>
-			/// <tr><td>long</td><td>IList&lt;long&gt;</td></tr>
+			/// <tr><td>string</td><td>IEnumerable&lt;string&gt;</td></tr>
+			/// <tr><td>int</td><td>IEnumerable&lt;int&gt;</td></tr>
+			/// <tr><td>long</td><td>IEnumerable&lt;long&gt;</td></tr>
 			/// <tr><td>ushort</td></tr>
-			/// <tr><td>double</td><td>IList&lt;double&gt;</td></tr>
+			/// <tr><td>double</td><td>IEnumerable&lt;double&gt;</td></tr>
 			/// <tr><td>bool</td></tr>
 			/// </table>
 			/// </remarks>
 			property IDictionary<String^, Object^>^ Properties {
-				IDictionary<String^, Object^>^ get();
+				virtual IDictionary<String^, Object^>^ get() {
+					return properties;
+				}
 			}
 
 			/// <summary>
@@ -114,122 +116,89 @@ namespace Hypertable {
 			/// </summary>
 			/// <remarks>true if the object has been disposed, otherwise false.</remarks>
 			property bool IsDisposed {
-				bool get( ) {
+				virtual bool get( ) {
 					return disposed;
 				}
 			}
 
+			#pragma endregion
+
 			/// <summary>
-			/// Creates a new Context instance.
+			/// Creates a new Context instance using specified connection string.
 			/// </summary>
-			/// <param name="ctxKind">Context kind.</param>
+			/// <param name="connectionString">Connection string.</param>
 			/// <returns>New Context instance.</returns>
-			/// <seealso cref="ContextKind"/>
-			static Context^ Create( Hypertable::ContextKind ctxKind );
+			static IContext^ Create( String^ connectionString );
 
 			/// <summary>
 			/// Creates a new Context instance using specified configuration properties.
 			/// </summary>
-			/// <param name="ctxKind">Context kind.</param>
 			/// <param name="properties">Configuration properties.</param>
 			/// <returns>New Context instance.</returns>
 			/// <remarks>
-			/// Property values support following types:
+			/// Following property types will be forwarded to the native ht4c providers:
 			/// <table class="comment">
-			/// <tr><td>string</td><td>IList&lt;string&gt;</td></tr>
-			/// <tr><td>int</td><td>IList&lt;int&gt;</td></tr>
-			/// <tr><td>long</td><td>IList&lt;long&gt;</td></tr>
+			/// <tr><td>string</td><td>IEnumerable&lt;string&gt;</td></tr>
+			/// <tr><td>int</td><td>IEnumerable&lt;int&gt;</td></tr>
+			/// <tr><td>long</td><td>IEnumerable&lt;long&gt;</td></tr>
 			/// <tr><td>ushort</td></tr>
-			/// <tr><td>double</td><td>IList&lt;double&gt;</td></tr>
+			/// <tr><td>double</td><td>IEnumerable&lt;double&gt;</td></tr>
 			/// <tr><td>bool</td></tr>
 			/// </table>
 			/// </remarks>
-			/// <seealso cref="ContextKind"/>
-			static Context^ Create( Hypertable::ContextKind ctxKind, IDictionary<String^, Object^>^ properties );
+			static IContext^ Create( IDictionary<String^, Object^>^ properties );
 
 			/// <summary>
-			/// Creates a new Context instance using specified Hypertable host.
+			/// Creates a new Context instance using specified configuration properties.
 			/// </summary>
-			/// <param name="ctxKind">Context kind.</param>
-			/// <param name="host">Host name.</param>
+			/// <param name="connectionString">Connection string.</param>
+			/// <param name="properties">Configuration properties, might overwrite those properties from connection string.</param>
 			/// <returns>New Context instance.</returns>
 			/// <remarks>
-			/// The host parameter specifies the Hyperspace host or the ThriftBroker host depending on
-			/// the ctxKind parameter.
-			/// </remarks>
-			/// <seealso cref="ContextKind"/>
-			static Context^ Create( Hypertable::ContextKind ctxKind, String^ host );
-
-			/// <summary>
-			/// Creates a new Context instance using specified Hypertable host and port.
-			/// </summary>
-			/// <param name="ctxKind">Context kind.</param>
-			/// <param name="host">Host name.</param>
-			/// <param name="port">Port number.</param>
-			/// <returns>New Context instance.</returns>
-			/// <remarks>
-			/// The host and port parameters specify the Hyperspace host:port or the ThriftBroker host:port
-			/// depending on the ctxKind parameter.
-			/// </remarks>
-			/// <seealso cref="ContextKind"/>
-			static Context^ Create( Hypertable::ContextKind ctxKind, String^ host, uint16_t port );
-
-			/// <summary>
-			/// Creates a new Context instance using specified Hypertable host and configuration properties.
-			/// </summary>
-			/// <param name="ctxKind">Context kind.</param>
-			/// <param name="host">Host name.</param>
-			/// <param name="properties">Configuration properties.</param>
-			/// <returns>New Context instance.</returns>
-			/// <remarks>
-			/// The host parameter specifies the Hyperspace host or the ThriftBroker host depending on
-			/// the ctxKind parameter.<br/><br/>
-			/// Property values support following types:
+			/// Following property types will be forwarded to the native ht4c providers:
 			/// <table class="comment">
-			/// <tr><td>string</td><td>IList&lt;string&gt;</td></tr>
-			/// <tr><td>int</td><td>IList&lt;int&gt;</td></tr>
-			/// <tr><td>long</td><td>IList&lt;long&gt;</td></tr>
+			/// <tr><td>string</td><td>IEnumerable&lt;string&gt;</td></tr>
+			/// <tr><td>int</td><td>IEnumerable&lt;int&gt;</td></tr>
+			/// <tr><td>long</td><td>IEnumerable&lt;long&gt;</td></tr>
 			/// <tr><td>ushort</td></tr>
-			/// <tr><td>double</td><td>IList&lt;double&gt;</td></tr>
+			/// <tr><td>double</td><td>IEnumerable&lt;double&gt;</td></tr>
 			/// <tr><td>bool</td></tr>
 			/// </table>
 			/// </remarks>
-			/// <seealso cref="ContextKind"/>
-			static Context^ Create( Hypertable::ContextKind ctxKind, String^ host, IDictionary<String^, Object^>^ properties );
+			static IContext^ Create( String^ connectionString, IDictionary<String^, Object^>^ properties );
 
 			/// <summary>
-			/// Creates a new Context instance using specified Hypertable host, port and configuration properties.
+			/// Registers a custom context provider.
 			/// </summary>
-			/// <param name="ctxKind">Context kind.</param>
-			/// <param name="host">Host name.</param>
-			/// <param name="port">Port number.</param>
-			/// <param name="properties">Configuration properties.</param>
-			/// <returns>New Context instance.</returns>
-			/// <remarks>
-			/// The host and port parameters specify the Hyperspace host:port or the ThriftBroker host:port depending
-			/// on the ctxKind.<br/><br/>
-			/// Property values support following types:
-			/// <table class="comment">
-			/// <tr><td>string</td><td>IList&lt;string&gt;</td></tr>
-			/// <tr><td>int</td><td>IList&lt;int&gt;</td></tr>
-			/// <tr><td>long</td><td>IList&lt;long&gt;</td></tr>
-			/// <tr><td>ushort</td></tr>
-			/// <tr><td>double</td><td>IList&lt;double&gt;</td></tr>
-			/// <tr><td>bool</td></tr>
-			/// </table>
-			/// </remarks>
-			/// <seealso cref="ContextKind"/>
-			static Context^ Create( Hypertable::ContextKind ctxKind, String^ host, uint16_t port, IDictionary<String^, Object^>^ properties );
+			/// <param name="providerName">Provider name.</param>
+			/// <param name="provider">Provider function.</param>
+			static void RegisterProvider( String^ providerName, Func<IDictionary<String^, Object^>^, IContext^>^ provider );
 
 			/// <summary>
-			/// Creates a new Context instance using command line arguments.
+			/// Unregisters a custom context provider.
 			/// </summary>
-			/// <param name="ctxKind">Context kind.</param>
-			/// <param name="commandLine">Command line arguments.</param>
-			/// <param name="includesModuleFileName">If true the commandLine parameter contains the module filename.</param>
-			/// <returns>New Context instance.</returns>
-			/// <seealso cref="ContextKind"/>
-			static Context^ Create( Hypertable::ContextKind ctxKind, String^ commandLine, bool includesModuleFileName );
+			/// <param name="providerName">Provider name.</param>
+			/// <returns>true if the provoder with the name specified has been removed, otherwise false.</returns>
+			static bool UnregisterProvider( String^ providerName );
+
+			#pragma region IContext methods
+
+			/// <summary>
+			/// Creates a new Client instance.
+			/// </summary>
+			/// <returns>New Client instance.</returns>
+			/// <seealso cref="IClient"/>
+			virtual Hypertable::IClient^ CreateClient( );
+
+			/// <summary>
+			/// Returns true if the actual provider supports the feature specified, otherwise false.
+			/// </summary>
+			/// <param name="contextFeature">Context feature.</param>
+			/// <returns>true if the actual provider supports the feature specified, otherwise false.</returns>
+			/// <seealso cref="ContextFeature"/>
+			virtual bool HasFeature( ContextFeature contextFeature );
+
+			#pragma endregion
 
 			/// <summary>
 			/// Clean up all managed and unmanaged resources.
@@ -241,30 +210,33 @@ namespace Hypertable {
 			/// </summary>
 			!Context( );
 
-			/// <summary>
-			/// Creates a new Client instance.
-			/// </summary>
-			/// <returns>New Client instance.</returns>
-			Hypertable::Client^ CreateClient( );
-
-		internal:
+	internal:
 
 			ht4c::Context* get();
 
 		private:
 
 			static Context( );
-			Context( Hypertable::ContextKind ctxKind, String^ host, UInt16 port, IDictionary<String^, Object^>^ properties );
-			Context( Hypertable::ContextKind ctxKind, String^ commandLine, bool includesModuleFileName );
+			Context( IDictionary<String^, Object^>^ properties );
 
+			static IContext^ CreateProvider( IDictionary<String^, Object^>^ properties );
+			static bool GetProvider( IDictionary<String^, Object^>^ properties, [Out] String^% providerName, [Out] Func<IDictionary<String^, Object^>^, IContext^>^%  provider );
+			static String^ GetProviderName( IDictionary<String^, Object^>^ properties );
+			static void ValidateUri( IDictionary<String^, Object^>^ properties );
+			static IDictionary<String^, Object^>^ MergeProperties( String^ connectionString, IDictionary<String^, Object^>^ properties );
+			static IDictionary<String^, Object^>^ From( ht4c::Common::Properties* properties );
+			static ht4c::Common::Properties* From( IDictionary<String^, Object^>^ properties, [Out] Dictionary<String^, Object^>^% remainingProperties );
 			static void RegisterUnload( );
 			static const char* LoggingLevel( );
 			static void Unload( Object^, EventArgs^ );
 
+
 			ht4c::Context* ctx;
 			IDictionary<String^, Object^>^ properties;
-			static Object^ syncRoot = gcnew Object();
 			bool disposed;
+
+			static Dictionary<String^, Func<IDictionary<String^, Object^>^, IContext^>^>^ providers = gcnew Dictionary<String^, Func<IDictionary<String^, Object^>^, IContext^>^>();
+			static Object^ syncRoot = gcnew Object();
 	};
 
 }

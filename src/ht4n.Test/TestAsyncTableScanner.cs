@@ -53,7 +53,7 @@ namespace Hypertable.Test
 
         private static readonly UTF8Encoding Encoding = new UTF8Encoding();
 
-        private static Table table;
+        private static ITable table;
 
         #endregion
 
@@ -70,12 +70,21 @@ namespace Hypertable.Test
         public static void ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext) {
             table = EnsureTable(typeof(TestAsyncTableScanner), Schema);
             InitializeTableData(table);
+
+            if (!HasPeriodicFlushTableMutator) {
+                Assert.IsFalse(IsHyper);
+                Assert.IsFalse(IsThrift);
+            }
         }
 
         [TestMethod]
         public void ScanMultipleTableAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             const int CountTables = 10;
-            var tables = new List<Table>();
+            var tables = new List<ITable>();
             try {
                 for (int t = 0; t < CountTables; ++t) {
                     var testTable = EnsureTable(string.Format("ScanMultipleTableBlockingAsync-{0}", t), Schema);
@@ -148,8 +157,12 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanMultipleTableBlockingAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             const int CountTables = 10;
-            var tables = new List<Table>();
+            var tables = new List<ITable>();
             try {
                 for (int t = 0; t < CountTables; ++t) {
                     var testTable = EnsureTable(string.Format("ScanMultipleTableBlockingAsync-{0}", t), Schema);
@@ -203,6 +216,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanMultipleTableColumnFamilyAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             using (var table2 = EnsureTable("ScanMultipleTableColumnFamilyAsync", Schema)) {
                 InitializeTableData(table2);
 
@@ -250,6 +267,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanMultipleTableColumnFamilyBlockingAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             using (var table2 = EnsureTable("ScanMultipleTableColumnFamilyBlockingAsync", Schema)) {
                 InitializeTableData(table2);
 
@@ -293,6 +314,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             var param = new object();
             int c = 0;
             int d = 0;
@@ -343,6 +368,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableBlockingAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             int c = 0;
             using (var asyncResult = new BlockingAsyncResult(4 * 1024)) {
                 AsyncScannerContext asyncScannerContext;
@@ -375,6 +404,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableCancelAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             for (int r = 0; r < 5; ++r) {
                 int c = 0;
                 using (var asyncResult = new AsyncResult(
@@ -397,8 +430,8 @@ namespace Hypertable.Test
                     Assert.IsTrue(asyncResult.IsCancelled);
                     Assert.AreEqual(CountA, c);
 
-                    // The official Hypertable version does not support re-using of the future object
-                    if (CtxKind == ContextKind.Hyper) {
+                    // The official Hypertable version does not support re-using of the future object using the thrift API
+                    if (!IsThrift) {
                         c = 0;
                         table.BeginScan(
                             asyncResult, 
@@ -423,8 +456,8 @@ namespace Hypertable.Test
                     asyncResult.Cancel();
                     Assert.IsTrue(asyncResult.IsCancelled);
 
-                    // The official Hypertable version does not support re-using of the future object
-                    if (CtxKind == ContextKind.Hyper) {
+                    // The official Hypertable version does not support re-using of the future object using the thridt API
+                    if (!IsThrift) {
                         c = 0;
                         table.BeginScan(
                             asyncResult, 
@@ -446,6 +479,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableCancelAsyncScanner() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             var rng = new Random();
             for (int r = 0; r < 5; ++r) {
                 int ca = 0;
@@ -560,6 +597,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableCancelBlockingAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             for (int r = 0; r < 5; ++r) {
                 int c = 0;
                 using (var asyncResult = new BlockingAsyncResult()) {
@@ -583,8 +624,8 @@ namespace Hypertable.Test
                     Assert.IsTrue(asyncResult.IsCancelled);
                     Assert.AreEqual(CountC, c);
 
-                    // The official Hypertable version does not support re-using of the future object
-                    if (CtxKind == ContextKind.Hyper) {
+                    // The official Hypertable version does not support re-using of the future object using the thrift API
+                    if (!IsThrift) {
                         c = 0;
                         table.BeginScan(asyncResult);
                         Assert.IsFalse(asyncResult.IsCancelled);
@@ -603,6 +644,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableCancelBlockingAsyncScanner() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             var rng = new Random();
             var scanSpecA = new ScanSpec().AddColumn("a");
             var scanSpecB = new ScanSpec().AddColumn("a").AddColumn("b").AddColumn("c");
@@ -679,7 +724,16 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableDifferentContextAsync() {
-            using (var ctx = Context.Create(CtxKind == ContextKind.Hyper ? ContextKind.Thrift : ContextKind.Hyper, Host))
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
+            if (!IsHyper && !IsThrift) {
+                Assert.Fail("Check implementation below for the new provider {0}", ProviderName);
+            }
+
+            var properties = new Dictionary<string, object> { { "Provider", IsHyper ? "Thrift" : "Hyper" } };
+            using (var ctx = Hypertable.Context.Create(ConnectionString, properties))
             using (var client = ctx.CreateClient()) {
                 string nsNameOther = NsName + "/other";
                 try {
@@ -736,7 +790,16 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableDifferentContextBlockingAsync() {
-            using (var ctx = Context.Create(CtxKind == ContextKind.Hyper ? ContextKind.Thrift : ContextKind.Hyper, Host))
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
+            if (!IsHyper && !IsThrift) {
+                Assert.Fail("Check implementation below for the new provider {0}", ProviderName);
+            }
+
+            var properties = new Dictionary<string, object> { { "Provider", IsHyper ? "Thrift" : "Hyper" } };
+            using (var ctx = Hypertable.Context.Create(ConnectionString, properties))
             using (var client = ctx.CreateClient()) {
                 string nsNameOther = NsName + "/other";
                 try {
@@ -789,6 +852,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableKeyOnlyAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             int c = 0;
             using (var asyncResult = new AsyncResult(
                 (ctx, cells) =>
@@ -812,6 +879,10 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableMaxRowsAsync() {
+            if (!HasAsyncTableScanner) {
+                return;
+            }
+
             int c = 0;
             using (var asyncResult = new AsyncResult(
                 (ctx, cells) =>
@@ -859,11 +930,26 @@ namespace Hypertable.Test
             DeleteColumnFamily(table, "g");
         }
 
+        [TestMethod]
+        public void Unsupported() {
+            if (HasAsyncTableScanner) {
+                return;
+            }
+
+            try {
+                using (var asyncResult = new AsyncResult((ctx, cells) => AsyncCallbackResult.Continue)) {
+                    asyncResult.Join();
+                }
+            }
+            catch (NotImplementedException) {
+            }
+        }
+
         #endregion
 
         #region Methods
 
-        private static void InitializeTableData(Table _table) {
+        private static void InitializeTableData(ITable _table) {
             var key = new Key();
             using (var mutator = _table.CreateMutator(MutatorSpec.CreateChunked())) {
                 for (int n = 0; n < CountA; ++n) {

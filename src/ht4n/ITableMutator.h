@@ -42,7 +42,7 @@ namespace Hypertable {
 	/// The following example shows how to insert a cell.
 	/// <code>
 	/// byte[] value = ...;
-	/// using( ITableMutator mutator = table.CreateMutator() ) {
+	/// using( var mutator = table.CreateMutator() ) {
 	///    Key key = new Key(Guid.NewGuid().ToString(), "cf");
 	///    mutator.Set( key, value );
 	/// }
@@ -50,7 +50,7 @@ namespace Hypertable {
 	/// The following example shows how to insert a cell and create a unique row key.
 	/// <code>
 	/// byte[] value = ...;
-	/// using( ITableMutator mutator = table.CreateMutator() ) {
+	/// using( var mutator = table.CreateMutator() ) {
 	///    Key key = new Key() { ColumnFamily = "cf" }; // w'out row key
 	///    mutator.Set( key, value, true ); // create row key and assign to key
 	/// }
@@ -58,19 +58,19 @@ namespace Hypertable {
 	/// The following example shows how to delete an entire row.
 	/// <code>
 	/// string row = ...;
-	/// using( ITableMutator mutator = table.CreateMutator() ) {
+	/// using( var mutator = table.CreateMutator() ) {
 	///    mutator.Delete( row );
 	/// }
 	/// </code>
 	/// The following example shows how to delete all cells in row, column family:column qualifier.
 	/// <code>
 	/// string row = ...;
-	/// using( ITableMutator mutator = table.CreateMutator() ) {
+	/// using( var mutator = table.CreateMutator() ) {
 	///    mutator.Delete( new Key(row, "cf", "cq") );
 	/// }
 	/// // or
-	/// Key key = new Key( row, "cf", "cq" );
-	/// using( ITableMutator mutator = table.CreateMutator() ) {
+	/// var key = new Key( row, "cf", "cq" );
+	/// using( var mutator = table.CreateMutator() ) {
 	///    mutator.Set( new Cell(key, CellFlag::DeleteCell) );
 	/// }
 	/// </code>

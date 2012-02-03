@@ -38,7 +38,7 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void CreateIntermediate() {
-            using (var client = Ctx.CreateClient()) {
+            using (var client = Context.CreateClient()) {
                 Assert.IsFalse(client.NamespaceExists("test/abc/def/ghi"));
                 client.CreateNamespace("test/abc/def/ghi", CreateDispositions.CreateIntermediate);
                 using (client.OpenNamespace("test/abc/def/ghi/jkl/mno", OpenDispositions.OpenAlways | OpenDispositions.CreateIntermediate)) {
@@ -65,7 +65,7 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void CreateOpenDropNamespaceA() {
-            using (var client = Ctx.CreateClient()) {
+            using (var client = Context.CreateClient()) {
                 try {
                     client.OpenNamespace("ns_does_not_exists");
                     Assert.Fail();
@@ -98,7 +98,7 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void CreateOpenDropNamespaceB() {
-            using (var client = Ctx.CreateClient()) {
+            using (var client = Context.CreateClient()) {
                 string[] namespaces = { "/test-x", "/test-x/1", "/test-x/1/2", "/test-x/1/2/3" };
 
                 client.DropNamespace("/test-x", DropDispositions.Complete);
@@ -145,7 +145,7 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void CreateOpenDropNamespaceC() {
-            using (var client = Ctx.CreateClient()) {
+            using (var client = Context.CreateClient()) {
                 string[] namespaces = { "/test-x/1/2", "/test-x/1/2/3/4/5/6" };
 
                 client.DropNamespace("/test-x", DropDispositions.Complete);
@@ -166,7 +166,7 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void CreateOpenDropNamespaceUseBaseNamespace() {
-            using (var client = Ctx.CreateClient()) {
+            using (var client = Context.CreateClient()) {
                 string[] namespacesA = { "/test-x", "/test-y" };
 
                 string[] namespacesB = { "/B1", "B2/" };
@@ -221,7 +221,7 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void CreateOpenDropNamespaceWithBackslashes() {
-            using (var client = Ctx.CreateClient()) {
+            using (var client = Context.CreateClient()) {
                 string[] namespaces = { @"\", @"\\", @"\test", @"test\", @"\test\", @"\test\1", @"test\1", @"test\1\", @"\test\1\" };
 
                 foreach (string name in namespaces) {
@@ -243,7 +243,7 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void CreateOpenDropRoot() {
-            using (var client = Ctx.CreateClient()) {
+            using (var client = Context.CreateClient()) {
                 try {
                     client.CreateNamespace("/");
                     Assert.Fail();

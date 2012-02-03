@@ -43,7 +43,7 @@ namespace Hypertable {
 	/// <example>
 	/// The following example shows how to scan a multiple tables asynchronously.
 	/// <code>
-	/// using( BlockingAsyncResult asynResult = new BlockingAsyncResult() ) {
+	/// using( var asynResult = new BlockingAsyncResult() ) {
 	///    tableA.BeginScan(asynResult);
 	///    tableB.BeginScan(asynResult);
 	///    AsyncScannerContext asyncScannerContext;
@@ -77,7 +77,7 @@ namespace Hypertable {
 			/// </summary>
 			/// <param name="cells">Available cells. This parameter is passed uninitialized.</param>m>
 			/// <returns>true if all outstanding operations have been completed.</returns>
-			/// <seealso cref="Table"/>
+			/// <seealso cref="ITable"/>
 			bool TryGetCells( [Out] IList<Cell^>^% cells );
 
 			/// <summary>
@@ -87,7 +87,7 @@ namespace Hypertable {
 			/// <param name="asyncScannerContext">Table scanner context.</param>
 			/// <param name="cells">Available cells. This parameter is passed uninitialized.</param>m>
 			/// <returns>true if all outstanding operations have been completed.</returns>
-			/// <seealso cref="Table"/>
+			/// <seealso cref="ITable"/>
 			bool TryGetCells( [Out] AsyncScannerContext^% asyncScannerContext, [Out] IList<Cell^>^% cells );
 
 			/// <summary>
@@ -97,7 +97,7 @@ namespace Hypertable {
 			/// <param name="timeout">Timespan to wait before a timeout occurs.</param>
 			/// <param name="cells">Available cells. This parameter is passed uninitialized.</param>m>
 			/// <returns>true if all outstanding operations have been completed.</returns>
-			/// <seealso cref="Table"/>
+			/// <seealso cref="ITable"/>
 			bool TryGetCells( TimeSpan timeout, [Out] IList<Cell^>^% cells );
 
 			/// <summary>
@@ -108,13 +108,13 @@ namespace Hypertable {
 			/// <param name="asyncScannerContext">Table scanner context.</param>
 			/// <param name="cells">Available cells. This parameter is passed uninitialized.</param>m>
 			/// <returns>true if all outstanding operations have been completed.</returns>
-			/// <seealso cref="Table"/>
+			/// <seealso cref="ITable"/>
 			bool TryGetCells( TimeSpan timeout, [Out] AsyncScannerContext^% asyncScannerContext, [Out] IList<Cell^>^% cells );
 
 	internal:
 
-			virtual void AttachAsyncScanner( Common::ContextKind contextKind, AsyncScannerContext^ asyncScannerContext, AsyncScannerCallback^ callback ) override;
-			virtual void AttachAsyncMutator( Common::ContextKind contextKind, AsyncMutatorContext^ asyncMutatorContext, ITableMutator^ mutator ) override;
+			virtual void AttachAsyncScanner( AsyncScannerContext^ asyncScannerContext, AsyncScannerCallback^ callback ) override;
+			virtual void AttachAsyncMutator( AsyncMutatorContext^ asyncMutatorContext, ITableMutator^ mutator ) override;
 			virtual Common::AsyncResult* CreateAsyncResult( Common::ContextKind contextKind, Common::AsyncResultSink* asyncResultSink ) override;
 
 	private:

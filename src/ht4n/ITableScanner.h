@@ -39,13 +39,13 @@ namespace Hypertable {
 	/// <example>
 	/// The following example shows how to scan all cells of a table.
 	/// <code>
-	/// using( ITablScanner scanner = table.CreateScanner() ) {
+	/// using( var scanner = table.CreateScanner() ) {
 	///    foreach( cell cell in scanner ) {
 	///       // process cell
 	///    }
 	/// }
 	/// // or
-	/// using( ITablScanner scanner = table.CreateScanner() ) {
+	/// using( var scanner = table.CreateScanner() ) {
 	///    Cell cell;
 	///    while( scanner.Next(out cell) ) {
 	///       // process cell
@@ -54,7 +54,7 @@ namespace Hypertable {
 	/// </code>
 	/// The following example shows how to scan all cells of a table using a single cell instance.
 	/// <code>
-	/// using( ITablScanner scanner = table.CreateScanner() ) {
+	/// using( var scanner = table.CreateScanner() ) {
 	///    Cell cell = new Cell();
 	///    while( scanner.Next(cell) ) {
 	///       // process cell

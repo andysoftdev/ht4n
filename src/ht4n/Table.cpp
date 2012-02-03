@@ -54,31 +54,31 @@ namespace Hypertable {
 	}
 
 	Table::!Table( ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			if( table ) {
 				delete table;
 				table = 0;
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	String^ Table::Name::get( ) {
-		HT4C_TRY {
+		HT4N_THROW_OBJECTDISPOSED( );
+
+		HT4N_TRY {
 			return gcnew String( table->getName().c_str() );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	String^ Table::Schema::get( ) {
-		HT4C_TRY {
+		HT4N_THROW_OBJECTDISPOSED( );
+
+		HT4N_TRY {
 			return gcnew String( table->getSchema().c_str() );
 		} 
-		HT4C_RETHROW
-	}
-
-	Hypertable::ContextKind Table::ContextKind::get() {
-		return (Hypertable::ContextKind)table->getContextKind();
+		HT4N_RETHROW
 	}
 
 	ITableMutator^ Table::CreateMutator( ) {
@@ -86,7 +86,9 @@ namespace Hypertable {
 	}
 
 	ITableMutator^ Table::CreateMutator( MutatorSpec^ mutatorSpec ) {
-		HT4C_TRY {
+		HT4N_THROW_OBJECTDISPOSED( );
+
+		HT4N_TRY {
 			uint32_t timeout = 0;
 			uint32_t flags = ht4c::Common::MF_Default;
 			uint32_t flushInterval = 0;
@@ -120,12 +122,14 @@ namespace Hypertable {
 			}
 			return gcnew TableMutator( table->createMutator(timeout, flags, flushInterval) );
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	ITableMutator^ Table::CreateAsyncMutator( AsyncResult^ asyncResult, MutatorSpec^ mutatorSpec ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( asyncResult == nullptr ) throw gcnew ArgumentNullException( L"asyncResult" );
-		HT4C_TRY {
+		HT4N_TRY {
 			const Common::ContextKind contextKind = table->getContextKind();
 			ITableMutator^ mutator = nullptr;
 			Common::AsyncTableMutator* asyncMutator = 0;
@@ -157,10 +161,10 @@ namespace Hypertable {
 				asyncMutator = table->createAsyncMutator( asyncResult->get(contextKind), timeout, flags );
 				mutator = gcnew TableMutator( asyncMutator );
 			}
-			asyncResult->AttachAsyncMutator( contextKind, gcnew AsyncMutatorContext(asyncMutator->id(), this, mutatorSpec), mutator );
+			asyncResult->AttachAsyncMutator( gcnew AsyncMutatorContext(contextKind, asyncMutator->id(), this, mutatorSpec), mutator );
 			return mutator;
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	ITableScanner^ Table::CreateScanner( ) {
@@ -168,15 +172,17 @@ namespace Hypertable {
 	}
 
 	ITableScanner^ Table::CreateScanner( ScanSpec^ scanSpec ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		Common::ScanSpec* _scanSpec = 0;
-		HT4C_TRY {
+		HT4N_TRY {
 			uint32_t timeout;
 			uint32_t flags;
 			_scanSpec = From( scanSpec, timeout, flags );
 
 			return gcnew TableScanner( table->createScanner(*_scanSpec, timeout, flags), scanSpec );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 		finally {
 			if( _scanSpec ) delete _scanSpec;
 		}
@@ -203,23 +209,25 @@ namespace Hypertable {
 	}
 
 	int64_t Table::BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, Object^ param, AsyncScannerCallback^ callback ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( asyncResult == nullptr ) throw gcnew ArgumentNullException( L"asyncResult" );
 		BlockingAsyncResult^ blockingAsyncResult = dynamic_cast<BlockingAsyncResult^>( asyncResult );
 		if( callback == nullptr && asyncResult->ScannerCallback == nullptr && blockingAsyncResult == nullptr ) throw gcnew ArgumentNullException( L"callback" );
 		if( callback != nullptr && blockingAsyncResult != nullptr ) throw gcnew ArgumentException( L"Callback must be null for blocking async results", L"callback" );
 		Common::ScanSpec* _scanSpec = 0;
-		HT4C_TRY {
+		HT4N_TRY {
 			const Common::ContextKind contextKind = table->getContextKind();
 			uint32_t timeout;
 			uint32_t flags;
 			_scanSpec = From( scanSpec, timeout, flags );
 			int64_t asyncScannerId = table->createAsyncScannerId( *_scanSpec, asyncResult->get(contextKind), timeout, flags );
 			if( asyncScannerId ) {
-				asyncResult->AttachAsyncScanner( contextKind, gcnew AsyncScannerContext(asyncScannerId, this, scanSpec, param), callback );
+				asyncResult->AttachAsyncScanner( gcnew AsyncScannerContext(contextKind, asyncScannerId, this, scanSpec, param), callback );
 				return asyncScannerId;
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 		finally {
 			if( _scanSpec ) delete _scanSpec;
 		}
@@ -227,6 +235,8 @@ namespace Hypertable {
 	}
 
 	String^ Table::ToString() {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		return String::Format( CultureInfo::InvariantCulture
 												 , L"{0}(Name={1})"
 												 , GetType()

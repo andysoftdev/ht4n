@@ -46,7 +46,7 @@ namespace Hypertable.Test
 
         private static readonly UTF8Encoding Encoding = new UTF8Encoding();
 
-        private static Table table;
+        private static ITable table;
 
         #endregion
 
@@ -67,6 +67,11 @@ namespace Hypertable.Test
                 + "</ColumnFamily>" + "</AccessGroup>" + "</Schema>";
 
             table = EnsureTable(typeof(TestTableMutator), Schema);
+
+            if( !HasAsyncTableMutator ) {
+                Assert.IsFalse(IsHyper);
+                Assert.IsFalse(IsThrift);
+            }
         }
 
         [TestMethod]
@@ -256,7 +261,7 @@ namespace Hypertable.Test
         public void Delete(MutatorSpec mutatorSpec) {
             var key = new Key { ColumnFamily = "a" };
 
-            using( var mutator = table.CreateMutator(mutatorSpec) ) {
+            using (var mutator = table.CreateMutator(mutatorSpec)) {
                 key.Row = "Row does not exist";
                 mutator.Set(key, Encoding.GetBytes(key.Row));
             }
@@ -1273,6 +1278,10 @@ namespace Hypertable.Test
         }
 
         public void SetPeriodicFlush(MutatorSpec mutatorSpec) {
+            if (!HasPeriodicFlushTableMutator) {
+                return;
+            }
+
             using (var mutator = table.CreateMutator(mutatorSpec)) {
                 for (int i = 0; i < 5; ++i) {
                     string row = string.Format("periodicFlush-{0}", i);
@@ -1378,7 +1387,7 @@ namespace Hypertable.Test
 
         #region Methods
 
-        private static int GetCellCount(Table _table) {
+        private static int GetCellCount(ITable _table) {
             int c = 0;
             using (var scanner = _table.CreateScanner()) {
                 var cell = new Cell();

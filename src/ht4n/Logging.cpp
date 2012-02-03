@@ -136,19 +136,19 @@ namespace Hypertable {
 	}
 
 	String^ Logging::Logfile::get( ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			msclr::lock sync( syncRoot );
 			return gcnew String( ht4c::Logging::getLogfile().c_str() );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void Logging::Logfile::set( String^ logfile ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			msclr::lock sync( syncRoot );
 			ht4c::Logging::setLogfile( CM2A(logfile) );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	bool Logging::IsEnabled( System::Diagnostics::TraceEventType traceEventType ) {

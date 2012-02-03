@@ -25,49 +25,41 @@
 #error "requires /clr"
 #endif
 
-#pragma warning( push )
-#pragma warning( disable : 4638 ) // reference to unknown symbol 'Client', 'Namespace'.
+#include "ht4c.Common/ContextFeature.h"
 
 namespace Hypertable {
 	using namespace System;
 
 	/// <summary>
-	/// Specifies possible open disposition values.
+	/// Declares extended context features, apart from the regular features.
 	/// </summary>
-	/// <remarks>
-	/// Open dispositions are used if opening namespaces or tables.
-	/// </remarks>
-	/// <seealso cref="IClient" />
-	/// <seealso cref="INamespace" />
-	[Serializable, Flags]
-	public enum class OpenDispositions {
+	[Serializable]
+	public enum class ContextFeature {
 
 		/// <summary>
-		/// Open only if exist, fails if not exist.
+		/// Unknown provider feature.
 		/// </summary>
-		OpenExisting = 0x00,
+		Unknown = ht4c::Common::CF_Unknown,
 
 		/// <summary>
-		/// Open always, create if not exist.
+		/// Hypertable query language (HQL).
 		/// </summary>
-		OpenAlways = 0x01,
+		HQL = ht4c::Common::CF_HQL,
 
 		/// <summary>
-		/// Create always, drop and re-create if exist (drops complete namspace sub tree if opening namespaces).
+		/// Asynchronous table mutator.
 		/// </summary>
-		CreateAlways = 0x02,
+		AsyncTableMutator = ht4c::Common::CF_AsyncTableMutator,
 
 		/// <summary>
-		/// Create intermediates if not exists, only relevant if opening namespaces.
+		/// Periodic flush mutator.
 		/// </summary>
-		CreateIntermediate = 0x10,
+		PeriodicFlushTableMutator = ht4c::Common::CF_PeriodicFlushTableMutator,
 
 		/// <summary>
-		/// Bypass any table cache, only relevant if opening tables.
+		/// Asynchronous table scanner.
 		/// </summary>
-		Force = 0x20
+		AsyncTableScanner = ht4c::Common::CF_AsyncTableScanner
 	};
 
 }
-
-#pragma warning( pop )

@@ -34,10 +34,6 @@ namespace Hypertable {
 	using namespace System;
 	using namespace ht4c;
 
-	Hypertable::ContextKind Client::ContextKind::get() {
-		return (Hypertable::ContextKind)client->getContextKind();
-	}
-
 	Client::~Client( ) {
 		disposed = true;
 		this->!Client();
@@ -45,13 +41,13 @@ namespace Hypertable {
 	}
 
 	Client::!Client( ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			if( client ) {
 				delete client;
 				client = 0;
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	Client::Client( Context^ _ctx )
@@ -60,10 +56,10 @@ namespace Hypertable {
 	, disposed( false )
 	{
 		if( ctx == nullptr ) throw gcnew ArgumentNullException( L"_ctx" );
-		HT4C_TRY {
+		HT4N_TRY {
 			client = ctx->get()->createClient();
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void Client::CreateNamespace( String^ name ) {
@@ -74,36 +70,50 @@ namespace Hypertable {
 		return CreateNamespace( name, nullptr, dispo );
 	}
 
-	void Client::CreateNamespace( String^ name, Namespace^ nsBase ) {
+	void Client::CreateNamespace( String^ name, INamespace^ nsBase ) {
 		return CreateNamespace( name, nsBase, CreateDispositions::None );
 	}
 
-	void Client::CreateNamespace( String^ name, Namespace^ nsBase, CreateDispositions dispo ) {
+	void Client::CreateNamespace( String^ name, INamespace^ _nsBase, CreateDispositions dispo ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
-		HT4C_TRY {
+		Namespace^ nsBase = dynamic_cast<Namespace^>( _nsBase );
+		if( nsBase == nullptr && _nsBase != nullptr ) {
+			throw gcnew ArgumentException( String::Format(CultureInfo::InvariantCulture, L"Base namespace type, {0} expected", GetType()), L"nsBase" );
+		}
+
+		HT4N_TRY {
 			client->createNamespace( CM2A(name)
 														 , nsBase != nullptr ? nsBase->get() : 0
 														 , (dispo & CreateDispositions::CreateIntermediate) == CreateDispositions::CreateIntermediate
 														 , (dispo & CreateDispositions::CreateIfNotExist) == CreateDispositions::CreateIfNotExist );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
-	Namespace^ Client::OpenNamespace( String^ name ) {
+	INamespace^ Client::OpenNamespace( String^ name ) {
 		return OpenNamespace( name, nullptr, OpenDispositions::OpenExisting );
 	}
 
-	Namespace^ Client::OpenNamespace( String^ name, OpenDispositions dispo ) {
+	INamespace^ Client::OpenNamespace( String^ name, OpenDispositions dispo ) {
 		return OpenNamespace( name, nullptr, dispo );
 	}
 
-	Namespace^ Client::OpenNamespace( String^ name, Namespace^ nsBase ) {
+	INamespace^ Client::OpenNamespace( String^ name, INamespace^ nsBase ) {
 		return OpenNamespace( name, nsBase, OpenDispositions::OpenExisting );
 	}
 
-	Namespace^ Client::OpenNamespace( String^ name, Namespace^ nsBase, OpenDispositions dispo ) {
+	INamespace^ Client::OpenNamespace( String^ name, INamespace^ _nsBase, OpenDispositions dispo ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( name == nullptr ) throw gcnew ArgumentNullException( L"name" );
-		HT4C_TRY {
+		Namespace^ nsBase = dynamic_cast<Namespace^>( _nsBase );
+		if( nsBase == nullptr && _nsBase != nullptr ) {
+			throw gcnew ArgumentException( String::Format(CultureInfo::InvariantCulture, L"Base namespace type, {0} expected", GetType()), L"nsBase" );
+		}
+
+		HT4N_TRY {
 			switch( dispo & (OpenDispositions::OpenExisting|OpenDispositions::OpenAlways|OpenDispositions::CreateAlways) ) {
 			case OpenDispositions::OpenAlways:
 				if( !NamespaceExists(name, nsBase) ) {
@@ -112,7 +122,7 @@ namespace Hypertable {
 				break;
 			case OpenDispositions::CreateAlways:
 				if( NamespaceExists(name, nsBase) ) {
-					Namespace^ ns = gcnew Namespace( this, client->openNamespace(CM2A(name), nsBase != nullptr ? nsBase->get() : 0) );
+					INamespace^ ns = gcnew Namespace( this, client->openNamespace(CM2A(name), nsBase != nullptr ? nsBase->get() : 0) );
 					try {
 						ns->DropTables();
 						ns->DropNamespaces( DropDispositions::Complete );
@@ -130,7 +140,7 @@ namespace Hypertable {
 			}
 			return gcnew Namespace( this, client->openNamespace(CM2A(name), nsBase != nullptr ? nsBase->get() : 0) );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void Client::DropNamespace( String^ name ) {
@@ -141,33 +151,47 @@ namespace Hypertable {
 		DropNamespace( name, nullptr, dispo );
 	}
 
-	void Client::DropNamespace( String^ name, Namespace^ nsBase ) {
+	void Client::DropNamespace( String^ name, INamespace^ nsBase ) {
 		DropNamespace( name, nsBase, DropDispositions::None );
 	}
 
-	void Client::DropNamespace( String^ name, Namespace^ nsBase, DropDispositions dispo ) {
+	void Client::DropNamespace( String^ name, INamespace^ _nsBase, DropDispositions dispo ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
-		if( nsBase == nullptr && name == "/" ) throw gcnew ArgumentException( L"Cannot drop root namespace", L"name" );
-		HT4C_TRY {
+		if( (_nsBase == nullptr || String::IsNullOrEmpty(_nsBase->Name)) && name == "/" ) throw gcnew ArgumentException( L"Cannot drop root namespace", L"name" );
+		Namespace^ nsBase = dynamic_cast<Namespace^>( _nsBase );
+		if( nsBase == nullptr && _nsBase != nullptr ) {
+			throw gcnew ArgumentException( String::Format(CultureInfo::InvariantCulture, L"Base namespace type, {0} expected", GetType()), L"nsBase" );
+		}
+
+		HT4N_TRY {
 			client->dropNamespace( CM2A(name)
 								 , nsBase != nullptr ? nsBase->get() : 0
 								 , (dispo & DropDispositions::IfExists) == DropDispositions::IfExists
 								 , (dispo & DropDispositions::IncludeTables) == DropDispositions::IncludeTables
 								 , (dispo & DropDispositions::Deep) == DropDispositions::Deep );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	bool Client::NamespaceExists( String^ name ) {
 		return NamespaceExists( name, nullptr );
 	}
 
-	bool Client::NamespaceExists( String^ name, Namespace^ nsBase ) {
+	bool Client::NamespaceExists( String^ name, INamespace^ _nsBase ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
-		HT4C_TRY {
+		Namespace^ nsBase = dynamic_cast<Namespace^>( _nsBase );
+		if( nsBase == nullptr && _nsBase != nullptr ) {
+			throw gcnew ArgumentException( String::Format(CultureInfo::InvariantCulture, L"Base namespace type, {0} expected", GetType()), L"nsBase" );
+		}
+
+		HT4N_TRY {
 			return client->existsNamespace( CM2A(name), nsBase != nullptr ? nsBase->get() : 0 );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 }

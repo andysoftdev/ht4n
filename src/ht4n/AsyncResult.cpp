@@ -22,7 +22,7 @@
 #include "stdafx.h"
 
 #include "AsyncResult.h"
-#include "Table.h"
+#include "ITable.h"
 #include "ITableMutator.h"
 #include "ScanSpec.h"
 #include "Cell.h"
@@ -275,7 +275,7 @@ namespace Hypertable {
 				}
 
 				if( ctx ) {
-					HT4C_TRY {
+					HT4N_TRY {
 						ctx->cells = &cells;
 						if( ctx->callback ) {
 							return ctx->callback->invoke( ctx );
@@ -284,7 +284,7 @@ namespace Hypertable {
 							return callback.invoke( ctx );
 						}
 					}
-					HT4C_RETHROW
+					HT4N_RETHROW
 					finally {
 						ctx->cells = 0;
 					}
@@ -373,16 +373,16 @@ namespace Hypertable {
 
 	Object^ AsyncResult::AsyncState::get( ) {
 		// FIXME
-		throw gcnew NotImplException( L"AsyncResult::AsyncState::get" );
+		throw gcnew System::NotImplementedException( );
 	}
 
 	WaitHandle^ AsyncResult::AsyncWaitHandle::get( ) {
 		// FIXME
-		throw gcnew NotImplException( L"AsyncResult::AsyncWaitHandle::get" );
+		throw gcnew System::NotImplementedException( );
 	}
 
 	bool AsyncResult::IsCompleted::get( ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			if( asyncResult ) {
 				for( int n = 0; n < size; ++n ) {
 					if( asyncResult[n] && !asyncResult[n]->isCompleted() ) {
@@ -392,11 +392,11 @@ namespace Hypertable {
 			}
 			return true;
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	bool AsyncResult::IsCancelled::get( ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			if( asyncResult ) {
 				for( int n = 0; n < size; ++n ) {
 					if( asyncResult[n] && asyncResult[n]->isCancelled() ) {
@@ -406,23 +406,23 @@ namespace Hypertable {
 			}
 			return false;
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	AsyncScannerCallback^ AsyncResult::ScannerCallback::get( ) {
 		return scannerCallback;
 	}
 
-	HypertableException^ AsyncResult::Error::get( ) {
-		HT4C_TRY {
+	System::Exception^ AsyncResult::Error::get( ) {
+		HT4N_TRY {
 			if( asyncResultSink && asyncResultSink->error() ) {
-				HypertableException^ exception = HypertableException::Create( *asyncResultSink->error() );
+				System::Exception^ exception = HypertableException::Create( *asyncResultSink->error() );
 				asyncResultSink->resetError();
 				return exception;
 			}
 			return nullptr;
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	AsyncResult::AsyncResult( )
@@ -452,7 +452,7 @@ namespace Hypertable {
 	}
 
 	AsyncResult::!AsyncResult( ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			for( int n = 0; n < size; ++n ) {
 				if( asyncResult[n] ) {
 					delete asyncResult[n];
@@ -467,11 +467,13 @@ namespace Hypertable {
 				asyncResultSink = 0;
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void AsyncResult::Join( ) {
-		HT4C_TRY {
+		HT4N_THROW_OBJECTDISPOSED( );
+
+		HT4N_TRY {
 			for( int i = 0; i < mutators->Count; ) {
 				WeakReference^ wr = mutators[i];
 				if( wr->IsAlive ) {
@@ -492,11 +494,13 @@ namespace Hypertable {
 				}
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void AsyncResult::Cancel( ) {
-		HT4C_TRY {
+		HT4N_THROW_OBJECTDISPOSED( );
+
+		HT4N_TRY {
 			if( asyncResult ) {
 				for( int n = 0; n < size; ++n ) {
 					if( asyncResult[n] ) {
@@ -505,16 +509,18 @@ namespace Hypertable {
 				}
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void AsyncResult::CancelAsyncScanner( AsyncScannerContext^ asyncScannerContext ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( asyncScannerContext == nullptr ) throw gcnew ArgumentNullException( L"asyncScannerContext" );
 		if( asyncScannerContext->Table == nullptr ) throw gcnew ArgumentException( L"Invalid table", L"asyncScannerContext" );
 
-		HT4C_TRY {
+		HT4N_TRY {
 			if( asyncResult ) {
-				int n = static_cast<int>( asyncScannerContext->Table->ContextKind );
+				int n = static_cast<int>( asyncScannerContext->ContextKind );
 				if( n < size ) {
 					if( asyncResult[n] ) {
 						asyncResult[n]->cancelAsyncScanner( asyncScannerContext->Id );
@@ -522,16 +528,18 @@ namespace Hypertable {
 				}
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void AsyncResult::CancelAsyncMutator( AsyncMutatorContext^ asyncMutatorContext ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( asyncMutatorContext == nullptr ) throw gcnew ArgumentNullException( L"asyncMutatorContext" );
 		if( asyncMutatorContext->Table == nullptr ) throw gcnew ArgumentException( L"Invalid table", L"asyncMutatorContext" );
 
-		HT4C_TRY {
+		HT4N_TRY {
 			if( asyncResult ) {
-				int n = static_cast<int>( asyncMutatorContext->Table->ContextKind );
+				int n = static_cast<int>( asyncMutatorContext->ContextKind );
 				if( n < size ) {
 					if( asyncResult[n] ) {
 						asyncResult[n]->cancelAsyncMutator( asyncMutatorContext->Id );
@@ -539,7 +547,7 @@ namespace Hypertable {
 				}
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	AsyncResult::AsyncResult( bool createResultSink )
@@ -559,34 +567,36 @@ namespace Hypertable {
 		return *(asyncResult[contextKind]);
 	}
 
-	void AsyncResult::AttachAsyncScanner( Common::ContextKind contextKind, AsyncScannerContext^ asyncScannerContext, AsyncScannerCallback^ callback ) {
+	void AsyncResult::AttachAsyncScanner( AsyncScannerContext^ asyncScannerContext, AsyncScannerCallback^ callback ) {
 		if( asyncScannerContext == nullptr ) throw gcnew ArgumentNullException( L"asyncScannerContext" );
 		if( !asyncResultSink ) throw gcnew InvalidOperationException( L"Async result sink has not been initialized" );
 		asyncResultSink->attachAsyncScanner( asyncScannerContext, callback );
+		Common::ContextKind contextKind = asyncScannerContext->ContextKind;
 		if( asyncResult[contextKind] ) {
 			asyncResult[contextKind]->attachAsyncScanner( asyncScannerContext->Id );
 		}
 	}
 
-	void AsyncResult::AttachAsyncMutator( Common::ContextKind contextKind, AsyncMutatorContext^ asyncMutatorContext, ITableMutator^ mutator ) {
+	void AsyncResult::AttachAsyncMutator( AsyncMutatorContext^ asyncMutatorContext, ITableMutator^ mutator ) {
 		if( asyncMutatorContext == nullptr ) throw gcnew ArgumentNullException( L"asyncMutatorContext" );
 		if( mutator == nullptr ) throw gcnew ArgumentNullException( L"mutator" );
 		if( !asyncResultSink ) throw gcnew InvalidOperationException( L"Async result sink has not been initialized" );
 		asyncResultSink->attachAsyncMutator( asyncMutatorContext );
 		mutators->Add( gcnew WeakReference(mutator) );
+		Common::ContextKind contextKind = asyncMutatorContext->ContextKind;
 		if( asyncResult[contextKind] ) {
 			asyncResult[contextKind]->attachAsyncMutator( asyncMutatorContext->Id );
 		}
 	}
 
 	Common::AsyncResult* AsyncResult::CreateAsyncResult( Common::ContextKind contextKind, Common::AsyncResultSink* _asyncResultSink ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			if( !_asyncResultSink ) throw gcnew ArgumentNullException( L"asyncResultSink" );
 			return    contextKind == Common::CK_Hyper
 							? static_cast<Common::AsyncResult*>(Hyper::HyperAsyncResult::create(_asyncResultSink) )
 							: static_cast<Common::AsyncResult*>(Thrift::ThriftAsyncResult::create(_asyncResultSink) );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 }

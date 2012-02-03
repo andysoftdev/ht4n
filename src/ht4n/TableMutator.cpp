@@ -42,14 +42,14 @@ namespace Hypertable {
 	}
 
 	TableMutator::!TableMutator( ) {
-		HT4C_TRY {
+		HT4N_TRY {
 			if( tableMutator ) {
 				tableMutator->flush();
 				delete tableMutator;
 				tableMutator = 0;
 			}
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void TableMutator::Set( Key^ key, cli::array<Byte>^ value ) {
@@ -75,9 +75,11 @@ namespace Hypertable {
 	}
 
 	void TableMutator::Set( IEnumerable<Cell^>^ cells, bool createRowKey ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( cells == nullptr ) throw gcnew ArgumentNullException( L"cells" );
 		Common::Cells* _cells = 0;
-		HT4C_TRY {
+		HT4N_TRY {
 			ICollection<Cell^>^ cells_collection = dynamic_cast<ICollection<Cell^>^>( cells );
 			_cells = Common::Cells::create( cells_collection != nullptr ? cells_collection->Count : 1024 );
 			for each( Cell^ cell in cells ) {
@@ -94,33 +96,39 @@ namespace Hypertable {
 			msclr::lock sync( syncRoot );
 			tableMutator->set( *_cells );
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 		finally {
 			if( _cells ) delete _cells;
 		}
 	}
 
 	void TableMutator::Delete( String^ row ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( String::IsNullOrEmpty(row) ) throw gcnew ArgumentException( L"Invalid parameter row (null or empty)", L"row" );
-		HT4C_TRY {
+		HT4N_TRY {
 			msclr::lock sync( syncRoot );
 			tableMutator->del( CM2A(row), 0, 0, 0 );
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void TableMutator::Delete( Key^ key ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
-		HT4C_TRY {
+		HT4N_TRY {
 			msclr::lock sync( syncRoot );
 			tableMutator->del( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp );
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void TableMutator:: Delete( IEnumerable<Key^>^ keys ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( keys == nullptr ) throw gcnew ArgumentNullException( L"keys" );
-		HT4C_TRY {
+		HT4N_TRY {
 			msclr::lock sync( syncRoot );
 			for each( Key^ key in keys ) {
 				if( key != nullptr ) {
@@ -128,12 +136,14 @@ namespace Hypertable {
 				}
 			}
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void TableMutator::Delete( IEnumerable<Cell^>^ cells ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		if( cells == nullptr ) throw gcnew ArgumentNullException( L"cells" );
-		HT4C_TRY {
+		HT4N_TRY {
 			msclr::lock sync( syncRoot );
 			for each( Cell^ cell in cells ) {
 				if( cell != nullptr ) {
@@ -144,15 +154,17 @@ namespace Hypertable {
 				}
 			}
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	void TableMutator::Flush( ) {
-		HT4C_TRY {
+		HT4N_THROW_OBJECTDISPOSED( );
+
+		HT4N_TRY {
 			msclr::lock sync( syncRoot );
 			tableMutator->flush();
 		} 
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 	TableMutator::TableMutator( Common::TableMutator* _tableMutator )
@@ -166,7 +178,7 @@ namespace Hypertable {
 
 	void TableMutator::Set( Key^ key, cli::array<Byte>^ value, CellFlag cellFlag, bool createRowKey ) {
 		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
-		HT4C_TRY {
+		HT4N_TRY {
 			UInt32 len = value != nullptr ? value->Length : 0;
 			if( createRowKey || String::IsNullOrEmpty(key->Row) ) {
 				std::string row;
@@ -183,7 +195,7 @@ namespace Hypertable {
 				tableMutator->set( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp, pv, len, (uint8_t)cellFlag );
 			}
 		}
-		HT4C_RETHROW
+		HT4N_RETHROW
 	}
 
 }
