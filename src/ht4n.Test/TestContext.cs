@@ -215,6 +215,13 @@ namespace Hypertable.Test
                 Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["Hamster.Filename"]);
             }
 
+            using( var context = Context.Create("Provider=Hamster; Uri=file://test.db; Hamster.PageSizeKB=128; Hamster.CacheSizeMB=32; Hamster.EnableAutoRecovery=true") ) {
+                Assert.AreEqual("Hamster", context.Properties["Provider"]);
+                Assert.AreEqual(128, context.Properties["Hypertable.Client.Hamster.PageSizeKB"]);
+                Assert.AreEqual(32, context.Properties["Hypertable.Client.Hamster.CacheSizeMB"]);
+                Assert.IsTrue((bool)context.Properties["Hypertable.Client.Hamster.EnableAutoRecovery"]);
+            }
+
 #endif
 
         }
