@@ -226,6 +226,19 @@ namespace Hypertable {
 	Hypertable::IClient^ Context::CreateClient() {
 		HT4N_THROW_OBJECTDISPOSED( );
 
+		String^ uriName = dynamic_cast<String^>( properties[gcnew String(Common::Config::Uri)] );
+		if( String::IsNullOrEmpty(uriName) ) throw gcnew InvalidOperationException( L"Invalid uri property" );
+
+		Uri^ uri = gcnew Uri( uriName );
+		if( !uri->IsFile && !uri->IsLoopback ) {
+			if(    uri->HostNameType == UriHostNameType::Basic
+					|| uri->HostNameType == UriHostNameType::Dns ) {
+
+				// resolve host name, throws an exception on failure
+				System::Net::Dns::GetHostEntry( uri->DnsSafeHost );
+			}
+		}
+
 		return gcnew Hypertable::Client( this );
 	}
 
@@ -365,14 +378,6 @@ namespace Hypertable {
 			if( String::IsNullOrEmpty(uriName) ) throw gcnew ArgumentException( L"Invalid uri property", L"properties" );
 
 			Uri^ uri = gcnew Uri( uriName );
-			if( !uri->IsFile && !uri->IsLoopback ) {
-				if(    uri->HostNameType == UriHostNameType::Basic
-						|| uri->HostNameType == UriHostNameType::Dns ) {
-
-					System::Net::Dns::GetHostEntry( uri->DnsSafeHost ); // resolve host name
-				}
-			}
-
 			String^ providerName = GetProviderName( properties );
 			if(  String::Equals(providerName, gcnew String(Common::Config::ProviderHyper))
 				|| String::Equals(providerName, gcnew String(Common::Config::ProviderThrift)) ) {
