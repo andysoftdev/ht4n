@@ -93,6 +93,7 @@ namespace Hypertable.Test
                 Assert.AreEqual((ushort)38040, context.Properties["hs-port"]);
                 Assert.AreEqual("localhost", context.Properties["thrift-host"]);
                 Assert.AreEqual((ushort)38080, context.Properties["thrift-port"]);
+                Assert.AreEqual(30000, context.Properties["ConnectionTimeout"]);
             }
 
             using (var context = Context.Create("Provider=Hyper")) {
@@ -111,7 +112,7 @@ namespace Hypertable.Test
                 Assert.AreEqual((ushort)38080, context.Properties["thrift-port"]);
             }
 
-            using( var context = Context.Create("Provider=Hyper; Uri=net.tcp://google.com:1000") ) {
+            using( var context = Context.Create("Provider=Hyper; Uri=net.tcp://google.com:1000; ConnectionTimeout=1000") ) {
                 Assert.AreEqual("Hyper", context.Properties["Provider"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Uri"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Hypertable.Client.Uri"]);
@@ -119,6 +120,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("google.com", ((IList<string>)context.Properties["hs-host"])[0]);
                 Assert.AreEqual((ushort)1000, context.Properties["hs-port"]);
+                Assert.AreEqual(1000, context.Properties["ConnectionTimeout"]);
+                Assert.AreEqual(1000, context.Properties["Hypertable.Client.ConnectionTimeout"]);
             }
 
             using( var context = Context.Create("Hypertable.Client.Provider=Hyper; Hypertable.Client.Uri net.tcp://google.com:1000") ) {
