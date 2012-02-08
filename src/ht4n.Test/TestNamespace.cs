@@ -90,9 +90,36 @@ namespace Hypertable.Test
                         Assert.AreEqual(0, ns.Tables.Count);
                     }
 
+                    try {
+                        client.CreateNamespace(name);
+                        Assert.Fail();
+                    }
+                    catch( NamespaceExistsException ) {
+                    }
+                    catch {
+                        Assert.Fail();
+                    }
+
                     client.DropNamespace(name);
                     Assert.IsFalse(client.NamespaceExists(name));
                 }
+
+                Assert.IsFalse(client.NamespaceExists("test/xyz"));
+                client.CreateNamespace("test/xyz", CreateDispositions.CreateIntermediate);
+                Assert.IsTrue(client.NamespaceExists("test"));
+                Assert.IsTrue(client.NamespaceExists("test/xyz"));
+
+                try {
+                    client.DropNamespace("test");
+                    Assert.Fail();
+                }
+                catch( HyperspaceException ) {
+                }
+                catch {
+                    Assert.Fail();
+                }
+
+                client.DropNamespace("test/xyz");
             }
         }
 
