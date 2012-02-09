@@ -84,7 +84,7 @@ namespace Hypertable {
 	void Key::From( const Common::Cell& cell ) {
 		Row = gcnew String( cell.row() );
 		ColumnFamily = gcnew String( cell.columnFamily() );
-		ColumnQualifier = gcnew String( cell.columnQualifier() );
+		ColumnQualifier = cell.columnQualifier() ? gcnew String( cell.columnQualifier() ) : nullptr;
 		Timestamp = cell.timestamp();
 	}
 
@@ -190,11 +190,11 @@ namespace Hypertable {
 		if( value == nullptr ) throw gcnew ArgumentNullException( L"value" );
 		if( value->Length != Common::KeyBuilder::sizeKey ) throw gcnew ArgumentException( L"Invalid value length", L"value" );
 
-		Common::uint8_t _guid[Common::KeyBuilder::sizeGuid];
-		Common::KeyBuilder::decode( CM2A(value), _guid );
 		cli::array<Byte>^ guid = gcnew cli::array<Byte>( Common::KeyBuilder::sizeGuid );
-		pin_ptr<Byte> pguid = &guid[0];
-		memcpy( pguid, _guid, sizeof(_guid) );
+		{
+			pin_ptr<Byte> pguid = &guid[0];
+			Common::KeyBuilder::decode( CM2A(value), pguid );
+		}
 		return System::Guid( guid );
 	}
 }
