@@ -331,7 +331,7 @@ namespace Hypertable.Test
 
             Assert.AreEqual(0, this.GetCellCount());
 
-            key = new Key { ColumnFamily = "a" };
+            key = new Key { ColumnFamily = "a", ColumnQualifier = null };
             using (var mutator = table.CreateMutator(mutatorSpec)) {
                 for (int n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
@@ -348,6 +348,28 @@ namespace Hypertable.Test
             }
 
             using (var mutator = table.CreateMutator(mutatorSpec)) {
+                mutator.Delete(cells);
+            }
+
+            Assert.AreEqual(0, this.GetCellCount());
+
+            key = new Key { ColumnFamily = "a", ColumnQualifier = string.Empty };
+            using( var mutator = table.CreateMutator(mutatorSpec) ) {
+                for( int n = 0; n < Count; ++n ) {
+                    key.Row = Guid.NewGuid().ToString();
+                    mutator.Set(key, Encoding.GetBytes(key.Row));
+                }
+            }
+
+            cells = new List<Cell>();
+            using( var scanner = table.CreateScanner() ) {
+                Cell cell;
+                while( scanner.Next(out cell) ) {
+                    cells.Add(cell);
+                }
+            }
+
+            using( var mutator = table.CreateMutator(mutatorSpec) ) {
                 mutator.Delete(cells);
             }
 

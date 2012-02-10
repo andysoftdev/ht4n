@@ -1574,8 +1574,8 @@ namespace Hypertable.Test
                 int c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
-                    Assert.AreEqual(versions[versions.Length - (c % versions.Length) - 1], Encoding.GetString(cell.Value));
                     Assert.AreEqual(rows[c / versions.Length], cell.Key.Row);
+                    Assert.AreEqual(versions[versions.Length - (c % versions.Length) - 1], Encoding.GetString(cell.Value));
                     ++c;
                 }
 
@@ -1586,8 +1586,8 @@ namespace Hypertable.Test
                 int c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
-                    Assert.AreEqual(versions[versions.Length - 1], Encoding.GetString(cell.Value));
                     Assert.AreEqual(rows[c], cell.Key.Row);
+                    Assert.AreEqual(versions[versions.Length - 1], Encoding.GetString(cell.Value));
                     ++c;
                 }
 
@@ -1598,8 +1598,8 @@ namespace Hypertable.Test
                 int c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
-                    Assert.AreEqual(versions[versions.Length - (c % 2) - 1], Encoding.GetString(cell.Value));
                     Assert.AreEqual(rows[c / 2], cell.Key.Row);
+                    Assert.AreEqual(versions[versions.Length - (c % 2) - 1], Encoding.GetString(cell.Value));
                     ++c;
                 }
 
