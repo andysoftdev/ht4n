@@ -227,6 +227,47 @@ namespace Hypertable.Test
 
 #endif
 
+#if SUPPORT_SQLITEDB
+
+            using( var context = Context.Create("Provider=SQLite; Uri=file://test.db") ) {
+                Assert.AreEqual("SQLite", context.Properties["Provider"]);
+                Assert.AreEqual("test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
+                Assert.AreEqual("test.db", context.Properties["SQLite.Filename"]);
+            }
+
+            using( var context = Context.Create("Provider=SQLite; Uri=file://Temp/test.db") ) {
+                Assert.AreEqual("SQLite", context.Properties["Provider"]);
+                Assert.AreEqual("Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
+                Assert.AreEqual("Temp\\test.db", context.Properties["SQLite.Filename"]);
+            }
+
+            using( var context = Context.Create("Provider=SQLite; Uri=file://%TEMP%/test.db") ) {
+                Assert.AreEqual("SQLite", context.Properties["Provider"]);
+                Assert.IsTrue(((string)context.Properties["Hypertable.Client.SQLite.Filename"]).EndsWith("\\test.db"));
+                Assert.IsTrue(((string)context.Properties["SQLite.Filename"]).EndsWith("\\test.db"));
+            }
+
+            using( var context = Context.Create("--Provider SQLite --Hypertable.Client.SQLite.Filename \"My Documents/test.db\"") ) {
+                Assert.AreEqual("SQLite", context.Properties["Provider"]);
+                Assert.AreEqual("My Documents/test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
+                Assert.AreEqual("My Documents/test.db", context.Properties["SQLite.Filename"]);
+            }
+
+            using( var context = Context.Create("--Provider SQLite --SQLite.Filename \"C:\\My Documents\\test.db\"") ) {
+                Assert.AreEqual("SQLite", context.Properties["Provider"]);
+                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
+                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["SQLite.Filename"]);
+            }
+
+            using( var context = Context.Create("Provider=SQLite; Uri=file://test.db; SQLite.PageSizeKB=16; SQLite.CacheSizeMB=32; SQLite.Synchronous=yes") ) {
+                Assert.AreEqual("SQLite", context.Properties["Provider"]);
+                Assert.AreEqual(16, context.Properties["Hypertable.Client.SQLite.PageSizeKB"]);
+                Assert.AreEqual(32, context.Properties["Hypertable.Client.SQLite.CacheSizeMB"]);
+                Assert.IsTrue((bool)context.Properties["Hypertable.Client.SQLite.Synchronous"]);
+            }
+
+#endif
+
         }
 
         [TestMethod]

@@ -61,3 +61,10 @@
 #pragma comment( lib, "ht4c.Hamster.lib" )
 
 #endif
+
+#ifdef SUPPORT_SQLITEDB
+
+#pragma comment( lib, "re2.lib" )						// New BSD
+#pragma comment( lib, "ht4c.SQLite.lib" )
+
+#endif

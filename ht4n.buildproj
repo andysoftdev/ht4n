@@ -59,6 +59,7 @@
 	<!-- Embedded db support -->
 	<PropertyGroup>
 		<SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
+		<SupportSQLiteDb Condition="'$(SupportSQLiteDb)' == ''">true</SupportSQLiteDb>
 	</PropertyGroup>
 
 	<!-- Configuration group -->
@@ -224,7 +225,7 @@
 			Condition="$(SupportHamsterDb) == true"
 			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
 			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
-			Value="--Provider=Hamster --Hamster.Filename=test.db" />
+			Value="--Provider=Hamster --Hamster.Filename=test.Hamster.db" />
 
 		<Exec
 			Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
@@ -232,6 +233,21 @@
 
 		<Exec
 			Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
+			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<!-- SQLite tests -->
+		<XmlPoke
+			Condition="$(SupportSQLiteDb) == true"
+			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
+			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
+			Value="--Provider=SQLite --SQLite.Filename=test.SQLite.db" />
+
+		<Exec
+			Condition="$(SupportSQLiteDb) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
+			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<Exec
+			Condition="$(SupportSQLiteDb) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
 			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<Exec
