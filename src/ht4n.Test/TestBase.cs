@@ -22,8 +22,10 @@
 namespace Hypertable.Test
 {
     using System;
+    using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics;
+    using System.Linq;
     using System.Reflection;
     using System.Text.RegularExpressions;
 
@@ -259,6 +261,24 @@ namespace Hypertable.Test
         /// <returns>Opend table.</returns>
         protected static ITable EnsureTable(string tableName, string schema) {
             return Ns.OpenTable(tableName, schema, OpenDispositions.CreateAlways);
+        }
+
+        /// <summary>
+        /// Randomly shuffle the enumerable specified.
+        /// </summary>
+        /// <param name="enumerable">
+        /// The enumerable.
+        /// </param>
+        /// <returns>
+        /// The shuffeled enumerable.
+        /// </returns>
+        protected static IEnumerable<T> Shuffle<T>(IEnumerable<T> enumerable) {
+            if (enumerable == null) {
+                throw new ArgumentNullException("enumerable");
+            }
+
+            var random = new Random((int)DateTime.Now.Ticks ^ enumerable.GetHashCode());
+            return enumerable.Select(t => Tuple.Create(random.Next(), t)).OrderBy(pair => pair.Item1).Select(pair => pair.Item2).ToList();
         }
 
         #endregion

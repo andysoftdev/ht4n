@@ -23,6 +23,8 @@ namespace Hypertable.Test
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
     using System.Text;
     using System.Threading;
 
@@ -959,6 +961,164 @@ namespace Hypertable.Test
                 }
 
                 Assert.AreEqual(2 * rows.Length / 2 * columnFamilies.Length * columnQualifiers.Length, c); // MaxRows applies to each row interval individual
+            }
+        }
+
+        [TestMethod]
+        public void ScanTableRandomCells() {
+            var random = new Random();
+            const string Cf = "abcdefg";
+            const int Count = 10000;
+            using (var _table = EnsureTable("ScanTableRandomCells", Schema)) {
+                var keys = new List<Key>(Count);
+                using (var mutator = _table.CreateMutator()) {
+                    for (int i = 0; i < Count; ++i) {
+                        var key = new Key
+                            {
+                                Row = Guid.NewGuid().ToString(), 
+                                ColumnFamily = new string(new[] { Cf[random.Next(Cf.Length)] }), 
+                                ColumnQualifier = random.Next(Cf.Length).ToString(CultureInfo.InvariantCulture)
+                            };
+                        keys.Add(key);
+                        mutator.Set(key, Encoding.GetBytes(key.Row));
+                    }
+                }
+
+                for( int r = 0; r < 10; ++r ) {
+                    int countCells = 10 + random.Next(Count - 10);
+                    var scanSpec = new ScanSpec();
+                    foreach (var k in Shuffle(keys)) {
+                        scanSpec.AddCell(k);
+                        if (scanSpec.CellCount == countCells) {
+                            break;
+                        }
+                    }
+
+                    var comparer = new KeyComparer(false);
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
+                        Assert.AreSame(scanSpec, scanner.ScanSpec);
+                        var cell = new Cell();
+                        int c = 0;
+                        while (scanner.Next(cell)) {
+                            Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                            Assert.IsTrue(comparer.Equals(scanSpec.Cells[c++], cell.Key));
+                        }
+
+                        Assert.AreEqual(scanSpec.CellCount, c);
+                    }
+                }
+
+                for( int r = 0; r < 10; ++r ) {
+                    int countCells = 10 + random.Next(Count - 10);
+                    var scanSpec = new ScanSpec();
+                    foreach( var k in Shuffle(keys) ) {
+                        scanSpec.AddRow(k.Row);
+                        if( scanSpec.RowCount == countCells ) {
+                            break;
+                        }
+                    }
+
+                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                        Assert.AreSame(scanSpec, scanner.ScanSpec);
+                        var cell = new Cell();
+                        int c = 0;
+                        while( scanner.Next(cell) ) {
+                            Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                            Assert.AreEqual(scanSpec.Rows[c++], cell.Key.Row);
+                        }
+
+                        Assert.AreEqual(scanSpec.RowCount, c);
+                    }
+                }
+
+                for( int r = 0; r < 10; ++r ) {
+                    var rows = new HashSet<string>();
+                    int countCells = 10 + random.Next(Count - 10);
+                    var scanSpec = new ScanSpec(true);
+                    foreach( var k in Shuffle(keys) ) {
+                        scanSpec.AddRow(k.Row);
+                        rows.Add(k.Row);
+                        if( scanSpec.RowCount == countCells ) {
+                            break;
+                        }
+                    }
+
+                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                        Assert.AreSame(scanSpec, scanner.ScanSpec);
+                        var cell = new Cell();
+                        int c = 0;
+                        while( scanner.Next(cell) ) {
+                            Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                            Assert.IsTrue(rows.Contains(cell.Key.Row));
+                            ++c;
+                        }
+
+                        Assert.AreEqual(scanSpec.RowCount, c);
+                    }
+                }
+
+                for( int r = 0; r < 10; ++r ) {
+                    var rows = new HashSet<string>();
+                    var columnFamily = new string(new[] { Cf[random.Next(Cf.Length)] });
+                    var columnQualifier = random.Next(Cf.Length).ToString(CultureInfo.InvariantCulture);
+                    int countCells = 10 + random.Next(Count / 10);
+                    var scanSpec = new ScanSpec { ScanAndFilter = true };
+                    foreach( var k in Shuffle(keys).Where(k => k.ColumnFamily == columnFamily && k.ColumnQualifier == columnQualifier) ) {
+                        Assert.AreEqual(columnFamily, k.ColumnFamily);
+                        Assert.AreEqual(columnQualifier, k.ColumnQualifier);
+                        scanSpec.AddColumn(k.ColumnFamily + ":" + k.ColumnQualifier);
+                        scanSpec.AddRow(k.Row);
+                        rows.Add(k.Row);
+                        if( scanSpec.RowCount == countCells ) {
+                            break;
+                        }
+                    }
+
+                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                        Assert.AreSame(scanSpec, scanner.ScanSpec);
+                        var cell = new Cell();
+                        int c = 0;
+                        while( scanner.Next(cell) ) {
+                            Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                            Assert.AreEqual(columnFamily, cell.Key.ColumnFamily);
+                            Assert.AreEqual(columnQualifier, cell.Key.ColumnQualifier);
+                            Assert.IsTrue(rows.Contains(cell.Key.Row));
+                            ++c;
+                        }
+
+                        Assert.AreEqual(scanSpec.RowCount, c);
+                    }
+                }
+
+                for( int r = 0; r < 10; ++r ) {
+                    var rows = new HashSet<string>();
+                    var columnQualifier = random.Next(Cf.Length).ToString(CultureInfo.InvariantCulture);
+                    int countCells = 10 + random.Next(Count / 10);
+                    var scanSpec = new ScanSpec { ScanAndFilter = true };
+                    foreach( var k in Shuffle(keys).Where(k => k.ColumnQualifier == columnQualifier) ) {
+                        Assert.AreEqual(columnQualifier, k.ColumnQualifier);
+                        scanSpec.AddColumn(k.ColumnFamily + ":" + k.ColumnQualifier);
+                        scanSpec.AddRow(k.Row);
+                        rows.Add(k.Row);
+                        if( scanSpec.RowCount == countCells ) {
+                            break;
+                        }
+                    }
+
+                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                        Assert.AreSame(scanSpec, scanner.ScanSpec);
+                        var cell = new Cell();
+                        int c = 0;
+                        while( scanner.Next(cell) ) {
+                            Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                            Assert.AreEqual(columnQualifier, cell.Key.ColumnQualifier);
+                            Assert.IsTrue(rows.Contains(cell.Key.Row));
+                            ++c;
+                        }
+
+                        Assert.AreEqual(scanSpec.RowCount, c);
+                    }
+                }
             }
         }
 
