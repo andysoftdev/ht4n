@@ -984,7 +984,7 @@ namespace Hypertable.Test
                     }
                 }
 
-                for( int r = 0; r < 10; ++r ) {
+                for (int r = 0; r < 10; ++r) {
                     int countCells = 10 + random.Next(Count - 10);
                     var scanSpec = new ScanSpec();
                     foreach (var k in Shuffle(keys)) {
@@ -1008,21 +1008,21 @@ namespace Hypertable.Test
                     }
                 }
 
-                for( int r = 0; r < 10; ++r ) {
+                for (int r = 0; r < 10; ++r) {
                     int countCells = 10 + random.Next(Count - 10);
                     var scanSpec = new ScanSpec();
-                    foreach( var k in Shuffle(keys) ) {
+                    foreach (var k in Shuffle(keys)) {
                         scanSpec.AddRow(k.Row);
-                        if( scanSpec.RowCount == countCells ) {
+                        if (scanSpec.RowCount == countCells) {
                             break;
                         }
                     }
 
-                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
                         int c = 0;
-                        while( scanner.Next(cell) ) {
+                        while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             Assert.AreEqual(scanSpec.Rows[c++], cell.Key.Row);
                         }
@@ -1031,23 +1031,23 @@ namespace Hypertable.Test
                     }
                 }
 
-                for( int r = 0; r < 10; ++r ) {
+                for (int r = 0; r < 10; ++r) {
                     var rows = new HashSet<string>();
                     int countCells = 10 + random.Next(Count - 10);
                     var scanSpec = new ScanSpec(true);
-                    foreach( var k in Shuffle(keys) ) {
+                    foreach (var k in Shuffle(keys)) {
                         scanSpec.AddRow(k.Row);
                         rows.Add(k.Row);
-                        if( scanSpec.RowCount == countCells ) {
+                        if (scanSpec.RowCount == countCells) {
                             break;
                         }
                     }
 
-                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
                         int c = 0;
-                        while( scanner.Next(cell) ) {
+                        while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             Assert.IsTrue(rows.Contains(cell.Key.Row));
                             ++c;
@@ -1057,28 +1057,28 @@ namespace Hypertable.Test
                     }
                 }
 
-                for( int r = 0; r < 10; ++r ) {
+                for (int r = 0; r < 10; ++r) {
                     var rows = new HashSet<string>();
                     var columnFamily = new string(new[] { Cf[random.Next(Cf.Length)] });
                     var columnQualifier = random.Next(Cf.Length).ToString(CultureInfo.InvariantCulture);
                     int countCells = 10 + random.Next(Count / 10);
                     var scanSpec = new ScanSpec { ScanAndFilter = true };
-                    foreach( var k in Shuffle(keys).Where(k => k.ColumnFamily == columnFamily && k.ColumnQualifier == columnQualifier) ) {
+                    foreach (var k in Shuffle(keys).Where(k => k.ColumnFamily == columnFamily && k.ColumnQualifier == columnQualifier)) {
                         Assert.AreEqual(columnFamily, k.ColumnFamily);
                         Assert.AreEqual(columnQualifier, k.ColumnQualifier);
                         scanSpec.AddColumn(k.ColumnFamily + ":" + k.ColumnQualifier);
                         scanSpec.AddRow(k.Row);
                         rows.Add(k.Row);
-                        if( scanSpec.RowCount == countCells ) {
+                        if (scanSpec.RowCount == countCells) {
                             break;
                         }
                     }
 
-                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
                         int c = 0;
-                        while( scanner.Next(cell) ) {
+                        while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             Assert.AreEqual(columnFamily, cell.Key.ColumnFamily);
                             Assert.AreEqual(columnQualifier, cell.Key.ColumnQualifier);
@@ -1090,29 +1090,88 @@ namespace Hypertable.Test
                     }
                 }
 
-                for( int r = 0; r < 10; ++r ) {
+                for (int r = 0; r < 10; ++r) {
                     var rows = new HashSet<string>();
                     var columnQualifier = random.Next(Cf.Length).ToString(CultureInfo.InvariantCulture);
                     int countCells = 10 + random.Next(Count / 10);
                     var scanSpec = new ScanSpec { ScanAndFilter = true };
-                    foreach( var k in Shuffle(keys).Where(k => k.ColumnQualifier == columnQualifier) ) {
+                    foreach (var k in Shuffle(keys).Where(k => k.ColumnQualifier == columnQualifier)) {
                         Assert.AreEqual(columnQualifier, k.ColumnQualifier);
                         scanSpec.AddColumn(k.ColumnFamily + ":" + k.ColumnQualifier);
                         scanSpec.AddRow(k.Row);
                         rows.Add(k.Row);
-                        if( scanSpec.RowCount == countCells ) {
+                        if (scanSpec.RowCount == countCells) {
                             break;
                         }
                     }
 
-                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
                         int c = 0;
-                        while( scanner.Next(cell) ) {
+                        while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             Assert.AreEqual(columnQualifier, cell.Key.ColumnQualifier);
                             Assert.IsTrue(rows.Contains(cell.Key.Row));
+                            ++c;
+                        }
+
+                        Assert.AreEqual(scanSpec.RowCount, c);
+                    }
+                }
+
+                using (var mutator = _table.CreateMutator()) {
+                    var key = new Key { Row = "A", ColumnFamily = "a", ColumnQualifier = "1" };
+                    mutator.Set(key, Encoding.GetBytes(key.Row));
+
+                    key = new Key { Row = "B", ColumnFamily = "a", ColumnQualifier = "2" };
+                    mutator.Set(key, Encoding.GetBytes(key.Row));
+
+                    key = new Key { Row = "C", ColumnFamily = "c", ColumnQualifier = "3" };
+                    mutator.Set(key, Encoding.GetBytes(key.Row));
+
+                    key = new Key { Row = "D", ColumnFamily = "c", ColumnQualifier = "4" };
+                    mutator.Set(key, Encoding.GetBytes(key.Row));
+
+                    key = new Key { Row = "E", ColumnFamily = "b", ColumnQualifier = "5" };
+                    mutator.Set(key, Encoding.GetBytes(key.Row));
+                }
+                {
+                    var scanSpec = new ScanSpec { ScanAndFilter = true };
+                    scanSpec.AddColumn("a:1");
+                    scanSpec.AddColumn("a:2");
+                    scanSpec.AddColumn("b:5");
+                    scanSpec.AddColumn("c:3");
+                    scanSpec.AddColumn("c:4");
+                    scanSpec.AddRow("A");
+                    scanSpec.AddRow("B");
+
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
+                        Assert.AreSame(scanSpec, scanner.ScanSpec);
+                        var cell = new Cell();
+                        int c = 0;
+                        while (scanner.Next(cell)) {
+                            Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                            ++c;
+                        }
+
+                        Assert.AreEqual(scanSpec.RowCount, c);
+                    }
+
+                    scanSpec = new ScanSpec { ScanAndFilter = true };
+                    scanSpec.AddColumn("a");
+                    scanSpec.AddColumn("b:5");
+                    scanSpec.AddColumn("c");
+                    scanSpec.AddRow("A");
+                    scanSpec.AddRow("C");
+                    scanSpec.AddRow("E");
+
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
+                        Assert.AreSame(scanSpec, scanner.ScanSpec);
+                        var cell = new Cell();
+                        int c = 0;
+                        while (scanner.Next(cell)) {
+                            Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             ++c;
                         }
 
