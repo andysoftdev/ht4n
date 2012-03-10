@@ -68,7 +68,7 @@ namespace Hypertable {
 	
 	ReadOnlyCollection<String^>^ ScanSpec::Columns::get( ) {
 		if( columns == nullptr ) {
-			columns = gcnew HashSet<String^>();
+			columns = gcnew SortedSet<String^>();
 		}
 		return AsReadOnly( columns );
 	}
@@ -142,7 +142,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(column) ) throw gcnew ArgumentNullException( L"column" );
 
 		if( columns == nullptr ) {
-			columns = gcnew HashSet<String^>();
+			columns = gcnew SortedSet<String^>();
 		}
 		columns->Add( column );
 		return this;
@@ -239,8 +239,8 @@ namespace Hypertable {
 		#define APPEND_INT( what ) if( what > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
 		#define APPEND_BOOL( what ) if( what ) sb->Append( L#what##L", " );
 		#define APPEND_STRING( what ) if( what != nullptr ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
-		#define APPEND_DATETIME( what ) if( what != timestampOrigin ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
-		#define APPEND_TIMESPAN( what ) if( what.Ticks > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+		#define APPEND_DATETIME( what ) if( what.Ticks != 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+		#define APPEND_TIMESPAN( what ) if( what.Ticks != 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
 
 		StringBuilder^ sb = gcnew StringBuilder();
 		sb->Append( GetType() );
@@ -261,6 +261,15 @@ namespace Hypertable {
 		APPEND_TIMESPAN( Timeout )
 		APPEND_INT( RowCount )
 		APPEND_INT( ColumnCount )
+		if( ColumnCount > 0 ) {
+			sb->Append(L"Columns=[");
+			for each( String^ column in columns ) {
+				sb->Append(column);
+				sb->Append(L", ");
+			}
+			sb->Length -= 2;
+			sb->Append(L"], ");
+		}
 		APPEND_INT( CellCount )
 		APPEND_INT( RowIntervalCount )
 		APPEND_INT( CellIntervalCount )
