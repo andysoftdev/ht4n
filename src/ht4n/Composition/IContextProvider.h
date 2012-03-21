@@ -56,7 +56,7 @@ namespace Hypertable {
 	/// void foo() {
 	///    // set the "Hypertable.Composition.ComposablePartCatalogs" property which expects
 	///    // a ComposablePartCatalog or an IEnumerable&lt;ComposablePartCatalog&gt;
-	///    var properties = new Dictionary%lt;string, object&gt;
+	///    var properties = new Dictionary&lt;string, object&gt;
 	///       {
 	///          { "Hypertable.Composition.ComposablePartCatalogs", new AssemblyCatalog(GetAssembly(this.GetType())) }
 	///       };
