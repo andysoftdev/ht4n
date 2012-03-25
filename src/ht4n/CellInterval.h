@@ -80,7 +80,7 @@ namespace Hypertable {
 			/// Initializes a new instance of the CellInterval class that is a copy of the specified instance.
 			/// </summary>
 			/// <param name="cellInterval">Cell interval to copy.</param>
-			CellInterval( CellInterval^ cellInterval );
+			explicit CellInterval( CellInterval^ cellInterval );
 
 			/// <summary>
 			/// Gets or sets the start column family.

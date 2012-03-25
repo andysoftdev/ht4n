@@ -43,6 +43,7 @@ namespace Hypertable {
 	ref class Key;
 	ref class RowInterval;
 	ref class CellInterval;
+	ref class ColumnPredicate;
 
 	/// <summary>
 	/// Represents a table scanner specification.
@@ -55,6 +56,7 @@ namespace Hypertable {
 	///                        .AddColumn("cf2:cq")          // all cells in column family cf2 with column qualifier cq
 	///                        .AddColumn("cf3:/abc[0-9]/")  // all cells in cf3 where column qualifier matches the regex
 	///                        .AddColumn("cf4:");           // all cells in cf4 where no column qualifier exists
+	///                        .AddColumn("cf5:^xyz");       // all cells in cf5 where the column qualifier starts with the prefix specified
 	///
 	/// using( var scanner = table.CreateScanner(scanSpec) ) {
 	///    foreach( cell cell in scanner ) {
@@ -122,6 +124,12 @@ namespace Hypertable {
 			/// </summary>
 			/// <param name="key">Cell to add to the scan specification.</param>
 			explicit ScanSpec( Key^ key );
+
+			/// <summary>
+			/// Initializes a new instance of the ScanSpec class using the column predicate specified.
+			/// </summary>
+			/// <param name="columnPredicate">Column predicate to add to the scan specification.</param>
+			explicit ScanSpec( ColumnPredicate^ columnPredicate );
 
 			/// <summary>
 			/// Initializes a new instance of the ScanSpec class using the row interval specified.
@@ -251,6 +259,15 @@ namespace Hypertable {
 			}
 
 			/// <summary>
+			/// Gets the number of column predicates.
+			/// </summary>
+			property int ColumnPredicateCount {
+				int get() {
+					return columnPredicates != nullptr ? columnPredicates->Count : 0;
+				}
+			}
+
+			/// <summary>
 			/// Gets the number of cells.
 			/// </summary>
 			property int CellCount {
@@ -289,6 +306,13 @@ namespace Hypertable {
 			/// </summary>
 			property ReadOnlyCollection<String^>^ Columns {
 				ReadOnlyCollection<String^>^ get();
+			}
+
+			/// <summary>
+			/// Gets the column predicates.
+			/// </summary>
+			property ReadOnlyCollection<ColumnPredicate^>^ ColumnPredicates {
+				ReadOnlyCollection<ColumnPredicate^>^ get();
 			}
 
 			/// <summary>
@@ -346,7 +370,7 @@ namespace Hypertable {
 			/// <param name="column">Column family to add.</param>
 			/// <returns>This ScanSpec instance.</returns>
 			/// <remarks>
-			/// column family[:[column qualifier|column qualifier regexp]] defines a column.
+			/// column family[:[[^]column qualifier|column qualifier regexp]] defines a column.
 			/// </remarks>
 			ScanSpec^ AddColumn( String^ column );
 
@@ -356,9 +380,23 @@ namespace Hypertable {
 			/// <param name="column">Column family to remove.</param>
 			/// <returns>This ScanSpec instance.</returns>
 			/// <remarks>
-			/// column family[:[column qualifier|column qualifier regexp]] defines a column.
+			/// column family[:[[^]column qualifier|column qualifier regexp]] defines a column.
 			/// </remarks>
 			ScanSpec^ RemoveColumn( String^ column );
+
+			/// <summary>
+			/// Adds a column predicate to the scan.
+			/// </summary>
+			/// <param name="columnPredicate">Column predicate to add.</param>
+			/// <returns>This ScanSpec instance.</returns>
+			ScanSpec^ AddColumnPredicate( ColumnPredicate^ columnPredicate );
+
+			/// <summary>
+			/// Removes a column predicate.
+			/// </summary>
+			/// <param name="columnPredicate">Column predicate to remove.</param>
+			/// <returns>This ScanSpec instance.</returns>
+			ScanSpec^ RemoveColumnPredicate( ColumnPredicate^ columnPredicate );
 
 			/// <summary>
 			/// Adds a cell to be returned in the scan.
@@ -451,6 +489,7 @@ namespace Hypertable {
 			bool isSorted;
 			ICollection<String^>^ rows;
 			ISet<String^>^ columns;
+			ISet<ColumnPredicate^>^ columnPredicates;
 			ICollection<Key^>^ keys;
 			ICollection<RowInterval^>^ rowIntervals;
 			ICollection<CellInterval^>^ cellIntervals;

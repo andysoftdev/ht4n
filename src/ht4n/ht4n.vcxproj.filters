@@ -155,6 +155,12 @@
     <ClInclude Include="Composition\IContextProviderMetaData.h">
       <Filter>Source Files\Composition</Filter>
     </ClInclude>
+    <ClInclude Include="ColumnPredicate.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatchKind.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -234,6 +240,9 @@
     </ClCompile>
     <ClCompile Include="Composition\ExportContextProviderAttribute.cpp">
       <Filter>Source Files\Composition</Filter>
+    </ClCompile>
+    <ClCompile Include="ColumnPredicate.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

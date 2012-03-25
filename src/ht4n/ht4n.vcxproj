@@ -267,6 +267,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="AsyncScannerCallback.h" />
     <ClInclude Include="AsyncScannerContext.h" />
     <ClInclude Include="BlockingAsyncResult.h" />
+    <ClInclude Include="ColumnPredicate.h" />
     <ClInclude Include="Composition\ContextFactory.h" />
     <ClInclude Include="Composition\ExportContextProviderAttribute.h" />
     <ClInclude Include="Composition\IContextFactory.h" />
@@ -279,6 +280,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="ContextFeature.h" />
     <ClInclude Include="INamespace.h" />
     <ClInclude Include="ITable.h" />
+    <ClInclude Include="MatchKind.h" />
     <ClInclude Include="QueuedTableMutator.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="CellFlag.h" />
@@ -314,6 +316,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="AsyncResult.cpp" />
+    <ClCompile Include="ColumnPredicate.cpp" />
     <ClCompile Include="Composition\ContextFactory.cpp" />
     <ClCompile Include="Composition\ExportContextProviderAttribute.cpp" />
     <ClCompile Include="QueuedTableMutator.cpp" />

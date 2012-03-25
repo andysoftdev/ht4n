@@ -25,69 +25,58 @@
 #error "requires /clr"
 #endif
 
+#include "MatchKind.h"
+
 namespace Hypertable {
 	using namespace System;
 
 	/// <summary>
-	/// Represents a row interval.
+	/// Represents a column predicate.
 	/// </summary>
 	[Serializable]
-	public ref class RowInterval : public IComparable<RowInterval^>, public IEquatable<RowInterval^>, public ICloneable {
+	public ref class ColumnPredicate : public IComparable<ColumnPredicate^>, public IEquatable<ColumnPredicate^>, public ICloneable {
 
 		public:
 
 			/// <summary>
-			/// Initializes a new instance of the RowInterval class.
+			/// Initializes a new instance of the ColumnPredicate class.
 			/// </summary>
-			RowInterval( );
+			ColumnPredicate( );
 
 			/// <summary>
-			/// Initializes a new instance of the RowInterval class using start/end row.
+			/// Initializes a new instance of the ColumnPredicate class using column family, match kind and search value.
 			/// </summary>
-			/// <param name="startRow">Start row, might be null if unspecified.</param>
-			/// <param name="endRow">End row, might be null if unspecified.</param>
-			RowInterval( String^ startRow, String^ endRow );
+			/// <param name="columnFamily">Column family.</param>
+			/// <param name="match">Defines the match kind.</param>
+			/// <param name="searchValue">Search value.</param>
+			ColumnPredicate( String^ columnFamily, MatchKind match, cli::array<byte>^ searchValue );
 
 			/// <summary>
-			/// Initializes a new instance of the RowInterval class using start/end row.
+			/// Initializes a new instance of the ColumnPredicate class that is a copy of the specified instance.
 			/// </summary>
-			/// <param name="startRow">Start row, might be null if unspecified.</param>
-			/// <param name="includeStartRow">Value that indicates whether the start row should be included.</param>
-			/// <param name="endRow">End row, might be null if unspecified.</param>
-			/// <param name="includeEndRow">Value that indicates whether the end row should be included.</param>
-			RowInterval( String^ startRow, bool includeStartRow, String^ endRow, bool includeEndRow );
+			/// <param name="columnPredicate">Column predicate to copy.</param>
+			explicit ColumnPredicate( ColumnPredicate^ columnPredicate );
 
 			/// <summary>
-			/// Initializes a new instance of the RowInterval class that is a copy of the specified instance.
+			/// Gets or sets the column family.
 			/// </summary>
-			/// <param name="rowInterval">Row interval to copy.</param>
-			explicit RowInterval( RowInterval^ rowInterval );
+			property String^ ColumnFamily;
 
 			/// <summary>
-			/// Gets or sets the start row.
+			/// Gets or sets the match kind.
 			/// </summary>
-			property String^ StartRow;
+			property MatchKind Match;
 
 			/// <summary>
-			/// Gets or sets a value that indicates whether the start row should be included.
+			/// Gets or sets the search value, might be null.
 			/// </summary>
-			property bool IncludeStartRow;
+			property cli::array<Byte>^ SearchValue;
 
 			/// <summary>
-			/// Gets or sets the end row.
+			/// Compares this instance with a specified ColumnPredicate object and indicates whether this instance precedes, follows,
+			/// or appears in the same position in the sort order as the specified ColumnPredicate.
 			/// </summary>
-			property String^ EndRow;
-
-			/// <summary>
-			/// Gets or sets a value that indicates whether the end row should be included.
-			/// </summary>
-			property bool IncludeEndRow;
-
-			/// <summary>
-			/// Compares this instance with a specified RowInterval object and indicates whether this instance precedes, follows,
-			/// or appears in the same position in the sort order as the specified RowInterval.
-			/// </summary>
-			/// <param name="other">Row interval to compare, or null.</param>
+			/// <param name="other">Column predicate to compare, or null.</param>
 			/// <returns>
 			/// Signed integer that indicates the relationship between the comparand and this instance:
 			/// <table class="comment">
@@ -96,24 +85,24 @@ namespace Hypertable {
 			/// <tr><td>&gt;</td><td>0 if this instance follows other.</td></tr>
 			/// </table>
 			/// </returns>
-			virtual int CompareTo( RowInterval^ other );
+			virtual int CompareTo( ColumnPredicate^ other );
 
 			/// <summary>
-			/// Determines whether this instance and an other RowInterval object equals.
+			/// Determines whether this instance and an other ColumnPredicate object equals.
 			/// </summary>
-			/// <param name="other">RowInterval to compare, or null.</param>
+			/// <param name="other">ColumnPredicate to compare, or null.</param>
 			/// <returns>true if the value of obj is the same as the value of this instance, otherwise false.</returns>
-			virtual bool Equals( RowInterval^ other );
+			virtual bool Equals( ColumnPredicate^ other );
 
 			/// <summary>
-			/// Determines whether this instance and a specified object, which must also be a RowInterval object, equals.
+			/// Determines whether this instance and a specified object, which must also be a ColumnPredicate object, equals.
 			/// </summary>
-			/// <param name="obj">Row interval to compare, or null.</param>
+			/// <param name="obj">Column predicate to compare, or null.</param>
 			/// <returns>true if the value of obj is the same as the value of this instance, otherwise false.</returns>
 			virtual bool Equals( Object^ obj ) override;
 
 			/// <summary>
-			/// Returns the hash code for this RowInterval.
+			/// Returns the hash code for this ColumnPredicate.
 			/// </summary>
 			/// <returns>Signed hash code.</returns>
 			virtual int GetHashCode() override;
@@ -127,14 +116,14 @@ namespace Hypertable {
 			/// <summary>
 			/// Creates a new object that is a copy of this instance.
 			/// </summary>
-			/// <returns>A new RowInterval instance equal to this instance.</returns>
+			/// <returns>A new ColumnPredicate instance equal to this instance.</returns>
 			virtual Object^ Clone( );
 
 			/// <summary>
-			/// Compares two specified row intervals and returns an integer that indicates their relative position in the sort order.
+			/// Compares two specified column predicates and returns an integer that indicates their relative position in the sort order.
 			/// </summary>
-			/// <param name="x">The first row interval to compare, or null.</param>
-			/// <param name="y">The second row interval to compare, or null.</param>
+			/// <param name="x">The first column predicate to compare, or null.</param>
+			/// <param name="y">The second column predicate to compare, or null.</param>
 			/// <returns>
 			/// Signed integer that indicates the relationship between the two comparands:
 			/// <table class="comment">
@@ -143,7 +132,7 @@ namespace Hypertable {
 			/// <tr><td>&gt; 0</td><td>if x is greater than y</td></tr>
 			/// </table>
 			/// </returns>
-			static int Compare( RowInterval^ x, RowInterval^ y );
+			static int Compare( ColumnPredicate^ x, ColumnPredicate^ y );
 
 			/// <summary>
 			/// Determines whether two specified row intervals are equal.
@@ -151,7 +140,7 @@ namespace Hypertable {
 			/// <param name="x">The first row interval to compare, or null.</param>
 			/// <param name="y">The second row interval to compare, or null.</param>
 			/// <returns>true if the value of x is the same as the value of y, otherwise false.</returns>
-			static bool operator == ( RowInterval^ x, RowInterval^ y );
+			static bool operator == ( ColumnPredicate^ x, ColumnPredicate^ y );
 
 			/// <summary>
 			/// Determines whether two specified row intervals are different.
@@ -159,7 +148,7 @@ namespace Hypertable {
 			/// <param name="x">The first row interval to compare, or null.</param>
 			/// <param name="y">The second row interval to compare, or null.</param>
 			/// <returns>true if the value of x is different as the value of y, otherwise false.</returns>
-			static bool operator != ( RowInterval^ x, RowInterval^ y );
+			static bool operator != ( ColumnPredicate^ x, ColumnPredicate^ y );
 
 			/// <summary>
 			/// Determines whether one specified row interval is less than the other.
@@ -167,7 +156,7 @@ namespace Hypertable {
 			/// <param name="x">The first row interval to compare, or null.</param>
 			/// <param name="y">The second row interval to compare, or null.</param>
 			/// <returns>true if the value of x is less than the value of y, otherwise false.</returns>
-			static bool operator < ( RowInterval^ x, RowInterval^ y );
+			static bool operator < ( ColumnPredicate^ x, ColumnPredicate^ y );
 
 			/// <summary>
 			/// Determines whether one specified row interval is greater than the other.
@@ -175,7 +164,7 @@ namespace Hypertable {
 			/// <param name="x">The first row interval to compare, or null.</param>
 			/// <param name="y">The second row interval to compare, or null.</param>
 			/// <returns>true if the value of x is greater than the value of y, otherwise false.</returns>
-			static bool operator > ( RowInterval^ x, RowInterval^ y );
+			static bool operator > ( ColumnPredicate^ x, ColumnPredicate^ y );
 	};
 
 }

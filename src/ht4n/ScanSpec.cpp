@@ -23,6 +23,7 @@
 
 #include "ScanSpec.h"
 #include "Key.h"
+#include "ColumnPredicate.h"
 #include "RowInterval.h"
 #include "CellInterval.h"
 #include "Exception.h"
@@ -51,6 +52,10 @@ namespace Hypertable {
 		AddCell( key );
 	}
 
+	ScanSpec::ScanSpec( ColumnPredicate^ columnPredicate ) {
+		AddColumnPredicate( columnPredicate );
+	}
+
 	ScanSpec::ScanSpec( RowInterval^ rowInterval ) {
 		AddRowInterval( rowInterval );
 	}
@@ -71,6 +76,13 @@ namespace Hypertable {
 			columns = gcnew SortedSet<String^>();
 		}
 		return AsReadOnly( columns );
+	}
+
+	ReadOnlyCollection<ColumnPredicate^>^ ScanSpec::ColumnPredicates::get( ) {
+		if( columnPredicates == nullptr ) {
+			columnPredicates = gcnew HashSet<ColumnPredicate^>();
+		}
+		return AsReadOnly( columnPredicates );
 	}
 
 	ReadOnlyCollection<Key^>^ ScanSpec::Cells::get( ) {
@@ -153,6 +165,27 @@ namespace Hypertable {
 
 		if( columns != nullptr ) {
 			columns->Remove( column );
+		}
+		return this;
+	}
+
+	ScanSpec^ ScanSpec::AddColumnPredicate( ColumnPredicate^ columnPredicate ) {
+		if( columnPredicate == nullptr ) throw gcnew ArgumentNullException( L"columnPredicate" );
+		if( String::IsNullOrEmpty(columnPredicate->ColumnFamily) ) throw gcnew ArgumentException(L"Invalid column family in column predicate", L"columnPredicate");
+		if( columnPredicate->Match == MatchKind::Undefined ) throw gcnew ArgumentException(L"Invalid match kind in column predicate", L"columnPredicate");
+
+		if( columnPredicates == nullptr ) {
+			columnPredicates = gcnew HashSet<ColumnPredicate^>();
+		}
+		columnPredicates->Add( columnPredicate );
+		return this;
+	}
+
+	ScanSpec^ ScanSpec::RemoveColumnPredicate( ColumnPredicate^ columnPredicate ) {
+		if( columnPredicate == nullptr ) throw gcnew ArgumentNullException( L"columnPredicate" );
+
+		if( columnPredicates != nullptr ) {
+			columnPredicates->Remove( columnPredicate );
 		}
 		return this;
 	}
@@ -270,6 +303,15 @@ namespace Hypertable {
 			sb->Length -= 2;
 			sb->Append(L"], ");
 		}
+		if( ColumnPredicateCount > 0 ) {
+			sb->Append(L"ColumnPredicates=[");
+			for each( ColumnPredicate^ columnPredicate in columnPredicates ) {
+				sb->Append(columnPredicate->ToString());
+				sb->Append(L", ");
+			}
+			sb->Length -= 2;
+			sb->Append(L"], ");
+		}
 		APPEND_INT( CellCount )
 		APPEND_INT( RowIntervalCount )
 		APPEND_INT( CellIntervalCount )
@@ -331,6 +373,29 @@ namespace Hypertable {
 			scanSpec.reserveColumns( columns->Count );
 			for each( String^ column in columns ) {
 				scanSpec.addColumn( CM2A(column) );
+			}
+		}
+		if( columnPredicates != nullptr && columnPredicates->Count > 0 ) {
+			for each( ColumnPredicate^ columnPredicate in columnPredicates ) {
+				if( String::IsNullOrEmpty(columnPredicate->ColumnFamily) ) throw gcnew BadScanSpecException(L"Invalid column family in column predicate");
+				if( columnPredicate->Match == MatchKind::Undefined ) throw gcnew BadScanSpecException(L"Invalid match kind in column predicate");
+
+				if( columns == nullptr || !columns->Contains(columnPredicate->ColumnFamily) ) {
+					scanSpec.addColumn( CM2A(columnPredicate->ColumnFamily) );
+				}
+
+				if( columnPredicate->SearchValue != nullptr ) {
+					if( columnPredicate->SearchValue->Length > 0 ) {
+						pin_ptr<byte> searchValue = &columnPredicate->SearchValue[0];
+						scanSpec.addColumnPredicate( CM2A(columnPredicate->ColumnFamily), (uint32_t)columnPredicate->Match, reinterpret_cast<const char*>(searchValue), columnPredicate->SearchValue->Length );
+					}
+					else {
+						scanSpec.addColumnPredicate( CM2A(columnPredicate->ColumnFamily), (uint32_t)columnPredicate->Match, "", 0 );
+					}
+				}
+				else {
+					scanSpec.addColumnPredicate( CM2A(columnPredicate->ColumnFamily), (uint32_t)columnPredicate->Match, 0, 0 );
+				}
 			}
 		}
 		if( keys != nullptr && keys->Count > 0 ) {

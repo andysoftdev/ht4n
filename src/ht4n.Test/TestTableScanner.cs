@@ -627,6 +627,368 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
+        public void ScanTableColumnPredicate() {
+            var key = new Key { Row = "XXX", ColumnFamily = "d" };
+            using (var mutator = table.CreateMutator()) {
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+                key.Row = "XXY";
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+                key.Row = "XYY";
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+                key.Row = "YYY";
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+                key.Row = "ZZX";
+                mutator.Set(key, Encoding.GetBytes(string.Empty));
+                key.Row = "ZZY";
+                mutator.Set(key, null);
+                key.Row = "ZZZ";
+                mutator.Set(key, Encoding.GetBytes("What a wonderful world"));
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes("XYY"))))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(1, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes(string.Empty))))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.IsNull(cell.Value);
+                    ++c;
+                }
+
+                Assert.AreEqual(2, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Exact, null)))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.IsNull(cell.Value);
+                    ++c;
+                }
+
+                Assert.AreEqual(2, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes(string.Empty))))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+
+                Assert.AreEqual(7, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, null)))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+
+                Assert.AreEqual(7, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("X"))))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(3, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("XX"))))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(2, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("Y"))))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(1, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("ZYX"))))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(0, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Contains, Encoding.GetBytes("wonder"))))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual("ZZZ", cell.Key.Row);
+                    ++c;
+                }
+
+                Assert.AreEqual(1, c);
+            }
+
+            key = new Key { Row = "XXX", ColumnFamily = "e" };
+            using (var mutator = table.CreateMutator()) {
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+                key.Row = "XXY";
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+                key.Row = "XYY";
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+                key.Row = "YYY";
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+                key.Row = "ZZX";
+                mutator.Set(key, Encoding.GetBytes(string.Empty));
+                key.Row = "ZZY";
+                mutator.Set(key, null);
+                key.Row = "ZZZ";
+                mutator.Set(key, Encoding.GetBytes("What's going on?"));
+            }
+
+            var scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes("XYY")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes("XYY")));
+
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(2, c);
+            }
+
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("X")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes("X")));
+
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(6, c);
+            }
+
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("XX")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes("XX")));
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(4, c);
+            }
+
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("Y")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes("Y")));
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(2, c);
+            }
+
+            scanSpec =
+                new ScanSpec().AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes("ZYX"))).AddColumnPredicate(
+                    new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes("ZYX")));
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+                }
+
+                Assert.AreEqual(0, c);
+            }
+
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes(string.Empty)))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes(string.Empty)));
+
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.IsTrue(cell.Key.Row.StartsWith("ZZ"));
+                    Assert.IsNull(cell.Value);
+                    ++c;
+                }
+
+                Assert.AreEqual(4, c);
+            }
+
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, null))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, null));
+
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.IsTrue(cell.Key.Row.StartsWith("ZZ"));
+                    Assert.IsNull(cell.Value);
+                    ++c;
+                }
+
+                Assert.AreEqual(4, c);
+            }
+
+            scanSpec =
+                new ScanSpec().AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes(string.Empty))).AddColumnPredicate(
+                    new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes(string.Empty)));
+
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+
+                Assert.AreEqual(14, c);
+            }
+
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, null))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, null));
+
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+
+                Assert.AreEqual(14, c);
+            }
+
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Contains, Encoding.GetBytes("wonder")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Contains, Encoding.GetBytes("What's")));
+
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual("ZZZ", cell.Key.Row);
+                    ++c;
+                }
+
+                Assert.AreEqual(2, c);
+            }
+
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Contains, Encoding.GetBytes("on")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Contains, Encoding.GetBytes("on")));
+
+            using (var scanner = table.CreateScanner(scanSpec)) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    Assert.AreEqual("ZZZ", cell.Key.Row);
+                    ++c;
+                }
+
+                Assert.AreEqual(2, c);
+            }
+        }
+
+        [TestMethod]
+        public void ScanTableColumnQualifierPrefix() {
+            var key = new Key { ColumnFamily = "d" };
+            using (var mutator = table.CreateMutator()) {
+                for (int i = 0; i < 100; ++i) {
+                    key.Row = i.ToString("D2");
+                    key.ColumnQualifier = (100 + i / 10).ToString("D3") + (1000 + i).ToString("D4");
+                    mutator.Set(key, Encoding.GetBytes((1000 + i).ToString("D4")));
+                }
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:^1"))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+
+                Assert.AreEqual(100, c);
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:^10"))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+
+                Assert.AreEqual(100, c);
+            }
+
+            for (int i = 0; i < 10; ++i) {
+                using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:^" + (100 + i).ToString("D3")))) {
+                    int c = 0;
+                    Cell cell;
+                    while (scanner.Next(out cell)) {
+                        Assert.AreEqual((1000 + 10 * i + c).ToString("D4"), Encoding.GetString(cell.Value));
+                        ++c;
+                    }
+
+                    Assert.AreEqual(10, c);
+                }
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:^10510"))) {
+                int c = 0;
+                Cell cell;
+                while (scanner.Next(out cell)) {
+                    ++c;
+                }
+
+                Assert.AreEqual(10, c);
+            }
+        }
+
+        [TestMethod]
         public void ScanTableColumnQualifierRegex() {
             var key = new Key { ColumnFamily = "d" };
             using (var mutator = table.CreateMutator()) {
@@ -650,7 +1012,7 @@ namespace Hypertable.Test
                 }
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:" + "/10[56]/"))) {
+            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:/10[56]/"))) {
                 int c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
