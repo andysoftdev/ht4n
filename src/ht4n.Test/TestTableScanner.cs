@@ -934,6 +934,78 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
+        public void ScanTableColumnQualifierIndex() {
+            const string ScanTableValueIndexSchema =
+                "<Schema>" +
+                "<AccessGroup name=\"default\" blksz=\"1024\">" +
+                "<ColumnFamily><Name>a</Name><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
+                "<ColumnFamily><Name>b</Name><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
+                "<ColumnFamily><Name>c</Name><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
+                "</AccessGroup>" +
+                "</Schema>";
+
+            const int Count = 10000;
+            using( var _table = EnsureTable("ScanTableColumnQualifierIndex", ScanTableValueIndexSchema) ) {
+                if( IsHyper || IsThrift ) {
+                    Assert.IsTrue(Ns.TableExists("^^ScanTableColumnQualifierIndex"));
+                }
+
+                var key = new Key();
+                using (var mutator = _table.CreateMutator()) {
+                    for( int i = 0; i < Count; ++i ) {
+                        var qualifier = i.ToString();
+                        var value = Encoding.GetBytes(qualifier);
+
+                        key.ColumnFamily = "a";
+                        key.ColumnQualifier = qualifier;
+                        key.Row = null;
+                        mutator.Set(key, value);
+                        
+                        key.ColumnFamily = "b";
+                        key.ColumnQualifier = qualifier;
+                        key.Row = null;
+                        mutator.Set(key, value);
+
+                        key.ColumnFamily = "c";
+                        key.ColumnQualifier = qualifier;
+                        key.Row = null;
+                        mutator.Set(key, value);
+                    }
+                }
+
+                string[] columnFamilies = { "a", "b", "c" };
+                var rng = new Random();
+                for (int i = 0; i < Count / 100; ++i) {
+                    var qualifier = rng.Next(Count).ToString();
+                    var scanSpec = new ScanSpec().AddColumn(columnFamilies[rng.Next(columnFamilies.Length)] + ":" + qualifier);
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
+                        Cell cell;
+                        Assert.IsTrue(scanner.Next(out cell));
+                        Assert.AreEqual(qualifier, Encoding.GetString(cell.Value));
+                        Assert.IsFalse(scanner.Next(out cell));
+                    }
+                }
+
+                int[] ranges = { 1000, 300, 56, 9999, 789, 4 };
+                int[] occurrence = { 1, 11, 111, 1, 11, 1111 };
+                Assert.AreEqual(ranges.Length, occurrence.Length);
+                for (int i = 0; i < ranges.Length; ++i) {
+                    var qualifier = ranges[i].ToString();
+                    var scanSpec = new ScanSpec().AddColumn(columnFamilies[rng.Next(columnFamilies.Length)] + ":^" + qualifier);
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
+                        int c = 0;
+                        Cell cell = new Cell();
+                        while (scanner.Next(cell)) {
+                            Assert.IsTrue(Encoding.GetString(cell.Value).StartsWith(qualifier));
+                            ++c;
+                        }
+                        Assert.AreEqual(occurrence[i], c, "range = {0}", ranges[i]);
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
         public void ScanTableColumnQualifierPrefix() {
             var key = new Key { ColumnFamily = "d" };
             using (var mutator = table.CreateMutator()) {
@@ -2054,6 +2126,74 @@ namespace Hypertable.Test
                 }
 
                 Assert.AreEqual(1, c);
+            }
+        }
+
+        [TestMethod]
+        public void ScanTableValueIndex() {
+            const string ScanTableValueIndexSchema =
+                "<Schema>" +
+                "<AccessGroup name=\"default\" blksz=\"1024\">" +
+                "<ColumnFamily><Name>a</Name><Index>true</Index></ColumnFamily>" +
+                "<ColumnFamily><Name>b</Name><Index>true</Index></ColumnFamily>" +
+                "<ColumnFamily><Name>c</Name><Index>true</Index></ColumnFamily>" +
+                "</AccessGroup>" +
+                "</Schema>";
+
+            const int Count = 10000;
+            using( var _table = EnsureTable("ScanTableValueIndex", ScanTableValueIndexSchema) ) {
+                if( IsHyper || IsThrift) {
+                    Assert.IsTrue(Ns.TableExists("^ScanTableValueIndex"));
+                }
+
+                var key = new Key();
+                using (var mutator = _table.CreateMutator()) {
+                    for( int i = 0; i < Count; ++i ) {
+                        var value = Encoding.GetBytes(i.ToString());
+
+                        key.ColumnFamily = "a";
+                        key.Row = null;
+                        mutator.Set(key, value);
+                        
+                        key.ColumnFamily = "b";
+                        key.Row = null;
+                        mutator.Set(key, value);
+
+                        key.ColumnFamily = "c";
+                        key.Row = null;
+                        mutator.Set(key, value);
+                    }
+                }
+
+                string[] columnFamilies = { "a", "b", "c" };
+                var rng = new Random();
+                for (int i = 0; i < Count / 100; ++i) {
+                    var search = rng.Next(Count).ToString();
+                    var scanSpec = new ScanSpec(new ColumnPredicate(columnFamilies[rng.Next(columnFamilies.Length)], MatchKind.Exact, Encoding.GetBytes(search)));
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
+                        Cell cell;
+                        Assert.IsTrue(scanner.Next(out cell));
+                        Assert.AreEqual(search, Encoding.GetString(cell.Value));
+                        Assert.IsFalse(scanner.Next(out cell));
+                    }
+                }
+
+                int[] ranges = { 1000, 300, 56, 9999, 789, 4 };
+                int[] occurrence = { 1, 11, 111, 1, 11, 1111 };
+                Assert.AreEqual(ranges.Length, occurrence.Length);
+                for (int i = 0; i < ranges.Length; ++i) {
+                    var search = ranges[i].ToString();
+                    var scanSpec = new ScanSpec(new ColumnPredicate(columnFamilies[rng.Next(columnFamilies.Length)], MatchKind.Prefix, Encoding.GetBytes(search)));
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
+                        int c = 0;
+                        Cell cell = new Cell();
+                        while (scanner.Next(cell)) {
+                            Assert.IsTrue(Encoding.GetString(cell.Value).StartsWith(search));
+                            ++c;
+                        }
+                        Assert.AreEqual(occurrence[i], c, "range = {0}", ranges[i]);
+                    }
+                }
             }
         }
 
