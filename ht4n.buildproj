@@ -3,7 +3,7 @@
 
 	 <!-- Master files to make -->
 	<PropertyGroup>
-		<Version>0.9.5.5</Version>
+		<Version>0.9.5.6</Version>
 		<Master_x86>dist\ht4n-$(Version)-win-x86.zip</Master_x86>
 		<Master_x64>dist\ht4n-$(Version)-win-x64.zip</Master_x64>
 		<Master_ApiDoc>dist\ht4n-$(Version)-api-doc.zip</Master_ApiDoc>
