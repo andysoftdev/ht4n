@@ -91,7 +91,7 @@ namespace Hypertable {
 	///    tableB.BeginScan(asynResult);
 	///    AsyncScannerContext asyncScannerContext;
 	///    IList&lt;Cell&gt; cells;
-	///    while( asynResult.TryGetCells(out asyncScannerContext;, out cells) ) {
+	///    while( asynResult.TryGetCells(out asyncScannerContext, out cells) ) {
 	///       foreach( Cell cell in cells ) {
 	///          // process cell
 	///       }
