@@ -208,7 +208,7 @@ namespace Hypertable.Test
                 }
             }
 
-            int c = 0;
+            var c = 0;
             using (var scanner = table.CreateScanner()) {
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
@@ -225,7 +225,8 @@ namespace Hypertable.Test
         /// <param name = "table">Table.</param>
         /// <param name = "cf">Column family.</param>
         protected static void DeleteColumnFamily(ITable table, string cf) {
-            using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true }.AddColumn(cf))) {
+            var scanSpec = new ScanSpec { KeysOnly = true }.AddColumn(cf);
+            using (var scanner = table.CreateScanner(scanSpec)) {
                 using (var mutator = table.CreateMutator()) {
                     var cell = new Cell();
                     while (scanner.Next(cell)) {

@@ -45,11 +45,15 @@ namespace Hypertable.Test
         private const int CountC = 1000;
 
         private const string Schema =
-            "<Schema>" + "<AccessGroup name=\"default\" blksz=\"1024\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>"
-            + "<Name>b</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>c</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>"
-            + "<ColumnFamily>" + "<Name>d</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>e</Name>" + "<deleted>false</deleted>"
-            + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>f</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>g</Name>"
-            + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>" + "</Schema>";
+            "<Schema><AccessGroup name=\"default\" blksz=\"1024\">" +
+            "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>b</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>c</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>d</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>e</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>f</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>g</Name></ColumnFamily>" +
+            "</AccessGroup></Schema>";
 
         private static readonly UTF8Encoding Encoding = new UTF8Encoding();
 
@@ -86,13 +90,13 @@ namespace Hypertable.Test
             const int CountTables = 10;
             var tables = new List<ITable>();
             try {
-                for (int t = 0; t < CountTables; ++t) {
+                for (var t = 0; t < CountTables; ++t) {
                     var testTable = EnsureTable(string.Format("ScanMultipleTableBlockingAsync-{0}", t), Schema);
                     InitializeTableData(testTable);
                     tables.Add(testTable);
                 }
 
-                int c = 0;
+                var c = 0;
                 using (var asyncResult = new AsyncResult(
                     (ctx, cells) =>
                         {
@@ -149,7 +153,7 @@ namespace Hypertable.Test
             }
             finally {
                 tables.ForEach(t => t.Dispose());
-                for (int t = 0; t < CountTables; ++t) {
+                for (var t = 0; t < CountTables; ++t) {
                     Ns.DropTable(string.Format("ScanMultipleTableBlockingAsync-{0}", t), DropDispositions.IfExists);
                 }
             }
@@ -164,13 +168,13 @@ namespace Hypertable.Test
             const int CountTables = 10;
             var tables = new List<ITable>();
             try {
-                for (int t = 0; t < CountTables; ++t) {
+                for (var t = 0; t < CountTables; ++t) {
                     var testTable = EnsureTable(string.Format("ScanMultipleTableBlockingAsync-{0}", t), Schema);
                     InitializeTableData(testTable);
                     tables.Add(testTable);
                 }
 
-                int c = 0;
+                var c = 0;
                 using (var asyncResult = new BlockingAsyncResult()) {
                     tables.ForEach(t => t.BeginScan(asyncResult, new ScanSpec().AddColumn("a")));
                     tables.ForEach(t => t.BeginScan(asyncResult, new ScanSpec().AddColumn("b")));
@@ -208,7 +212,7 @@ namespace Hypertable.Test
             }
             finally {
                 tables.ForEach(t => t.Dispose());
-                for (int t = 0; t < CountTables; ++t) {
+                for (var t = 0; t < CountTables; ++t) {
                     Ns.DropTable(string.Format("ScanMultipleTableBlockingAsync-{0}", t), DropDispositions.IfExists);
                 }
             }
@@ -223,7 +227,7 @@ namespace Hypertable.Test
             using (var table2 = EnsureTable("ScanMultipleTableColumnFamilyAsync", Schema)) {
                 InitializeTableData(table2);
 
-                int c = 0;
+                var c = 0;
                 using (var asyncResult = new AsyncResult(
                     (ctx, cells) =>
                         {
@@ -274,7 +278,7 @@ namespace Hypertable.Test
             using (var table2 = EnsureTable("ScanMultipleTableColumnFamilyBlockingAsync", Schema)) {
                 InitializeTableData(table2);
 
-                int c = 0;
+                var c = 0;
                 using (var asyncResult = new BlockingAsyncResult()) {
                     table.BeginScan(asyncResult, new ScanSpec().AddColumn("a"));
                     table2.BeginScan(asyncResult, new ScanSpec().AddColumn("b"));
@@ -319,8 +323,8 @@ namespace Hypertable.Test
             }
 
             var param = new object();
-            int c = 0;
-            int d = 0;
+            var c = 0;
+            var d = 0;
             AsyncScannerCallback cb = (ctx, cells) =>
                 {
                     Assert.AreSame(table, ctx.Table);
@@ -372,7 +376,7 @@ namespace Hypertable.Test
                 return;
             }
 
-            int c = 0;
+            var c = 0;
             using (var asyncResult = new BlockingAsyncResult(4 * 1024)) {
                 AsyncScannerContext asyncScannerContext;
                 IList<Cell> cells;
@@ -408,8 +412,8 @@ namespace Hypertable.Test
                 return;
             }
 
-            for (int r = 0; r < 5; ++r) {
-                int c = 0;
+            for (var r = 0; r < 5; ++r) {
+                var c = 0;
                 using (var asyncResult = new AsyncResult(
                     (ctx, cells) =>
                         {
@@ -484,14 +488,14 @@ namespace Hypertable.Test
             }
 
             var rng = new Random();
-            for (int r = 0; r < 5; ++r) {
-                int ca = 0;
-                int caLimit = rng.Next(CountA / 2);
-                int caTotal = 0;
-                int cb = 0;
-                int cbLimit = rng.Next(CountB / 2);
-                int cbTotal = 0;
-                int cc = 0;
+            for (var r = 0; r < 5; ++r) {
+                var ca = 0;
+                var caLimit = rng.Next(CountA / 2);
+                var caTotal = 0;
+                var cb = 0;
+                var cbLimit = rng.Next(CountB / 2);
+                var cbTotal = 0;
+                var cc = 0;
 
                 using (var asyncResult = new AsyncResult()) {
                     table.BeginScan(
@@ -510,7 +514,7 @@ namespace Hypertable.Test
 
                     table.BeginScan(
                         asyncResult, 
-                        new ScanSpec().AddColumn("a").AddColumn("b").AddColumn("c"), 
+                        new ScanSpec().AddColumn("a", "b", "c"), 
                         (ctx, cells) =>
                             {
                                 cb += cells.Count;
@@ -524,7 +528,7 @@ namespace Hypertable.Test
 
                     table.BeginScan(
                         asyncResult, 
-                        new ScanSpec().AddColumn("b").AddColumn("c"), 
+                        new ScanSpec().AddColumn("b", "c"), 
                         (ctx, cells) =>
                             {
                                 cc += cells.Count;
@@ -563,7 +567,7 @@ namespace Hypertable.Test
 
                     table.BeginScan(
                         asyncResult, 
-                        new ScanSpec().AddColumn("a").AddColumn("b").AddColumn("c"), 
+                        new ScanSpec().AddColumn("a", "b", "c"), 
                         (ctx, cells) =>
                             {
                                 cb += cells.Count;
@@ -577,7 +581,7 @@ namespace Hypertable.Test
 
                     table.BeginScan(
                         asyncResult, 
-                        new ScanSpec().AddColumn("b").AddColumn("c"), 
+                        new ScanSpec().AddColumn("b", "c"), 
                         (ctx, cells) =>
                             {
                                 cc += cells.Count;
@@ -601,8 +605,8 @@ namespace Hypertable.Test
                 return;
             }
 
-            for (int r = 0; r < 5; ++r) {
-                int c = 0;
+            for (var r = 0; r < 5; ++r) {
+                var c = 0;
                 using (var asyncResult = new BlockingAsyncResult()) {
                     table.BeginScan(asyncResult);
                     IList<Cell> cells;
@@ -650,10 +654,10 @@ namespace Hypertable.Test
 
             var rng = new Random();
             var scanSpecA = new ScanSpec().AddColumn("a");
-            var scanSpecB = new ScanSpec().AddColumn("a").AddColumn("b").AddColumn("c");
-            var scanSpecC = new ScanSpec().AddColumn("b").AddColumn("c");
+            var scanSpecB = new ScanSpec().AddColumn("a", "b", "c");
+            var scanSpecC = new ScanSpec().AddColumn("b", "c");
 
-            for (int r = 0; r < 5; ++r) {
+            for (var r = 0; r < 5; ++r) {
                 var c = new Dictionary<ScanSpec, int>();
                 var limit = new Dictionary<ScanSpec, int>();
                 var total = new Dictionary<ScanSpec, int>();
@@ -733,15 +737,15 @@ namespace Hypertable.Test
             }
 
             var properties = new Dictionary<string, object> { { "Provider", IsHyper ? "Thrift" : "Hyper" } };
+            var nsOtherName = NsName + "/other";
             using (var ctx = Hypertable.Context.Create(ConnectionString, properties))
             using (var client = ctx.CreateClient()) {
-                string nsNameOther = NsName + "/other";
                 try {
-                    using (var nsOther = client.OpenNamespace(nsNameOther, OpenDispositions.OpenAlways))
+                    using (var nsOther = client.OpenNamespace(nsOtherName, OpenDispositions.OpenAlways))
                     using (var tableOther = nsOther.OpenTable("ScanTableDifferentContextAsync", Schema, OpenDispositions.CreateAlways)) {
                         InitializeTableData(tableOther);
 
-                        int c = 0;
+                        var c = 0;
                         using (var asyncResult = new AsyncResult(
                             (_ctx, cells) =>
                                 {
@@ -783,7 +787,7 @@ namespace Hypertable.Test
                     }
                 }
                 finally {
-                    client.DropNamespace(nsNameOther, DropDispositions.Complete);
+                    client.DropNamespace(nsOtherName, DropDispositions.Complete);
                 }
             }
         }
@@ -801,13 +805,13 @@ namespace Hypertable.Test
             var properties = new Dictionary<string, object> { { "Provider", IsHyper ? "Thrift" : "Hyper" } };
             using (var ctx = Hypertable.Context.Create(ConnectionString, properties))
             using (var client = ctx.CreateClient()) {
-                string nsNameOther = NsName + "/other";
+                var nsNameOther = NsName + "/other";
                 try {
                     using (var nsOther = client.OpenNamespace(nsNameOther, OpenDispositions.OpenAlways))
                     using (var tableOther = nsOther.OpenTable("ScanTableDifferentContextBlockingAsync", Schema, OpenDispositions.CreateAlways)) {
                         InitializeTableData(tableOther);
 
-                        int c = 0;
+                        var c = 0;
                         using (var asyncResult = new BlockingAsyncResult()) {
                             table.BeginScan(asyncResult, new ScanSpec().AddColumn("a"));
                             tableOther.BeginScan(asyncResult, new ScanSpec().AddColumn("b"));
@@ -856,7 +860,7 @@ namespace Hypertable.Test
                 return;
             }
 
-            int c = 0;
+            var c = 0;
             using (var asyncResult = new AsyncResult(
                 (ctx, cells) =>
                     {
@@ -883,7 +887,7 @@ namespace Hypertable.Test
                 return;
             }
 
-            int c = 0;
+            var c = 0;
             using (var asyncResult = new AsyncResult(
                 (ctx, cells) =>
                     {
@@ -952,7 +956,7 @@ namespace Hypertable.Test
         private static void InitializeTableData(ITable _table) {
             var key = new Key();
             using (var mutator = _table.CreateMutator(MutatorSpec.CreateChunked())) {
-                for (int n = 0; n < CountA; ++n) {
+                for (var n = 0; n < CountA; ++n) {
                     key.ColumnFamily = "a";
                     key.Row = Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));

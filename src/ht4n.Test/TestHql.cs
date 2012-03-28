@@ -45,29 +45,6 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
-        [Ignore] // FIXME, issue 'delete with unspecified timestamp applying to all future inserts'
-        public void CreateDeleteSingleCell() {
-            if (!HasHQL) {
-                return;
-            }
-
-            Ns.Exec("CREATE TABLE fruit (tag)");
-            Ns.Exec("INSERT INTO fruit VALUES" + "(\"2009-08-02 08:30:01\", \"banana\", \"tag\", \"Had with dinner\")");
-            var cells = Ns.Query("SELECT * FROM fruit");
-            Assert.IsNotNull(cells);
-            Assert.AreEqual(1, cells.Count);
-            Ns.Exec("DELETE * FROM fruit WHERE ROW=\"banana\"");
-            cells = Ns.Query("SELECT * FROM fruit");
-            Assert.IsNotNull(cells);
-            Assert.AreEqual(0, cells.Count);
-            Ns.Exec("INSERT INTO fruit VALUES" + "(\"2009-08-02 08:30:01\", \"banana\", \"tag\", \"Had with dinner\")");
-            cells = Ns.Query("SELECT * FROM fruit");
-            Assert.IsNotNull(cells);
-            Assert.AreEqual(1, cells.Count);
-            Ns.Exec("DROP TABLE fruit");
-        }
-
-        [TestMethod]
         public void Exec() {
             if (!HasHQL) {
                 return;

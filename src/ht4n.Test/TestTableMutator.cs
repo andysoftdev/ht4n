@@ -62,195 +62,18 @@ namespace Hypertable.Test
         [ClassInitialize]
         public static void ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext) {
             const string Schema =
-                "<Schema>" + "<AccessGroup name=\"default\" blksz=\"1024\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>"
-                + "<ColumnFamily>" + "<Name>b</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>c</Name>" + "<deleted>false</deleted>"
-                + "</ColumnFamily>" + "</AccessGroup>" + "</Schema>";
+                "<Schema><AccessGroup name=\"default\" blksz=\"1024\">" +
+                "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+                "<ColumnFamily><Name>b</Name></ColumnFamily>" +
+                "<ColumnFamily><Name>c</Name></ColumnFamily>" +
+                "</AccessGroup></Schema>";
 
             table = EnsureTable(typeof(TestTableMutator), Schema);
 
-            if( !HasAsyncTableMutator ) {
+            if (!HasAsyncTableMutator) {
                 Assert.IsFalse(IsHyper);
                 Assert.IsFalse(IsThrift);
             }
-        }
-
-        [TestMethod]
-        [Ignore] // FIXME, issue 'delete with unspecified timestamp applying to all future inserts'
-        public void CreateDeleteSingleCell() {
-            this.CreateDeleteSingleCell(null);
-        }
-
-        public void CreateDeleteSingleCell(MutatorSpec mutatorSpec) {
-            var key = new Key { Row = Guid.NewGuid().ToString(), ColumnFamily = "b" };
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Set(key, Encoding.GetBytes(key.Row));
-            }
-
-            Assert.AreEqual(1, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Delete(key.Row);
-            }
-
-            Assert.AreEqual(0, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Set(key, Encoding.GetBytes(key.Row));
-            }
-
-            Assert.AreEqual(1, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Delete(key);
-            }
-
-            Assert.AreEqual(0, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Set(key, Encoding.GetBytes(key.Row));
-            }
-
-            Assert.AreEqual(1, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Delete(key);
-            }
-
-            Assert.AreEqual(0, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Set(key, Encoding.GetBytes(key.Row));
-            }
-
-            Assert.AreEqual(1, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Delete(key.Row);
-            }
-
-            Assert.AreEqual(0, this.GetCellCount());
-
-            var cellFlags = new[] { CellFlag.DeleteRow, CellFlag.DeleteColumnFamily, CellFlag.DeleteCell, CellFlag.DeleteCellVersion };
-            foreach (var cellFlag in cellFlags) {
-                using (var mutator = table.CreateMutator(mutatorSpec)) {
-                    mutator.Set(key, Encoding.GetBytes(key.Row));
-                }
-
-                Assert.AreEqual(1, this.GetCellCount(), string.Format("CellFlag={0}", cellFlag));
-
-                using (var mutator = table.CreateMutator(mutatorSpec)) {
-                    mutator.Set(new Cell(key, cellFlag));
-                }
-
-                Assert.AreEqual(0, this.GetCellCount(), string.Format("CellFlag={0}", cellFlag));
-
-                using (var mutator = table.CreateMutator(mutatorSpec)) {
-                    mutator.Set(key, Encoding.GetBytes(key.Row));
-                }
-
-                Assert.AreEqual(1, this.GetCellCount(), string.Format("CellFlag={0}", cellFlag));
-
-                using (var mutator = table.CreateMutator(mutatorSpec)) {
-                    mutator.Set(new Cell(key, cellFlag));
-                }
-
-                Assert.AreEqual(0, this.GetCellCount(), string.Format("CellFlag={0}", cellFlag));
-            }
-
-            key.DateTime = DateTime.UtcNow;
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Set(key, Encoding.GetBytes(key.Row));
-            }
-
-            Assert.AreEqual(1, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Delete(key.Row);
-            }
-
-            Assert.AreEqual(0, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Set(key, Encoding.GetBytes(key.Row));
-            }
-
-            Assert.AreEqual(1, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Delete(key.Row);
-            }
-
-            Assert.AreEqual(0, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Set(key, Encoding.GetBytes(key.Row));
-            }
-
-            Assert.AreEqual(1, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Delete(key);
-            }
-
-            Assert.AreEqual(0, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Set(key, Encoding.GetBytes(key.Row));
-            }
-
-            Assert.AreEqual(1, this.GetCellCount());
-
-            using (var mutator = table.CreateMutator(mutatorSpec)) {
-                mutator.Delete(key);
-            }
-
-            Assert.AreEqual(0, this.GetCellCount());
-
-            foreach (var cellFlag in cellFlags) {
-                using (var mutator = table.CreateMutator(mutatorSpec)) {
-                    mutator.Set(key, Encoding.GetBytes(key.Row));
-                }
-
-                Assert.AreEqual(1, this.GetCellCount(), string.Format("CellFlag={0}", cellFlag));
-
-                using (var mutator = table.CreateMutator(mutatorSpec)) {
-                    mutator.Set(new Cell(key, cellFlag));
-                }
-
-                Assert.AreEqual(0, this.GetCellCount(), string.Format("CellFlag={0}", cellFlag));
-
-                using (var mutator = table.CreateMutator(mutatorSpec)) {
-                    mutator.Set(key, Encoding.GetBytes(key.Row));
-                }
-
-                Assert.AreEqual(1, this.GetCellCount(), string.Format("CellFlag={0}", cellFlag));
-
-                using (var mutator = table.CreateMutator(mutatorSpec)) {
-                    mutator.Set(new Cell(key, cellFlag));
-                }
-
-                Assert.AreEqual(0, this.GetCellCount(), string.Format("CellFlag={0}", cellFlag));
-            }
-        }
-
-        [TestMethod]
-        [Ignore] // FIXME, issue 'delete with unspecified timestamp applying to all future inserts'
-        public void CreateDeleteSingleCellChunked() {
-            this.CreateDeleteSingleCell(ChunkedMutatorSpec);
-        }
-
-        [TestMethod]
-        [Ignore] // FIXME, issue 'delete with unspecified timestamp applying to all future inserts'
-        public void CreateDeleteSingleCellChunkedQueued() {
-            this.CreateDeleteSingleCell(ChunkedQueuedMutatorSpec);
-        }
-
-        [TestMethod]
-        [Ignore] // FIXME, issue 'delete with unspecified timestamp applying to all future inserts'
-        public void CreateDeleteSingleCellQueued() {
-            this.CreateDeleteSingleCell(MutatorSpec.CreateQueued());
         }
 
         [TestMethod]
@@ -267,7 +90,7 @@ namespace Hypertable.Test
             }
 
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
@@ -282,7 +105,7 @@ namespace Hypertable.Test
             }
 
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                foreach (string rowKey in rowKeys) {
+                foreach (var rowKey in rowKeys) {
                     mutator.Delete(rowKey);
                 }
             }
@@ -291,7 +114,7 @@ namespace Hypertable.Test
 
             key = new Key { ColumnFamily = "a" };
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
@@ -307,7 +130,7 @@ namespace Hypertable.Test
 
             using (var mutator = table.CreateMutator(mutatorSpec)) {
                 key = new Key();
-                foreach (string rowKey in rowKeys) {
+                foreach (var rowKey in rowKeys) {
                     key.Row = rowKey;
                     mutator.Delete(key);
                 }
@@ -318,7 +141,7 @@ namespace Hypertable.Test
             key = new Key { ColumnFamily = "a" };
             var keys = new List<Key>();
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                     keys.Add((Key)key.Clone());
@@ -333,7 +156,7 @@ namespace Hypertable.Test
 
             key = new Key { ColumnFamily = "a", ColumnQualifier = null };
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
@@ -354,22 +177,22 @@ namespace Hypertable.Test
             Assert.AreEqual(0, this.GetCellCount());
 
             key = new Key { ColumnFamily = "a", ColumnQualifier = string.Empty };
-            using( var mutator = table.CreateMutator(mutatorSpec) ) {
-                for( int n = 0; n < Count; ++n ) {
+            using (var mutator = table.CreateMutator(mutatorSpec)) {
+                for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
             }
 
             cells = new List<Cell>();
-            using( var scanner = table.CreateScanner() ) {
+            using (var scanner = table.CreateScanner()) {
                 Cell cell;
-                while( scanner.Next(out cell) ) {
+                while (scanner.Next(out cell)) {
                     cells.Add(cell);
                 }
             }
 
-            using( var mutator = table.CreateMutator(mutatorSpec) ) {
+            using (var mutator = table.CreateMutator(mutatorSpec)) {
                 mutator.Delete(cells);
             }
 
@@ -553,7 +376,7 @@ namespace Hypertable.Test
             Cell cell;
             var key = new Key();
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
                     key.ColumnFamily = "a";
                     mutator.Set(key, Encoding.GetBytes(key.Row));
@@ -578,7 +401,7 @@ namespace Hypertable.Test
             Assert.AreEqual(0, this.GetCellCount());
 
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
                     key.ColumnFamily = "a";
                     mutator.Set(key, Encoding.GetBytes(key.Row));
@@ -603,7 +426,7 @@ namespace Hypertable.Test
             Assert.AreEqual(0, this.GetCellCount());
 
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
                     key.ColumnFamily = "a";
                     mutator.Set(key, Encoding.GetBytes(key.Row));
@@ -924,7 +747,7 @@ namespace Hypertable.Test
         public void Set(MutatorSpec mutatorSpec) {
             var key = new Key { ColumnFamily = "a" };
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
@@ -951,7 +774,7 @@ namespace Hypertable.Test
         public void SetCollection(MutatorSpec mutatorSpec) {
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell>();
-            for (int n = 0; n < Count; ++n) {
+            for (var n = 0; n < Count; ++n) {
                 key.Row = Guid.NewGuid().ToString();
                 cells.Add(new Cell(key, Encoding.GetBytes(key.Row), true));
             }
@@ -981,7 +804,7 @@ namespace Hypertable.Test
         public void SetCollectionCreateKey(MutatorSpec mutatorSpec) {
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell>();
-            for (int n = 0; n < Count; ++n) {
+            for (var n = 0; n < Count; ++n) {
                 cells.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
 
@@ -1014,7 +837,7 @@ namespace Hypertable.Test
         public void SetCollectionCreateKeyLazy(MutatorSpec mutatorSpec) {
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell>();
-            for (int n = 0; n < Count; ++n) {
+            for (var n = 0; n < Count; ++n) {
                 key.Row = (n % 3) == 0 ? Guid.NewGuid().ToString() : null;
                 cells.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
@@ -1057,12 +880,12 @@ namespace Hypertable.Test
 
         public void SetCollectionDifferentSizedValues(MutatorSpec mutatorSpec) {
             var sb = new StringBuilder();
-            for (int n = 0; n < 0x40; ++n) {
+            for (var n = 0; n < 0x40; ++n) {
                 sb.Append(Guid.NewGuid().ToString());
             }
 
             var largeValue = Encoding.GetBytes(sb.ToString());
-            for (int n = 0; n < 0x4000; ++n) {
+            for (var n = 0; n < 0x4000; ++n) {
                 sb.Append(Guid.NewGuid().ToString());
             }
 
@@ -1071,16 +894,16 @@ namespace Hypertable.Test
 
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell> {
-                    new Cell(key.Clone() as Key, smallValue), 
-                    new Cell(key.Clone() as Key, null), 
-                    new Cell(key.Clone() as Key, smallValue), 
-                    new Cell(key.Clone() as Key, largeValue), 
-                    new Cell(key.Clone() as Key, null), 
-                    new Cell(key.Clone() as Key, smallValue), 
-                    new Cell(key.Clone() as Key, largeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, null), 
-                    new Cell(key.Clone() as Key, smallValue), 
+                    new Cell(key.Clone() as Key, smallValue),
+                    new Cell(key.Clone() as Key, null),
+                    new Cell(key.Clone() as Key, smallValue),
+                    new Cell(key.Clone() as Key, largeValue),
+                    new Cell(key.Clone() as Key, null),
+                    new Cell(key.Clone() as Key, smallValue),
+                    new Cell(key.Clone() as Key, largeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, null),
+                    new Cell(key.Clone() as Key, smallValue),
                     new Cell(key.Clone() as Key, largeValue)
                 };
 
@@ -1121,16 +944,16 @@ namespace Hypertable.Test
 
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell> {
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
                     new Cell(key.Clone() as Key, hugeValue)
                 };
 
@@ -1171,23 +994,23 @@ namespace Hypertable.Test
         public void SetCollectionThreaded(MutatorSpec mutatorSpec) {
             var key = new Key { ColumnFamily = "a" };
             var cells1 = new List<Cell>();
-            for (int n = 0; n < 16; ++n) {
+            for (var n = 0; n < 16; ++n) {
                 cells1.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
 
             var cells2 = new List<Cell>();
-            for (int n = 0; n < 16; ++n) {
+            for (var n = 0; n < 16; ++n) {
                 cells2.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
 
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                int c1 = 0;
-                int c2 = 0;
+                var c1 = 0;
+                var c2 = 0;
 
                 var t1 = new Thread(
                     () =>
                         {
-                            for (int n = 0; n < Count; ++n, ++c1) {
+                            for (var n = 0; n < Count; ++n, ++c1) {
                                 mutator.Set(cells1, true);
                                 if (n == Count / 2) {
                                     mutator.Flush();
@@ -1198,7 +1021,7 @@ namespace Hypertable.Test
                 var t2 = new Thread(
                     () =>
                         {
-                            for (int n = 0; n < Count; ++n, ++c2) {
+                            for (var n = 0; n < Count; ++n, ++c2) {
                                 mutator.Set(cells2, true);
                                 if (n == Count / 2) {
                                     mutator.Flush();
@@ -1238,7 +1061,7 @@ namespace Hypertable.Test
         public void SetCreateKey(MutatorSpec mutatorSpec) {
             var key = new Key { ColumnFamily = "b" };
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     mutator.Set(key, Encoding.GetBytes(Guid.NewGuid().ToString()), true);
                     Assert.IsFalse(string.IsNullOrEmpty(key.Row));
                 }
@@ -1264,7 +1087,7 @@ namespace Hypertable.Test
 
         public void SetCreateKeyLazy(MutatorSpec mutatorSpec) {
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int n = 0; n < Count; ++n) {
+                for (var n = 0; n < Count; ++n) {
                     var key = new Key { ColumnFamily = "b" };
                     mutator.Set(key, Encoding.GetBytes(Guid.NewGuid().ToString()));
                     Assert.IsFalse(string.IsNullOrEmpty(key.Row));
@@ -1305,8 +1128,8 @@ namespace Hypertable.Test
             }
 
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                for (int i = 0; i < 5; ++i) {
-                    string row = string.Format("periodicFlush-{0}", i);
+                for (var i = 0; i < 5; ++i) {
+                    var row = string.Format("periodicFlush-{0}", i);
                     var scanSpec = new ScanSpec(row).AddColumn("a");
                     var key = new Key(row, "a");
                     mutator.Set(key, Encoding.GetBytes(key.Row));
@@ -1353,14 +1176,14 @@ namespace Hypertable.Test
 
         public void SetThreaded(MutatorSpec mutatorSpec) {
             using (var mutator = table.CreateMutator(mutatorSpec)) {
-                int c1 = 0;
-                int c2 = 0;
+                var c1 = 0;
+                var c2 = 0;
 
                 var t1 = new Thread(
                     () =>
                         {
                             var key = new Key { ColumnFamily = "a" };
-                            for (int n = 0; n < Count; ++n, ++c1) {
+                            for (var n = 0; n < Count; ++n, ++c1) {
                                 key.Row = Guid.NewGuid().ToString();
                                 mutator.Set(key, Encoding.GetBytes(key.Row));
                             }
@@ -1370,7 +1193,7 @@ namespace Hypertable.Test
                     () =>
                         {
                             var key = new Key { ColumnFamily = "a" };
-                            for (int n = 0; n < Count; ++n, ++c2) {
+                            for (var n = 0; n < Count; ++n, ++c2) {
                                 key.Row = Guid.NewGuid().ToString();
                                 mutator.Set(key, Encoding.GetBytes(key.Row));
                             }
@@ -1410,7 +1233,7 @@ namespace Hypertable.Test
         #region Methods
 
         private static int GetCellCount(ITable _table) {
-            int c = 0;
+            var c = 0;
             using (var scanner = _table.CreateScanner()) {
                 var cell = new Cell();
                 while (scanner.Next(cell)) {

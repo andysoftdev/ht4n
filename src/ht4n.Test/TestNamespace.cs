@@ -29,7 +29,7 @@ namespace Hypertable.Test
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
-    /// Test Hypertable namespaces.
+    /// Test the namespaces.
     /// </summary>
     [TestClass]
     public class TestNamespace : TestBase
@@ -78,7 +78,7 @@ namespace Hypertable.Test
 
                 string[] namespaces = { "test-1", "Test-1", "/test-2", "/test-3/" };
 
-                foreach (string name in namespaces) {
+                foreach (var name in namespaces) {
                     client.DropNamespace(name, DropDispositions.IfExists);
                     Assert.IsFalse(client.NamespaceExists(name));
                     client.CreateNamespace(name);
@@ -94,7 +94,7 @@ namespace Hypertable.Test
                         client.CreateNamespace(name);
                         Assert.Fail();
                     }
-                    catch( NamespaceExistsException ) {
+                    catch (NamespaceExistsException) {
                     }
                     catch {
                         Assert.Fail();
@@ -113,7 +113,7 @@ namespace Hypertable.Test
                     client.DropNamespace("test");
                     Assert.Fail();
                 }
-                catch( HyperspaceException ) {
+                catch (HyperspaceException) {
                 }
                 catch {
                     Assert.Fail();
@@ -129,7 +129,7 @@ namespace Hypertable.Test
                 string[] namespaces = { "/test-x", "/test-x/1", "/test-x/1/2", "/test-x/1/2/3" };
 
                 client.DropNamespace("/test-x", DropDispositions.Complete);
-                foreach (string name in namespaces) {
+                foreach (var name in namespaces) {
                     Assert.IsFalse(client.NamespaceExists(name));
                     client.CreateNamespace(name);
                     Assert.IsTrue(client.NamespaceExists(name));
@@ -139,7 +139,7 @@ namespace Hypertable.Test
                     }
                 }
 
-                for (int n = 0; n < namespaces.Length - 1; ++n) {
+                for (var n = 0; n < namespaces.Length - 1; ++n) {
                     using (var ns = client.OpenNamespace(namespaces[n])) {
                         var nsListing = ns.GetListing(true);
                         Assert.AreEqual(ns.Name, nsListing.FullName);
@@ -147,7 +147,7 @@ namespace Hypertable.Test
                         Assert.AreEqual(1, nsListing.Namespaces.Count);
                         Assert.AreEqual(nsListing.Namespaces[0].FullName, namespaces[n + 1].Trim('/'));
 
-                        for (int m = n + 1; m < namespaces.Length - 1; ++m) {
+                        for (var m = n + 1; m < namespaces.Length - 1; ++m) {
                             nsListing = nsListing.Namespaces[0];
                             Assert.AreEqual(1, nsListing.Namespaces.Count);
                             Assert.AreEqual(nsListing.Namespaces[0].FullName, namespaces[m + 1].Trim('/'));
@@ -163,7 +163,7 @@ namespace Hypertable.Test
                     }
                 }
 
-                foreach (string name in namespaces.Reverse()) {
+                foreach (var name in namespaces.Reverse()) {
                     client.DropNamespace(name);
                     Assert.IsFalse(client.NamespaceExists(name));
                 }
@@ -176,7 +176,7 @@ namespace Hypertable.Test
                 string[] namespaces = { "/test-x/1/2", "/test-x/1/2/3/4/5/6" };
 
                 client.DropNamespace("/test-x", DropDispositions.Complete);
-                foreach (string name in namespaces) {
+                foreach (var name in namespaces) {
                     Assert.IsFalse(client.NamespaceExists(name));
                     client.CreateNamespace(name, CreateDispositions.CreateIntermediate);
                     Assert.IsTrue(client.NamespaceExists(name));
@@ -200,7 +200,7 @@ namespace Hypertable.Test
 
                 string[] namespacesC = { "/C1/1/2", "C2/1/2/" };
 
-                foreach (string nameA in namespacesA) {
+                foreach (var nameA in namespacesA) {
                     client.DropNamespace(nameA, DropDispositions.Complete);
                     Assert.IsFalse(client.NamespaceExists(nameA));
                     client.CreateNamespace(nameA);
@@ -209,8 +209,8 @@ namespace Hypertable.Test
                     using (var nsA = client.OpenNamespace(nameA)) {
                         Assert.AreEqual(nsA.Name, nameA.Trim('/'));
 
-                        foreach (string nameB in namespacesB) {
-                            string name = nameA + "/" + nameB;
+                        foreach (var nameB in namespacesB) {
+                            var name = nameA + "/" + nameB;
                             Assert.IsFalse(client.NamespaceExists(name));
                             client.CreateNamespace(nameB, nsA);
                             Assert.IsTrue(client.NamespaceExists(nameB, nsA));
@@ -218,7 +218,7 @@ namespace Hypertable.Test
                             using (var nsB = client.OpenNamespace(nameB, nsA)) {
                                 Assert.AreEqual(nsB.Name, name.Replace("//", "/").Trim('/'));
 
-                                foreach (string nameC in namespacesC) {
+                                foreach (var nameC in namespacesC) {
                                     name = nameA + "/" + nameB + "/" + nameC;
                                     Assert.IsFalse(client.NamespaceExists(name));
                                     client.CreateNamespace(nameC, nsB, CreateDispositions.CreateIntermediate);
@@ -233,13 +233,13 @@ namespace Hypertable.Test
 
                         var nsChildren = nsA.Namespaces;
                         Assert.AreEqual(namespacesB.Length, nsChildren.Count);
-                        foreach (string nschild in nsChildren) {
-                            Assert.IsTrue(namespacesB.Where(ns => ns.Contains(nschild)).Count() == 1);
+                        foreach (var nschild in nsChildren) {
+                            Assert.IsTrue(namespacesB.Count(ns => ns.Contains(nschild)) == 1);
                         }
                     }
                 }
 
-                foreach (string name in namespacesA) {
+                foreach (var name in namespacesA) {
                     client.DropNamespace(name, DropDispositions.Complete);
                     Assert.IsFalse(client.NamespaceExists(name));
                 }
@@ -251,7 +251,7 @@ namespace Hypertable.Test
             using (var client = Context.CreateClient()) {
                 string[] namespaces = { @"\", @"\\", @"\test", @"test\", @"\test\", @"\test\1", @"test\1", @"test\1\", @"\test\1\" };
 
-                foreach (string name in namespaces) {
+                foreach (var name in namespaces) {
                     client.DropNamespace(name, DropDispositions.IfExists);
                     Assert.IsFalse(client.NamespaceExists(name));
                     client.CreateNamespace(name);

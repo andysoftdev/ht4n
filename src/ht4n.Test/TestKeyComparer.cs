@@ -28,7 +28,7 @@ namespace Hypertable.Test
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
-    /// Test KeyComparer.
+    /// Test the key comparer.
     /// </summary>
     [TestClass]
     public class TestKeyComparer

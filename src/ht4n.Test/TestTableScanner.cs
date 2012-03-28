@@ -49,11 +49,15 @@ namespace Hypertable.Test
         private const int R = 100;
 
         private const string Schema =
-            "<Schema>" + "<AccessGroup name=\"default\" blksz=\"1024\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>"
-            + "<Name>b</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>c</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>"
-            + "<ColumnFamily>" + "<Name>d</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>e</Name>" + "<deleted>false</deleted>"
-            + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>f</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>g</Name>"
-            + "<deleted>false</deleted>" + "</ColumnFamily>" + "</AccessGroup>" + "</Schema>";
+            "<Schema><AccessGroup name=\"default\" blksz=\"1024\">" +
+            "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>b</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>c</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>d</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>e</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>f</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>g</Name></ColumnFamily>" +
+            "</AccessGroup></Schema>";
 
         private static readonly UTF8Encoding Encoding = new UTF8Encoding();
 
@@ -80,7 +84,7 @@ namespace Hypertable.Test
         public void ScanTable() {
             using (var scanner = table.CreateScanner()) {
                 Assert.IsNull(scanner.ScanSpec);
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -94,7 +98,7 @@ namespace Hypertable.Test
         [TestMethod]
         public void ScanTableCancel() {
             using (var scanner = table.CreateScanner()) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     if (c == CountA) {
@@ -113,14 +117,14 @@ namespace Hypertable.Test
             using (var _table = EnsureTable("ScanTableCellInterval", Schema)) {
                 var key = new Key { ColumnFamily = "d" };
                 using (var mutator = _table.CreateMutator()) {
-                    for (int i = 0; i < 100; ++i) {
+                    for (var i = 0; i < 100; ++i) {
                         key.Row = i.ToString("D2");
                         mutator.Set(key, BitConverter.GetBytes(i));
                     }
                 }
 
                 using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval(null, "d", "50", "d")))) {
-                    int c = 0;
+                    var c = 0;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -131,7 +135,7 @@ namespace Hypertable.Test
                 }
 
                 using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval(string.Empty, "d", "50", "d")))) {
-                    int c = 0;
+                    var c = 0;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -142,7 +146,7 @@ namespace Hypertable.Test
                 }
 
                 using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("90", "d", null, "d")))) {
-                    int c = 90;
+                    var c = 90;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -153,7 +157,7 @@ namespace Hypertable.Test
                 }
 
                 using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("90", "d", string.Empty, "d")))) {
-                    int c = 90;
+                    var c = 90;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -164,7 +168,7 @@ namespace Hypertable.Test
                 }
 
                 using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "d", "50", "d")))) {
-                    int c = 10;
+                    var c = 10;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -175,7 +179,7 @@ namespace Hypertable.Test
                 }
 
                 using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "d", null, true, "50", "d", null, false)))) {
-                    int c = 10;
+                    var c = 10;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -186,7 +190,7 @@ namespace Hypertable.Test
                 }
 
                 using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "d", null, false, "50", "d", null, false)))) {
-                    int c = 11;
+                    var c = 11;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -196,8 +200,9 @@ namespace Hypertable.Test
                     Assert.AreEqual(50, c);
                 }
 
-                using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "d", "20", "d")).AddCellInterval(new CellInterval("40", "d", "50", "d")))) {
-                    int c = 10;
+                using (var scanner = _table.CreateScanner(new ScanSpec().AddCellInterval(new CellInterval("10", "d", "20", "d"), new CellInterval("40", "d", "50", "d")))
+                    ) {
+                    var c = 10;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -214,14 +219,14 @@ namespace Hypertable.Test
 
                 key.ColumnFamily = "c";
                 using (var mutator = _table.CreateMutator()) {
-                    for (int i = 0; i < 100; ++i) {
+                    for (var i = 0; i < 100; ++i) {
                         key.Row = i.ToString("D2");
                         mutator.Set(key, BitConverter.GetBytes(i));
                     }
                 }
 
                 using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "50", "d")))) {
-                    int c = 10;
+                    var c = 10;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -238,14 +243,14 @@ namespace Hypertable.Test
 
                 key.ColumnQualifier = "1";
                 using (var mutator = _table.CreateMutator()) {
-                    for (int i = 0; i < 100; ++i) {
+                    for (var i = 0; i < 100; ++i) {
                         key.Row = i.ToString("D2");
                         mutator.Set(key, BitConverter.GetBytes(i));
                     }
                 }
 
                 using (var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "50", "d")))) {
-                    int c = 10;
+                    var c = 10;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -499,7 +504,7 @@ namespace Hypertable.Test
             const int cellOffset = CountB;
 
             using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = cellOffset })) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -510,7 +515,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = cellOffset }.AddColumn("a"))) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -524,10 +529,10 @@ namespace Hypertable.Test
             string[] columnFamilies = { "d", "e", "f", "g" };
             string[] columnQualifiers = { "0", "1", "2", "3" };
 
-            foreach (string row in rows) {
+            foreach (var row in rows) {
                 using (var mutator = table.CreateMutator()) {
-                    foreach (string columnFamily in columnFamilies) {
-                        foreach (string columnQualifier in columnQualifiers) {
+                    foreach (var columnFamily in columnFamilies) {
+                        foreach (var columnQualifier in columnQualifiers) {
                             mutator.Set(new Key(row, columnFamily, columnQualifier), Encoding.GetBytes(row + columnFamily + columnQualifier));
                         }
                     }
@@ -536,8 +541,8 @@ namespace Hypertable.Test
 
             using (
                 var scanner =
-                    table.CreateScanner(new ScanSpec { CellOffset = rows.Length * columnFamilies.Length * columnQualifiers.Length / 2, ScanAndFilter = true }.AddRows(rows))) {
-                int c = 0;
+                    table.CreateScanner(new ScanSpec { CellOffset = rows.Length * columnFamilies.Length * columnQualifiers.Length / 2, ScanAndFilter = true }.AddRow(rows))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -546,8 +551,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(rows.Length * columnFamilies.Length * columnQualifiers.Length / 2, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = 1 }.AddRowInterval(new RowInterval("AA", "BB")).AddRowInterval(new RowInterval("CC", "DD")))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = 1 }.AddRowInterval(new RowInterval("AA", "BB"), new RowInterval("CC", "DD")))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -560,7 +565,7 @@ namespace Hypertable.Test
         [TestMethod]
         public void ScanTableColumnFamily() {
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("a"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -571,7 +576,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("b"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -582,7 +587,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("c"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -592,8 +597,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(CountC, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("a").AddColumn("b"))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("a", "b"))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -603,8 +608,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(CountA + CountB, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("a").AddColumn("c"))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("a", "c"))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -614,8 +619,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(CountA + CountC, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("b").AddColumn("c"))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("b", "c"))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -646,7 +651,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes("XYY"))))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -657,7 +662,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes(string.Empty))))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.IsNull(cell.Value);
@@ -668,7 +673,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Exact, null)))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.IsNull(cell.Value);
@@ -679,7 +684,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes(string.Empty))))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -689,7 +694,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, null)))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -699,7 +704,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("X"))))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -710,7 +715,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("XX"))))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -721,7 +726,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("Y"))))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -732,7 +737,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("ZYX"))))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -743,7 +748,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Contains, Encoding.GetBytes("wonder"))))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual("ZZZ", cell.Key.Row);
@@ -775,7 +780,7 @@ namespace Hypertable.Test
                 .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes("XYY")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -790,7 +795,7 @@ namespace Hypertable.Test
                 .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes("X")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -803,8 +808,9 @@ namespace Hypertable.Test
             scanSpec = new ScanSpec()
                 .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("XX")))
                 .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes("XX")));
+
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -817,8 +823,9 @@ namespace Hypertable.Test
             scanSpec = new ScanSpec()
                 .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("Y")))
                 .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes("Y")));
+
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -828,11 +835,12 @@ namespace Hypertable.Test
                 Assert.AreEqual(2, c);
             }
 
-            scanSpec =
-                new ScanSpec().AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes("ZYX"))).AddColumnPredicate(
-                    new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes("ZYX")));
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes("ZYX")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes("ZYX")));
+
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -847,7 +855,7 @@ namespace Hypertable.Test
                 .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes(string.Empty)));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("ZZ"));
@@ -863,7 +871,7 @@ namespace Hypertable.Test
                 .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, null));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("ZZ"));
@@ -874,12 +882,12 @@ namespace Hypertable.Test
                 Assert.AreEqual(4, c);
             }
 
-            scanSpec =
-                new ScanSpec().AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes(string.Empty))).AddColumnPredicate(
-                    new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes(string.Empty)));
+            scanSpec = new ScanSpec()
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes(string.Empty)))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes(string.Empty)));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -893,7 +901,7 @@ namespace Hypertable.Test
                 .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, null));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -907,7 +915,7 @@ namespace Hypertable.Test
                 .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Contains, Encoding.GetBytes("What's")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual("ZZZ", cell.Key.Row);
@@ -922,7 +930,7 @@ namespace Hypertable.Test
                 .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Contains, Encoding.GetBytes("on")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual("ZZZ", cell.Key.Row);
@@ -936,23 +944,21 @@ namespace Hypertable.Test
         [TestMethod]
         public void ScanTableColumnQualifierIndex() {
             const string ScanTableValueIndexSchema =
-                "<Schema>" +
-                "<AccessGroup name=\"default\" blksz=\"1024\">" +
+                "<Schema><AccessGroup name=\"default\" blksz=\"1024\">" +
                 "<ColumnFamily><Name>a</Name><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
                 "<ColumnFamily><Name>b</Name><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
                 "<ColumnFamily><Name>c</Name><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
-                "</AccessGroup>" +
-                "</Schema>";
+                "</AccessGroup></Schema>";
 
             const int Count = 10000;
-            using( var _table = EnsureTable("ScanTableColumnQualifierIndex", ScanTableValueIndexSchema) ) {
-                if( IsHyper || IsThrift ) {
+            using (var _table = EnsureTable("ScanTableColumnQualifierIndex", ScanTableValueIndexSchema)) {
+                if (IsHyper || IsThrift) {
                     Assert.IsTrue(Ns.TableExists("^^ScanTableColumnQualifierIndex"));
                 }
 
                 var key = new Key();
                 using (var mutator = _table.CreateMutator()) {
-                    for( int i = 0; i < Count; ++i ) {
+                    for (var i = 0; i < Count; ++i) {
                         var qualifier = i.ToString();
                         var value = Encoding.GetBytes(qualifier);
 
@@ -960,7 +966,7 @@ namespace Hypertable.Test
                         key.ColumnQualifier = qualifier;
                         key.Row = null;
                         mutator.Set(key, value);
-                        
+
                         key.ColumnFamily = "b";
                         key.ColumnQualifier = qualifier;
                         key.Row = null;
@@ -975,7 +981,7 @@ namespace Hypertable.Test
 
                 string[] columnFamilies = { "a", "b", "c" };
                 var rng = new Random();
-                for (int i = 0; i < Count / 100; ++i) {
+                for (var i = 0; i < Count / 100; ++i) {
                     var qualifier = rng.Next(Count).ToString();
                     var scanSpec = new ScanSpec().AddColumn(columnFamilies[rng.Next(columnFamilies.Length)] + ":" + qualifier);
                     using (var scanner = _table.CreateScanner(scanSpec)) {
@@ -989,16 +995,17 @@ namespace Hypertable.Test
                 int[] ranges = { 1000, 300, 56, 9999, 789, 4 };
                 int[] occurrence = { 1, 11, 111, 1, 11, 1111 };
                 Assert.AreEqual(ranges.Length, occurrence.Length);
-                for (int i = 0; i < ranges.Length; ++i) {
+                for (var i = 0; i < ranges.Length; ++i) {
                     var qualifier = ranges[i].ToString();
                     var scanSpec = new ScanSpec().AddColumn(columnFamilies[rng.Next(columnFamilies.Length)] + ":^" + qualifier);
                     using (var scanner = _table.CreateScanner(scanSpec)) {
-                        int c = 0;
-                        Cell cell = new Cell();
+                        var c = 0;
+                        var cell = new Cell();
                         while (scanner.Next(cell)) {
                             Assert.IsTrue(Encoding.GetString(cell.Value).StartsWith(qualifier));
                             ++c;
                         }
+
                         Assert.AreEqual(occurrence[i], c, "range = {0}", ranges[i]);
                     }
                 }
@@ -1009,7 +1016,7 @@ namespace Hypertable.Test
         public void ScanTableColumnQualifierPrefix() {
             var key = new Key { ColumnFamily = "d" };
             using (var mutator = table.CreateMutator()) {
-                for (int i = 0; i < 100; ++i) {
+                for (var i = 0; i < 100; ++i) {
                     key.Row = i.ToString("D2");
                     key.ColumnQualifier = (100 + i / 10).ToString("D3") + (1000 + i).ToString("D4");
                     mutator.Set(key, Encoding.GetBytes((1000 + i).ToString("D4")));
@@ -1017,7 +1024,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:^1"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1027,7 +1034,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:^10"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1036,9 +1043,9 @@ namespace Hypertable.Test
                 Assert.AreEqual(100, c);
             }
 
-            for (int i = 0; i < 10; ++i) {
+            for (var i = 0; i < 10; ++i) {
                 using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:^" + (100 + i).ToString("D3")))) {
-                    int c = 0;
+                    var c = 0;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual((1000 + 10 * i + c).ToString("D4"), Encoding.GetString(cell.Value));
@@ -1050,7 +1057,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:^10510"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1064,16 +1071,16 @@ namespace Hypertable.Test
         public void ScanTableColumnQualifierRegex() {
             var key = new Key { ColumnFamily = "d" };
             using (var mutator = table.CreateMutator()) {
-                for (int i = 0; i < 100; ++i) {
+                for (var i = 0; i < 100; ++i) {
                     key.Row = i.ToString("D2");
                     key.ColumnQualifier = (100 + i / 10).ToString("D3");
                     mutator.Set(key, Encoding.GetBytes((1000 + i).ToString("D4")));
                 }
             }
 
-            for (int i = 0; i < 10; ++i) {
+            for (var i = 0; i < 10; ++i) {
                 using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:" + (100 + i).ToString("D3")))) {
-                    int c = 0;
+                    var c = 0;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual((1000 + 10 * i + c).ToString("D4"), Encoding.GetString(cell.Value));
@@ -1085,7 +1092,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:/10[56]/"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1101,20 +1108,20 @@ namespace Hypertable.Test
 
             var key = new Key { Row = Guid.NewGuid().ToString(), ColumnFamily = "d" };
             using (var mutator = table.CreateMutator()) {
-                foreach (string columnQualifier in columnQualifiers) {
+                foreach (var columnQualifier in columnQualifiers) {
                     key.ColumnQualifier = columnQualifier;
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
 
                 key = new Key { Row = Guid.NewGuid().ToString(), ColumnFamily = "d" };
-                foreach (string columnQualifier in columnQualifiers) {
+                foreach (var columnQualifier in columnQualifiers) {
                     key.ColumnQualifier = columnQualifier;
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1125,7 +1132,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(key.Row).AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1137,7 +1144,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1148,7 +1155,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(key.Row).AddColumn("d:"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1159,9 +1166,9 @@ namespace Hypertable.Test
                 Assert.AreEqual(1, c);
             }
 
-            foreach (string columnQualifier in columnQualifiers) {
+            foreach (var columnQualifier in columnQualifiers) {
                 using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d:" + (!string.IsNullOrEmpty(columnQualifier) ? columnQualifier : string.Empty)))) {
-                    int c = 0;
+                    var c = 0;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1172,9 +1179,9 @@ namespace Hypertable.Test
                 }
             }
 
-            foreach (string columnQualifier in columnQualifiers) {
+            foreach (var columnQualifier in columnQualifiers) {
                 using (var scanner = table.CreateScanner(new ScanSpec().AddCell(key.Row, "d", !string.IsNullOrEmpty(columnQualifier) ? columnQualifier : string.Empty))) {
-                    int c = 0;
+                    var c = 0;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1193,10 +1200,10 @@ namespace Hypertable.Test
             var dateTimeSet = new DateTime[items.Length + 1];
 
             const int Wait = 100;
-            int c = 0;
+            var c = 0;
             var key = new Key { ColumnFamily = "d" };
             using (var mutator = table.CreateMutator()) {
-                foreach (string item in items) {
+                foreach (var item in items) {
                     key.Row = Guid.NewGuid().ToString();
                     dateTimeSet[c++] = key.DateTime = DateTime.UtcNow;
                     mutator.Set(key, Encoding.GetBytes(item));
@@ -1228,7 +1235,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(items.Length, c);
             }
 
-            for (int n = 0; n < items.Length; ++n) {
+            for (var n = 0; n < items.Length; ++n) {
                 using (
                     var scanner =
                         table.CreateScanner(new ScanSpec { StartDateTime = dateTimeSet[n], EndDateTime = dateTimeSet[n] + TimeSpan.FromMilliseconds(Wait / 2) }.AddColumn("d"))) {
@@ -1246,7 +1253,7 @@ namespace Hypertable.Test
         [TestMethod]
         public void ScanTableKeyOnly() {
             using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true })) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsFalse(string.IsNullOrEmpty(cell.Key.Row));
@@ -1264,10 +1271,10 @@ namespace Hypertable.Test
             string[] columnFamilies = { "d", "e", "f", "g" };
             string[] columnQualifiers = { "0", "1", "2", "3" };
 
-            foreach (string row in rows) {
+            foreach (var row in rows) {
                 using (var mutator = table.CreateMutator()) {
-                    foreach (string columnFamily in columnFamilies) {
-                        foreach (string columnQualifier in columnQualifiers) {
+                    foreach (var columnFamily in columnFamilies) {
+                        foreach (var columnQualifier in columnQualifiers) {
                             mutator.Set(new Key(row, columnFamily, columnQualifier), Encoding.GetBytes(row + columnFamily + columnQualifier));
                         }
                     }
@@ -1275,7 +1282,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 5 })) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1284,8 +1291,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(5, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { MaxCellsColumnFamily = 2 }.AddRows(rows))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxCellsColumnFamily = 2 }.AddRow(rows))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1294,8 +1301,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(rows.Length * columnFamilies.Length * 2, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { MaxCellsColumnFamily = 2, ScanAndFilter = true }.AddRows(rows))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxCellsColumnFamily = 2, ScanAndFilter = true }.AddRow(rows))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1304,9 +1311,9 @@ namespace Hypertable.Test
                 Assert.AreEqual(rows.Length * columnFamilies.Length * 2, c);
             }
 
-            foreach (string columnFamily in columnFamilies) {
-                using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 3, ScanAndFilter = true }.AddRows(rows).AddColumn(columnFamily))) {
-                    int c = 0;
+            foreach (var columnFamily in columnFamilies) {
+                using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 3, ScanAndFilter = true }.AddRow(rows).AddColumn(columnFamily))) {
+                    var c = 0;
                     Cell cell;
                     while (scanner.Next(out cell)) {
                         ++c;
@@ -1316,8 +1323,8 @@ namespace Hypertable.Test
                 }
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 5 }.AddRowInterval(new RowInterval("A", "B")).AddRowInterval(new RowInterval("C", "D")))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxCells = 5 }.AddRowInterval(new RowInterval("A", "B"), new RowInterval("C", "D")))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1326,8 +1333,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(2 * 5, c); // Applies to each row interval individual
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { MaxCellsColumnFamily = 2 }.AddRowInterval(new RowInterval("A", "B")).AddRowInterval(new RowInterval("C", "D")))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxCellsColumnFamily = 2 }.AddRowInterval(new RowInterval("A", "B"), new RowInterval("C", "D")))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1340,7 +1347,7 @@ namespace Hypertable.Test
         [TestMethod]
         public void ScanTableMaxRows() {
             using (var scanner = table.CreateScanner(new ScanSpec { MaxRows = CountC }.AddColumn("a"))) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1351,7 +1358,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { MaxRows = CountB }.AddColumn("a"))) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1365,18 +1372,18 @@ namespace Hypertable.Test
             string[] columnFamilies = { "d", "e", "f", "g" };
             string[] columnQualifiers = { "0", "1", "2", "3" };
 
-            foreach (string row in rows) {
+            foreach (var row in rows) {
                 using (var mutator = table.CreateMutator()) {
-                    foreach (string columnFamily in columnFamilies) {
-                        foreach (string columnQualifier in columnQualifiers) {
+                    foreach (var columnFamily in columnFamilies) {
+                        foreach (var columnQualifier in columnQualifiers) {
                             mutator.Set(new Key(row, columnFamily, columnQualifier), Encoding.GetBytes(row + columnFamily + columnQualifier));
                         }
                     }
                 }
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { MaxRows = rows.Length / 2, ScanAndFilter = true }.AddRows(rows))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxRows = rows.Length / 2, ScanAndFilter = true }.AddRow(rows))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1385,10 +1392,9 @@ namespace Hypertable.Test
                 Assert.AreEqual(rows.Length / 2 * columnFamilies.Length * columnQualifiers.Length, c);
             }
 
-            using (
-                var scanner = table.CreateScanner(
-                    new ScanSpec { MaxRows = rows.Length / 2 }.AddRowInterval(new RowInterval("AA", "BB")).AddRowInterval(new RowInterval("CC", "DD")))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxRows = rows.Length / 2 }.AddRowInterval(new RowInterval("AA", "BB"), new RowInterval("CC", "DD")))
+                ) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -1406,11 +1412,11 @@ namespace Hypertable.Test
             using (var _table = EnsureTable("ScanTableRandomCells", Schema)) {
                 var keys = new List<Key>(Count);
                 using (var mutator = _table.CreateMutator()) {
-                    for (int i = 0; i < Count; ++i) {
+                    for (var i = 0; i < Count; ++i) {
                         var key = new Key
                             {
-                                Row = Guid.NewGuid().ToString(), 
-                                ColumnFamily = new string(new[] { Cf[random.Next(Cf.Length)] }), 
+                                Row = Guid.NewGuid().ToString(),
+                                ColumnFamily = new string(new[] { Cf[random.Next(Cf.Length)] }),
                                 ColumnQualifier = random.Next(Cf.Length).ToString(CultureInfo.InvariantCulture)
                             };
                         keys.Add(key);
@@ -1418,8 +1424,8 @@ namespace Hypertable.Test
                     }
                 }
 
-                for (int r = 0; r < 10; ++r) {
-                    int countCells = 10 + random.Next(Count - 10);
+                for (var r = 0; r < 10; ++r) {
+                    var countCells = 10 + random.Next(Count - 10);
                     var scanSpec = new ScanSpec();
                     foreach (var k in Shuffle(keys)) {
                         scanSpec.AddCell(k);
@@ -1432,7 +1438,7 @@ namespace Hypertable.Test
                     using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
-                        int c = 0;
+                        var c = 0;
                         while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             Assert.IsTrue(comparer.Equals(scanSpec.Cells[c++], cell.Key));
@@ -1442,8 +1448,8 @@ namespace Hypertable.Test
                     }
                 }
 
-                for (int r = 0; r < 10; ++r) {
-                    int countCells = 10 + random.Next(Count - 10);
+                for (var r = 0; r < 10; ++r) {
+                    var countCells = 10 + random.Next(Count - 10);
                     var scanSpec = new ScanSpec();
                     foreach (var k in Shuffle(keys)) {
                         scanSpec.AddRow(k.Row);
@@ -1455,7 +1461,7 @@ namespace Hypertable.Test
                     using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
-                        int c = 0;
+                        var c = 0;
                         while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             Assert.AreEqual(scanSpec.Rows[c++], cell.Key.Row);
@@ -1465,9 +1471,9 @@ namespace Hypertable.Test
                     }
                 }
 
-                for (int r = 0; r < 10; ++r) {
+                for (var r = 0; r < 10; ++r) {
                     var rows = new HashSet<string>();
-                    int countCells = 10 + random.Next(Count - 10);
+                    var countCells = 10 + random.Next(Count - 10);
                     var scanSpec = new ScanSpec(true);
                     foreach (var k in Shuffle(keys)) {
                         scanSpec.AddRow(k.Row);
@@ -1480,7 +1486,7 @@ namespace Hypertable.Test
                     using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
-                        int c = 0;
+                        var c = 0;
                         while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             Assert.IsTrue(rows.Contains(cell.Key.Row));
@@ -1491,11 +1497,11 @@ namespace Hypertable.Test
                     }
                 }
 
-                for (int r = 0; r < 10; ++r) {
+                for (var r = 0; r < 10; ++r) {
                     var rows = new HashSet<string>();
                     var columnFamily = new string(new[] { Cf[random.Next(Cf.Length)] });
                     var columnQualifier = random.Next(Cf.Length).ToString(CultureInfo.InvariantCulture);
-                    int countCells = 10 + random.Next(Count / 10);
+                    var countCells = 10 + random.Next(Count / 10);
                     var scanSpec = new ScanSpec { ScanAndFilter = true };
                     foreach (var k in Shuffle(keys).Where(k => k.ColumnFamily == columnFamily && k.ColumnQualifier == columnQualifier)) {
                         Assert.AreEqual(columnFamily, k.ColumnFamily);
@@ -1511,7 +1517,7 @@ namespace Hypertable.Test
                     using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
-                        int c = 0;
+                        var c = 0;
                         while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             Assert.AreEqual(columnFamily, cell.Key.ColumnFamily);
@@ -1524,10 +1530,10 @@ namespace Hypertable.Test
                     }
                 }
 
-                for (int r = 0; r < 10; ++r) {
+                for (var r = 0; r < 10; ++r) {
                     var rows = new HashSet<string>();
                     var columnQualifier = random.Next(Cf.Length).ToString(CultureInfo.InvariantCulture);
-                    int countCells = 10 + random.Next(Count / 10);
+                    var countCells = 10 + random.Next(Count / 10);
                     var scanSpec = new ScanSpec { ScanAndFilter = true };
                     foreach (var k in Shuffle(keys).Where(k => k.ColumnQualifier == columnQualifier)) {
                         Assert.AreEqual(columnQualifier, k.ColumnQualifier);
@@ -1542,7 +1548,7 @@ namespace Hypertable.Test
                     using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
-                        int c = 0;
+                        var c = 0;
                         while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             Assert.AreEqual(columnQualifier, cell.Key.ColumnQualifier);
@@ -1570,6 +1576,7 @@ namespace Hypertable.Test
                     key = new Key { Row = "E", ColumnFamily = "b", ColumnQualifier = "5" };
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
+
                 {
                     var scanSpec = new ScanSpec { ScanAndFilter = true };
                     scanSpec.AddColumn("a:1");
@@ -1583,7 +1590,7 @@ namespace Hypertable.Test
                     using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
-                        int c = 0;
+                        var c = 0;
                         while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             ++c;
@@ -1593,9 +1600,7 @@ namespace Hypertable.Test
                     }
 
                     scanSpec = new ScanSpec { ScanAndFilter = true };
-                    scanSpec.AddColumn("a");
-                    scanSpec.AddColumn("b:5");
-                    scanSpec.AddColumn("c");
+                    scanSpec.AddColumn("a", "b:5", "c");
                     scanSpec.AddRow("A");
                     scanSpec.AddRow("C");
                     scanSpec.AddRow("E");
@@ -1603,7 +1608,7 @@ namespace Hypertable.Test
                     using (var scanner = _table.CreateScanner(scanSpec)) {
                         Assert.AreSame(scanSpec, scanner.ScanSpec);
                         var cell = new Cell();
-                        int c = 0;
+                        var c = 0;
                         while (scanner.Next(cell)) {
                             Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                             ++c;
@@ -1638,15 +1643,15 @@ namespace Hypertable.Test
 
             var scanSpec1 = new ScanSpec().AddColumn("a");
             var scanSpec2 = new ScanSpec();
-            foreach (string t in rowKeys) {
-                string rowKey = rowKeys[random.Next(rowKeys.Count)];
+            foreach (var t in rowKeys) {
+                var rowKey = rowKeys[random.Next(rowKeys.Count)];
                 scanSpec1.AddRow(rowKey);
                 scanSpec2.AddCell(rowKey, "a", null);
             }
 
             Assert.AreEqual(R, scanSpec1.RowCount);
             Assert.AreEqual(R, scanSpec2.Cells.Count);
-            int c = 0;
+            var c = 0;
             using (scanner = table.CreateScanner(scanSpec1)) {
                 Assert.AreSame(scanSpec1, scanner.ScanSpec);
                 while (scanner.Next(cell)) {
@@ -1695,8 +1700,8 @@ namespace Hypertable.Test
             }
 
             Assert.AreEqual(R, rowKeys.Count);
-            int c = 0;
-            foreach (string t in rowKeys) {
+            var c = 0;
+            foreach (var t in rowKeys) {
                 using (scanner = table.CreateScanner(new ScanSpec(new Key(rowKeys[random.Next(rowKeys.Count)], "a", null)))) {
                     while (scanner.Next(cell)) {
                         Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1742,8 +1747,8 @@ namespace Hypertable.Test
             Assert.AreEqual(R, scanSpec1.RowCount);
             Assert.AreEqual(R, scanSpec2.Cells.Count);
 
-            int c = 0;
-            string previousRow = string.Empty;
+            var c = 0;
+            var previousRow = string.Empty;
             using (scanner = table.CreateScanner(scanSpec1)) {
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1777,14 +1782,14 @@ namespace Hypertable.Test
         public void ScanTableRowInterval() {
             var key = new Key { ColumnFamily = "d" };
             using (var mutator = table.CreateMutator()) {
-                for (int i = 0; i < 100; ++i) {
+                for (var i = 0; i < 100; ++i) {
                     key.Row = i.ToString("D2");
                     mutator.Set(key, BitConverter.GetBytes(i));
                 }
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval(null, "50")).AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1795,7 +1800,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval(null, false, "50", false)).AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1806,7 +1811,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval(string.Empty, "50")).AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1817,7 +1822,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval(string.Empty, false, "50", false)).AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1828,7 +1833,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval("90", null)).AddColumn("d"))) {
-                int c = 90;
+                var c = 90;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1839,7 +1844,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval("90", false, null, false)).AddColumn("d"))) {
-                int c = 91;
+                var c = 91;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1850,7 +1855,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval("90", string.Empty)).AddColumn("d"))) {
-                int c = 90;
+                var c = 90;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1861,7 +1866,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval("90", false, string.Empty, false)).AddColumn("d"))) {
-                int c = 91;
+                var c = 91;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1872,7 +1877,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval("10", "50")).AddColumn("d"))) {
-                int c = 10;
+                var c = 10;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1883,7 +1888,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval("10", true, "50", false)).AddColumn("d"))) {
-                int c = 10;
+                var c = 10;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1894,7 +1899,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval("10", false, "50", false)).AddColumn("d"))) {
-                int c = 11;
+                var c = 11;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1905,7 +1910,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec(new RowInterval("10", "20")).AddRowInterval(new RowInterval("40", "50")).AddColumn("d"))) {
-                int c = 10;
+                var c = 10;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
@@ -1934,9 +1939,9 @@ namespace Hypertable.Test
             }
 
             const int rowOffset = CountB;
-            int countB = 0;
-            int countC = 0;
-            using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true }.AddColumn("b").AddColumn("c").AddRowInterval(new RowInterval(rowKeys[rowOffset], null)))) {
+            var countB = 0;
+            var countC = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true }.AddColumn("b", "c").AddRowInterval(new RowInterval(rowKeys[rowOffset], null)))) {
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     if (cell.Key.ColumnFamily == "b") {
@@ -1952,7 +1957,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rowOffset })) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1963,9 +1968,9 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rowOffset })) {
-                int ca = 0;
-                int cb = 0;
-                int cc = 0;
+                var ca = 0;
+                var cb = 0;
+                var cc = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -1989,7 +1994,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rowOffset }.AddColumn("a"))) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -2000,8 +2005,8 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rowOffset }.AddColumn("a").AddColumn("b"))) {
-                int ca = 0;
-                int cb = 0;
+                var ca = 0;
+                var cb = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -2024,18 +2029,18 @@ namespace Hypertable.Test
             string[] columnFamilies = { "d", "e", "f", "g" };
             string[] columnQualifiers = { "0", "1", "2", "3" };
 
-            foreach (string row in rows) {
+            foreach (var row in rows) {
                 using (var mutator = table.CreateMutator()) {
-                    foreach (string columnFamily in columnFamilies) {
-                        foreach (string columnQualifier in columnQualifiers) {
+                    foreach (var columnFamily in columnFamilies) {
+                        foreach (var columnQualifier in columnQualifiers) {
                             mutator.Set(new Key(row, columnFamily, columnQualifier), Encoding.GetBytes(row + columnFamily + columnQualifier));
                         }
                     }
                 }
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rows.Length / 2, ScanAndFilter = true }.AddRows(rows))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rows.Length / 2, ScanAndFilter = true }.AddRow(rows))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -2044,8 +2049,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(rows.Length / 2 * columnFamilies.Length * columnQualifiers.Length, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = 1 }.AddRowInterval(new RowInterval("AA", "BB")).AddRowInterval(new RowInterval("CC", "DD")))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = 1 }.AddRowInterval(new RowInterval("AA", "BB"), new RowInterval("CC", "DD")))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -2069,7 +2074,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowRegex = "A.*" }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 foreach (var cell in scanner) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -2079,7 +2084,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowRegex = "AA." }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 foreach (var cell in scanner) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -2089,7 +2094,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowRegex = "AB.*" }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 foreach (var cell in scanner) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -2099,7 +2104,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowRegex = "^B.*" }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 foreach (var cell in scanner) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -2109,7 +2114,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowRegex = "^BB.*" }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 foreach (var cell in scanner) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -2119,7 +2124,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { RowRegex = "^B.." }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 foreach (var cell in scanner) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -2132,29 +2137,27 @@ namespace Hypertable.Test
         [TestMethod]
         public void ScanTableValueIndex() {
             const string ScanTableValueIndexSchema =
-                "<Schema>" +
-                "<AccessGroup name=\"default\" blksz=\"1024\">" +
+                "<Schema><AccessGroup name=\"default\" blksz=\"1024\">" +
                 "<ColumnFamily><Name>a</Name><Index>true</Index></ColumnFamily>" +
                 "<ColumnFamily><Name>b</Name><Index>true</Index></ColumnFamily>" +
                 "<ColumnFamily><Name>c</Name><Index>true</Index></ColumnFamily>" +
-                "</AccessGroup>" +
-                "</Schema>";
+                "</AccessGroup></Schema>";
 
             const int Count = 10000;
-            using( var _table = EnsureTable("ScanTableValueIndex", ScanTableValueIndexSchema) ) {
-                if( IsHyper || IsThrift) {
+            using (var _table = EnsureTable("ScanTableValueIndex", ScanTableValueIndexSchema)) {
+                if (IsHyper || IsThrift) {
                     Assert.IsTrue(Ns.TableExists("^ScanTableValueIndex"));
                 }
 
                 var key = new Key();
                 using (var mutator = _table.CreateMutator()) {
-                    for( int i = 0; i < Count; ++i ) {
+                    for (var i = 0; i < Count; ++i) {
                         var value = Encoding.GetBytes(i.ToString());
 
                         key.ColumnFamily = "a";
                         key.Row = null;
                         mutator.Set(key, value);
-                        
+
                         key.ColumnFamily = "b";
                         key.Row = null;
                         mutator.Set(key, value);
@@ -2167,7 +2170,7 @@ namespace Hypertable.Test
 
                 string[] columnFamilies = { "a", "b", "c" };
                 var rng = new Random();
-                for (int i = 0; i < Count / 100; ++i) {
+                for (var i = 0; i < Count / 100; ++i) {
                     var search = rng.Next(Count).ToString();
                     var scanSpec = new ScanSpec(new ColumnPredicate(columnFamilies[rng.Next(columnFamilies.Length)], MatchKind.Exact, Encoding.GetBytes(search)));
                     using (var scanner = _table.CreateScanner(scanSpec)) {
@@ -2181,16 +2184,17 @@ namespace Hypertable.Test
                 int[] ranges = { 1000, 300, 56, 9999, 789, 4 };
                 int[] occurrence = { 1, 11, 111, 1, 11, 1111 };
                 Assert.AreEqual(ranges.Length, occurrence.Length);
-                for (int i = 0; i < ranges.Length; ++i) {
+                for (var i = 0; i < ranges.Length; ++i) {
                     var search = ranges[i].ToString();
                     var scanSpec = new ScanSpec(new ColumnPredicate(columnFamilies[rng.Next(columnFamilies.Length)], MatchKind.Prefix, Encoding.GetBytes(search)));
                     using (var scanner = _table.CreateScanner(scanSpec)) {
-                        int c = 0;
-                        Cell cell = new Cell();
+                        var c = 0;
+                        var cell = new Cell();
                         while (scanner.Next(cell)) {
                             Assert.IsTrue(Encoding.GetString(cell.Value).StartsWith(search));
                             ++c;
                         }
+
                         Assert.AreEqual(occurrence[i], c, "range = {0}", ranges[i]);
                     }
                 }
@@ -2211,7 +2215,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { ValueRegex = "X.*" }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -2222,7 +2226,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { ValueRegex = "XX." }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -2233,7 +2237,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { ValueRegex = "XY.*" }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -2244,7 +2248,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { ValueRegex = "^Y.*" }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -2255,7 +2259,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { ValueRegex = "^YY.*" }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -2266,7 +2270,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { ValueRegex = "^Y.." }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
@@ -2282,17 +2286,17 @@ namespace Hypertable.Test
             string[] rows = { "A", "B", "C", "D" };
             string[] versions = { "0", "1", "2", "3" };
 
-            foreach (string row in rows) {
+            foreach (var row in rows) {
                 var key = new Key { Row = row, ColumnFamily = "d" };
                 using (var mutator = table.CreateMutator()) {
-                    foreach (string version in versions) {
+                    foreach (var version in versions) {
                         mutator.Set(key, Encoding.GetBytes(version));
                     }
                 }
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(rows[c / versions.Length], cell.Key.Row);
@@ -2304,7 +2308,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { MaxVersions = 1 }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(rows[c], cell.Key.Row);
@@ -2316,7 +2320,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = table.CreateScanner(new ScanSpec { MaxVersions = 2 }.AddColumn("d"))) {
-                int c = 0;
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     Assert.AreEqual(rows[c / 2], cell.Key.Row);
@@ -2327,8 +2331,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(rows.Length * 2, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { MaxVersions = 1 }.AddColumn("d").AddRow("A").AddRow("B"))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxVersions = 1 }.AddColumn("d").AddRow("A", "B"))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -2337,8 +2341,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(2, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { ScanAndFilter = true, MaxVersions = 1 }.AddColumn("d").AddRow("A").AddRow("B"))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { ScanAndFilter = true, MaxVersions = 1 }.AddColumn("d").AddRow("A", "B"))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -2347,8 +2351,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(2, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { MaxVersions = 2 }.AddColumn("d").AddRow("B").AddRow("C"))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { MaxVersions = 2 }.AddColumn("d").AddRow("B", "C"))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -2357,8 +2361,8 @@ namespace Hypertable.Test
                 Assert.AreEqual(4, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { ScanAndFilter = true, MaxVersions = 2 }.AddColumn("d").AddRow("B").AddRow("C"))) {
-                int c = 0;
+            using (var scanner = table.CreateScanner(new ScanSpec { ScanAndFilter = true, MaxVersions = 2 }.AddColumn("d").AddRow("B", "C"))) {
+                var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
                     ++c;
@@ -2383,7 +2387,7 @@ namespace Hypertable.Test
         private static void InitializeTableData(ITable _table) {
             var key = new Key();
             using (var mutator = _table.CreateMutator(MutatorSpec.CreateChunked())) {
-                for (int n = 0; n < CountA; ++n) {
+                for (var n = 0; n < CountA; ++n) {
                     key.ColumnFamily = "a";
                     key.Row = Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
@@ -2423,8 +2427,8 @@ namespace Hypertable.Test
 
             Assert.AreEqual(count, scanSpec.RowCount);
 
-            int c = 0;
-            string previousRow = string.Empty;
+            var c = 0;
+            var previousRow = string.Empty;
             using (scanner = table.CreateScanner(scanSpec)) {
                 while (scanner.Next(cell)) {
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));

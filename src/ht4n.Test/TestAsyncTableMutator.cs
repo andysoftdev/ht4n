@@ -41,9 +41,11 @@ namespace Hypertable.Test
         private const int Count = 1000;
 
         private const string Schema =
-            "<Schema>" + "<AccessGroup name=\"default\" blksz=\"1024\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>"
-            + "<Name>b</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>c</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>"
-            + "</AccessGroup>" + "</Schema>";
+            "<Schema><AccessGroup name=\"default\" blksz=\"1024\">" +
+            "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>b</Name></ColumnFamily>" +
+            "<ColumnFamily><Name>c</Name></ColumnFamily>" +
+            "</AccessGroup></Schema>";
 
         private static readonly MutatorSpec ChunkedMutatorSpec = MutatorSpec.CreateChunked();
 
@@ -87,7 +89,7 @@ namespace Hypertable.Test
             var key = new Key { ColumnFamily = "a" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
@@ -108,7 +110,7 @@ namespace Hypertable.Test
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    foreach (string rowKey in rowKeys) {
+                    foreach (var rowKey in rowKeys) {
                         mutator.Delete(rowKey);
                     }
                 }
@@ -123,7 +125,7 @@ namespace Hypertable.Test
             key = new Key { ColumnFamily = "a" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
@@ -145,7 +147,7 @@ namespace Hypertable.Test
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
                     key = new Key();
-                    foreach (string rowKey in rowKeys) {
+                    foreach (var rowKey in rowKeys) {
                         key.Row = rowKey;
                         mutator.Delete(key);
                     }
@@ -162,7 +164,7 @@ namespace Hypertable.Test
             var keys = new List<Key>();
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                         keys.Add((Key)key.Clone());
@@ -189,7 +191,7 @@ namespace Hypertable.Test
             key = new Key { ColumnFamily = "a" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
@@ -482,7 +484,7 @@ namespace Hypertable.Test
             var key = new Key();
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         key.ColumnFamily = "a";
                         mutator.Set(key, Encoding.GetBytes(key.Row));
@@ -519,7 +521,7 @@ namespace Hypertable.Test
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         key.ColumnFamily = "a";
                         mutator.Set(key, Encoding.GetBytes(key.Row));
@@ -556,7 +558,7 @@ namespace Hypertable.Test
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         key.ColumnFamily = "a";
                         mutator.Set(key, Encoding.GetBytes(key.Row));
@@ -1010,7 +1012,7 @@ namespace Hypertable.Test
             var key = new Key { ColumnFamily = "a" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
@@ -1024,7 +1026,7 @@ namespace Hypertable.Test
 
             using (var asyncResult = new BlockingAsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         mutator.Set(key, Encoding.GetBytes(key.Row));
                     }
@@ -1059,7 +1061,7 @@ namespace Hypertable.Test
 
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell>();
-            for (int n = 0; n < Count; ++n) {
+            for (var n = 0; n < Count; ++n) {
                 key.Row = Guid.NewGuid().ToString();
                 cells.Add(new Cell(key, Encoding.GetBytes(key.Row), true));
             }
@@ -1098,7 +1100,7 @@ namespace Hypertable.Test
 
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell>();
-            for (int n = 0; n < Count; ++n) {
+            for (var n = 0; n < Count; ++n) {
                 cells.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
 
@@ -1140,7 +1142,7 @@ namespace Hypertable.Test
 
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell>();
-            for (int n = 0; n < Count; ++n) {
+            for (var n = 0; n < Count; ++n) {
                 key.Row = (n % 3) == 0 ? Guid.NewGuid().ToString() : null;
                 cells.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
@@ -1192,12 +1194,12 @@ namespace Hypertable.Test
             }
 
             var sb = new StringBuilder();
-            for (int n = 0; n < 0x40; ++n) {
+            for (var n = 0; n < 0x40; ++n) {
                 sb.Append(Guid.NewGuid().ToString());
             }
 
             var largeValue = Encoding.GetBytes(sb.ToString());
-            for (int n = 0; n < 0x4000; ++n) {
+            for (var n = 0; n < 0x4000; ++n) {
                 sb.Append(Guid.NewGuid().ToString());
             }
 
@@ -1206,16 +1208,16 @@ namespace Hypertable.Test
 
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell> {
-                    new Cell(key.Clone() as Key, smallValue), 
-                    new Cell(key.Clone() as Key, null), 
-                    new Cell(key.Clone() as Key, smallValue), 
-                    new Cell(key.Clone() as Key, largeValue), 
-                    new Cell(key.Clone() as Key, null), 
-                    new Cell(key.Clone() as Key, smallValue), 
-                    new Cell(key.Clone() as Key, largeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, null), 
-                    new Cell(key.Clone() as Key, smallValue), 
+                    new Cell(key.Clone() as Key, smallValue),
+                    new Cell(key.Clone() as Key, null),
+                    new Cell(key.Clone() as Key, smallValue),
+                    new Cell(key.Clone() as Key, largeValue),
+                    new Cell(key.Clone() as Key, null),
+                    new Cell(key.Clone() as Key, smallValue),
+                    new Cell(key.Clone() as Key, largeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, null),
+                    new Cell(key.Clone() as Key, smallValue),
                     new Cell(key.Clone() as Key, largeValue)
                 };
 
@@ -1265,16 +1267,16 @@ namespace Hypertable.Test
 
             var key = new Key { ColumnFamily = "a" };
             var cells = new List<Cell> {
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
-                    new Cell(key.Clone() as Key, hugeValue), 
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
+                    new Cell(key.Clone() as Key, hugeValue),
                     new Cell(key.Clone() as Key, hugeValue)
                 };
 
@@ -1324,24 +1326,24 @@ namespace Hypertable.Test
 
             var key = new Key { ColumnFamily = "a" };
             var cells1 = new List<Cell>();
-            for (int n = 0; n < 16; ++n) {
+            for (var n = 0; n < 16; ++n) {
                 cells1.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
 
             var cells2 = new List<Cell>();
-            for (int n = 0; n < 16; ++n) {
+            for (var n = 0; n < 16; ++n) {
                 cells2.Add(new Cell(key.Clone() as Key, Encoding.GetBytes(Guid.NewGuid().ToString())));
             }
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    int c1 = 0;
-                    int c2 = 0;
+                    var c1 = 0;
+                    var c2 = 0;
 
                     var t1 = new Thread(
                         () =>
                             {
-                                for (int n = 0; n < Count; ++n, ++c1) {
+                                for (var n = 0; n < Count; ++n, ++c1) {
                                     mutator.Set(cells1, true);
                                     if (n == Count / 2) {
                                         mutator.Flush();
@@ -1352,7 +1354,7 @@ namespace Hypertable.Test
                     var t2 = new Thread(
                         () =>
                             {
-                                for (int n = 0; n < Count; ++n, ++c2) {
+                                for (var n = 0; n < Count; ++n, ++c2) {
                                     mutator.Set(cells2, true);
                                     if (n == Count / 2) {
                                         mutator.Flush();
@@ -1402,7 +1404,7 @@ namespace Hypertable.Test
             var key = new Key { ColumnFamily = "b" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         mutator.Set(key, Encoding.GetBytes(Guid.NewGuid().ToString()), true);
                         Assert.IsFalse(string.IsNullOrEmpty(key.Row));
                     }
@@ -1437,7 +1439,7 @@ namespace Hypertable.Test
 
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < Count; ++n) {
+                    for (var n = 0; n < Count; ++n) {
                         var key = new Key { ColumnFamily = "b" };
                         mutator.Set(key, Encoding.GetBytes(Guid.NewGuid().ToString()));
                         Assert.IsFalse(string.IsNullOrEmpty(key.Row));
@@ -1489,7 +1491,7 @@ namespace Hypertable.Test
 
             using (var ctx = Hypertable.Context.Create(ConnectionString, properties))
             using (var client = ctx.CreateClient()) {
-                string nsNameOther = NsName + "/other";
+                var nsNameOther = NsName + "/other";
                 try {
                     using (var nsOther = client.OpenNamespace(nsNameOther, OpenDispositions.OpenAlways))
                     using (var tableOther = nsOther.OpenTable("AsyncSetDifferentContext", Schema, OpenDispositions.CreateAlways)) {
@@ -1497,7 +1499,7 @@ namespace Hypertable.Test
                         using (var asyncResult = new AsyncResult()) {
                             using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec))
                             using (var mutatorOther = tableOther.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                                for (int n = 0; n < Count; ++n) {
+                                for (var n = 0; n < Count; ++n) {
                                     key.Row = Guid.NewGuid().ToString();
                                     mutator.Set(key, Encoding.GetBytes(key.Row));
                                     key.Row = Guid.NewGuid().ToString();
@@ -1547,7 +1549,7 @@ namespace Hypertable.Test
             const int CountTables = 10;
             var tables = new List<ITable>();
             try {
-                for (int t = 0; t < CountTables; ++t) {
+                for (var t = 0; t < CountTables; ++t) {
                     var table2 = EnsureTable(string.Format("AsyncSetMultipleTables-{0}", t), Schema);
                     tables.Add(table2);
                 }
@@ -1557,7 +1559,7 @@ namespace Hypertable.Test
                     var mutators = new List<ITableMutator>();
                     try {
                         tables.ForEach(t => mutators.Add(t.CreateAsyncMutator(asyncResult, mutatorSpec)));
-                        for (int n = 0; n < Count; ++n) {
+                        for (var n = 0; n < Count; ++n) {
                             mutators.ForEach(m => m.Set(key, Encoding.GetBytes(key.Row = Guid.NewGuid().ToString())));
                         }
 
@@ -1573,7 +1575,7 @@ namespace Hypertable.Test
             }
             finally {
                 tables.ForEach(t => t.Dispose());
-                for (int t = 0; t < CountTables; ++t) {
+                for (var t = 0; t < CountTables; ++t) {
                     Ns.DropTable(string.Format("AsyncSetMultipleTables-{0}", t), DropDispositions.IfExists);
                 }
             }
@@ -1612,13 +1614,13 @@ namespace Hypertable.Test
             var key = new Key { ColumnFamily = "a" };
             using (var asyncResult = new AsyncResult()) {
                 using (var mutator = table.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    int c1 = 0;
-                    int c2 = 0;
+                    var c1 = 0;
+                    var c2 = 0;
 
                     var t1 = new Thread(
                         () =>
                             {
-                                for (int n = 0; n < Count; ++n, ++c1) {
+                                for (var n = 0; n < Count; ++n, ++c1) {
                                     key.Row = Guid.NewGuid().ToString();
                                     mutator.Set(key, Encoding.GetBytes(key.Row));
                                 }
@@ -1627,7 +1629,7 @@ namespace Hypertable.Test
                     var t2 = new Thread(
                         () =>
                             {
-                                for (int n = 0; n < Count; ++n, ++c2) {
+                                for (var n = 0; n < Count; ++n, ++c2) {
                                     key.Row = Guid.NewGuid().ToString();
                                     mutator.Set(key, Encoding.GetBytes(key.Row));
                                 }
@@ -1694,7 +1696,7 @@ namespace Hypertable.Test
                 throw new ArgumentNullException("t");
             }
 
-            int c = 0;
+            var c = 0;
             using (var scanner = t.CreateScanner()) {
                 var cell = new Cell();
                 while (scanner.Next(cell)) {

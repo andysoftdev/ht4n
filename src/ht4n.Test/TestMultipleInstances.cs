@@ -45,7 +45,7 @@ namespace Hypertable.Test
 
         private const int CountC = 1000;
 
-        private const string uriB = "localhost"; // TODO, check also with 2nd host different to localhost
+        private const string UriB = "localhost"; // TODO, check also with 2nd host different to localhost
 
         private static readonly UTF8Encoding Encoding = new UTF8Encoding();
 
@@ -77,13 +77,15 @@ namespace Hypertable.Test
         [ClassInitialize]
         public static void ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext) {
             const string Schema =
-                "<Schema>" + "<AccessGroup name=\"default\" blksz=\"1024\">" + "<ColumnFamily>" + "<Name>a</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>"
-                + "<ColumnFamily>" + "<Name>b</Name>" + "<deleted>false</deleted>" + "</ColumnFamily>" + "<ColumnFamily>" + "<Name>c</Name>" + "<deleted>false</deleted>"
-                + "</ColumnFamily>" + "</AccessGroup>" + "</Schema>";
+                "<Schema><AccessGroup name=\"default\" blksz=\"1024\">" +
+                "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+                "<ColumnFamily><Name>b</Name></ColumnFamily>" +
+                "<ColumnFamily><Name>c</Name></ColumnFamily>" +
+                "</AccessGroup></Schema>";
 
             tableA = EnsureTable(typeof(TestMultipleInstances), Schema);
 
-            var properties = new Dictionary<string, object> { { "Uri", uriB } };
+            var properties = new Dictionary<string, object> { { "Uri", UriB } };
 
             contextB = Hypertable.Context.Create(ConnectionString, properties);
             clientB = contextB.CreateClient();
@@ -107,7 +109,7 @@ namespace Hypertable.Test
             using (var asyncResult = new AsyncResult()) {
                 using (var mutatorA = tableA.CreateAsyncMutator(asyncResult, mutatorSpec))
                 using (var mutatorB = tableB.CreateAsyncMutator(asyncResult, mutatorSpec)) {
-                    for (int n = 0; n < CountA; ++n) {
+                    for (var n = 0; n < CountA; ++n) {
                         key.Row = Guid.NewGuid().ToString();
                         mutatorA.Set(key, Encoding.GetBytes(key.Row));
                         key.Row = Guid.NewGuid().ToString();
@@ -142,7 +144,7 @@ namespace Hypertable.Test
         public void Copy() {
             var key = new Key { ColumnFamily = "a" };
             using (var mutator = tableA.CreateMutator()) {
-                for (int n = 0; n < CountC; ++n) {
+                for (var n = 0; n < CountC; ++n) {
                     key.Row = "A" + Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
@@ -150,7 +152,7 @@ namespace Hypertable.Test
 
             key = new Key { ColumnFamily = "b" };
             using (var mutator = tableB.CreateMutator()) {
-                for (int n = 0; n < CountC; ++n) {
+                for (var n = 0; n < CountC; ++n) {
                     key.Row = "B" + Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
@@ -158,7 +160,7 @@ namespace Hypertable.Test
 
             using (var scanner = tableA.CreateScanner(new ScanSpec().AddColumn("a")))
             using (var mutator = tableB.CreateMutator()) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
@@ -172,7 +174,7 @@ namespace Hypertable.Test
 
             using (var scanner = tableB.CreateScanner(new ScanSpec().AddColumn("b")))
             using (var mutator = tableA.CreateMutator()) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
@@ -185,7 +187,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = tableA.CreateScanner(new ScanSpec().AddColumn("a"))) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
@@ -197,7 +199,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = tableA.CreateScanner(new ScanSpec().AddColumn("b"))) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
@@ -209,7 +211,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = tableB.CreateScanner(new ScanSpec().AddColumn("a"))) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
@@ -221,7 +223,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = tableB.CreateScanner(new ScanSpec().AddColumn("b"))) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
@@ -234,7 +236,7 @@ namespace Hypertable.Test
 
             using (var scannerA = tableA.CreateScanner(new ScanSpec().AddColumn("a")))
             using (var scannerB = tableB.CreateScanner(new ScanSpec().AddColumn("a"))) {
-                int c = 0;
+                var c = 0;
                 var cellA = new Cell();
                 var cellB = new Cell();
                 while (scannerA.Next(cellA)) {
@@ -253,7 +255,7 @@ namespace Hypertable.Test
 
             using (var scannerB = tableA.CreateScanner(new ScanSpec().AddColumn("b")))
             using (var scannerA = tableB.CreateScanner(new ScanSpec().AddColumn("b"))) {
-                int c = 0;
+                var c = 0;
                 var cellB = new Cell();
                 var cellA = new Cell();
                 while (scannerB.Next(cellB)) {
@@ -275,7 +277,7 @@ namespace Hypertable.Test
         public void Delete() {
             var key = new Key { ColumnFamily = "a" };
             using (var mutator = tableA.CreateMutator()) {
-                for (int n = 0; n < CountC; ++n) {
+                for (var n = 0; n < CountC; ++n) {
                     key.Row = "A" + Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
@@ -283,7 +285,7 @@ namespace Hypertable.Test
 
             key = new Key { ColumnFamily = "b" };
             using (var mutator = tableB.CreateMutator()) {
-                for (int n = 0; n < CountC; ++n) {
+                for (var n = 0; n < CountC; ++n) {
                     key.Row = "B" + Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
@@ -299,7 +301,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = tableA.CreateScanner()) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
@@ -320,7 +322,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = tableB.CreateScanner()) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
@@ -341,7 +343,7 @@ namespace Hypertable.Test
             InitializeTableData(tableA);
             InitializeTableData(tableB);
 
-            int c = 0;
+            var c = 0;
             using (var asyncResult = new AsyncResult(
                 (ctx, _cells) =>
                     {
@@ -391,7 +393,7 @@ namespace Hypertable.Test
             InitializeTableData(tableA);
             InitializeTableData(tableB);
 
-            int c = 0;
+            var c = 0;
             using (var asyncResult = new BlockingAsyncResult()) {
                 tableA.BeginScan(asyncResult, new ScanSpec().AddColumn("a"));
                 tableB.BeginScan(asyncResult, new ScanSpec().AddColumn("b"));
@@ -432,7 +434,7 @@ namespace Hypertable.Test
         public void Set() {
             var key = new Key { ColumnFamily = "a" };
             using (var mutator = tableA.CreateMutator()) {
-                for (int n = 0; n < CountC; ++n) {
+                for (var n = 0; n < CountC; ++n) {
                     key.Row = "A" + Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
@@ -440,14 +442,14 @@ namespace Hypertable.Test
 
             key = new Key { ColumnFamily = "b" };
             using (var mutator = tableB.CreateMutator()) {
-                for (int n = 0; n < CountC; ++n) {
+                for (var n = 0; n < CountC; ++n) {
                     key.Row = "B" + Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));
                 }
             }
 
             using (var scanner = tableA.CreateScanner()) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
@@ -459,7 +461,7 @@ namespace Hypertable.Test
             }
 
             using (var scanner = tableB.CreateScanner()) {
-                int c = 0;
+                var c = 0;
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
@@ -482,7 +484,7 @@ namespace Hypertable.Test
         #region Methods
 
         private static int GetCellCount(ITable _table) {
-            int c = 0;
+            var c = 0;
             using (var scanner = _table.CreateScanner()) {
                 var cell = new Cell();
                 while (scanner.Next(cell)) {
@@ -496,7 +498,7 @@ namespace Hypertable.Test
         private static void InitializeTableData(ITable _table) {
             var key = new Key();
             using (var mutator = _table.CreateMutator(MutatorSpec.CreateChunked())) {
-                for (int n = 0; n < CountA; ++n) {
+                for (var n = 0; n < CountA; ++n) {
                     key.ColumnFamily = "a";
                     key.Row = Guid.NewGuid().ToString();
                     mutator.Set(key, Encoding.GetBytes(key.Row));

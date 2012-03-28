@@ -28,7 +28,7 @@ namespace Hypertable.Test
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
-    /// Test Hypertable tables.
+    /// Test the tables.
     /// </summary>
     [TestClass]
     public class TestTable : TestBase
@@ -48,15 +48,9 @@ namespace Hypertable.Test
             Assert.IsFalse(Ns.TableExists("test-1"));
 
             const string SchemaA =
-                "<Schema>" +
-                "<AccessGroup name=\"default\">" +
-                "<ColumnFamily>" +
-                "<Name>a</Name>" +
-                "<Index>true</Index>" +
-                "<QualifierIndex>true</QualifierIndex>" +
-                "</ColumnFamily>" +
-                "</AccessGroup>" +
-                "</Schema>";
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>a</Name><Index>true</Index><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
+                "</AccessGroup>" + "</Schema>";
 
             Ns.CreateTable("test-1", SchemaA);
             Assert.IsTrue(Ns.TableExists("test-1"));
@@ -67,31 +61,27 @@ namespace Hypertable.Test
                 Assert.IsTrue(Ns.TableExists("^^test-1"));
             }
 
-            string _schemaA = Ns.GetTableSchema("test-1");
-            using( var table = Ns.OpenTable("test-1") ) {
+            var _schemaA = Ns.GetTableSchema("test-1");
+            using (var table = Ns.OpenTable("test-1")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");
                 Assert.AreEqual(table.Schema, _schemaA);
             }
 
-            const string SchemaB =
-                "<Schema>" +
-                "<AccessGroup name=\"default\">" +
-                "<ColumnFamily>" +
-                "<Name>b</Name>" +
-                "</ColumnFamily>" +
-                "</AccessGroup>"
-                + "</Schema>";
+            const string SchemaB = 
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>b</Name></ColumnFamily>" +
+                "</AccessGroup></Schema>";
 
             Ns.AlterTable("test-1", SchemaB);
 
-            if( IsHyper || IsThrift ) {
+            if (IsHyper || IsThrift) {
                 Assert.IsTrue(Ns.TableExists("^test-1"));
                 Assert.IsTrue(Ns.TableExists("^^test-1"));
             }
 
-            string _schemaB = Ns.GetTableSchema("test-1");
+            var _schemaB = Ns.GetTableSchema("test-1");
             Assert.AreNotEqual(_schemaB, _schemaA);
-            using( var table = Ns.OpenTable("test-1") ) {
+            using (var table = Ns.OpenTable("test-1")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");
                 Assert.AreEqual(table.Schema, _schemaB);
             }
@@ -103,35 +93,27 @@ namespace Hypertable.Test
 
             Assert.IsFalse(Ns.TableExists("test-1"));
 
-            const string SchemaA =
-                "<Schema>" +
-                "<AccessGroup name=\"default\">" +
-                "<ColumnFamily>" +
-                "<Name>a</Name>" +
-                "</ColumnFamily>" +
-                "</AccessGroup>" +
-                "</Schema>";
+            const string SchemaA = 
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+                "</AccessGroup></Schema>";
 
             Ns.CreateTable("test-1", SchemaA);
             Assert.IsTrue(Ns.TableExists("test-1"));
             Ns.CreateTable("test-1", SchemaA, CreateDispositions.CreateIfNotExist);
-            string _schemaA = Ns.GetTableSchema("test-1");
+            var _schemaA = Ns.GetTableSchema("test-1");
             using (var table = Ns.OpenTable("test-1")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");
                 Assert.AreEqual(table.Schema, _schemaA);
             }
 
             const string SchemaB =
-                "<Schema>" +
-                "<AccessGroup name=\"default\">" +
-                "<ColumnFamily>" +
-                "<Name>b</Name>" +
-                "</ColumnFamily>" +
-                "</AccessGroup>"
-                + "</Schema>";
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>b</Name></ColumnFamily>" +
+                "</AccessGroup></Schema>";
 
             Ns.AlterTable("test-1", SchemaB);
-            string _schemaB = Ns.GetTableSchema("test-1");
+            var _schemaB = Ns.GetTableSchema("test-1");
             Assert.AreNotEqual(_schemaB, _schemaA);
             using (var table = Ns.OpenTable("test-1")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");
@@ -158,13 +140,9 @@ namespace Hypertable.Test
             Assert.IsFalse(Ns.TableExists("test-3"));
 
             const string Schema =
-                "<Schema>" +
-                "<AccessGroup name=\"default\">" +
-                "<ColumnFamily>" +
-                "<Name>a</Name>" +
-                "</ColumnFamily>" +
-                "</AccessGroup>" +
-                "</Schema>";
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+                "</AccessGroup></Schema>";
 
             Ns.CreateTable("test-1", Schema);
             Assert.IsTrue(Ns.TableExists("test-1"));
@@ -192,8 +170,6 @@ namespace Hypertable.Test
             Assert.IsTrue(tables.Contains("test-3"));
         }
 
-
-
         [TestMethod]
         public void DropIndexedTable() {
             DropTables(this.regex);
@@ -201,29 +177,75 @@ namespace Hypertable.Test
             Assert.IsFalse(Ns.TableExists("test"));
 
             const string Schema =
-                "<Schema>" +
-                "<AccessGroup name=\"default\">" +
-                "<ColumnFamily>" +
-                "<Name>a</Name>" +
-                "<Index>true</Index>" +
-                "<QualifierIndex>true</QualifierIndex>" +
-                "</ColumnFamily>" +
-                "</AccessGroup>" +
-                "</Schema>";
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>a</Name><Index>true</Index><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
+                "</AccessGroup></Schema>";
 
             Ns.CreateTable("test", Schema, CreateDispositions.CreateIfNotExist);
             Assert.IsTrue(Ns.TableExists("test"));
 
-            if( IsHyper || IsThrift ) {
+            if (IsHyper || IsThrift) {
                 Assert.IsTrue(Ns.TableExists("^test"));
                 Assert.IsTrue(Ns.TableExists("^^test"));
             }
 
             Ns.DropTable("test");
 
-            if( IsHyper || IsThrift ) {
+            if (IsHyper || IsThrift) {
                 Assert.IsFalse(Ns.TableExists("^test"));
                 Assert.IsFalse(Ns.TableExists("^^test"));
+            }
+        }
+
+        [TestMethod]
+        public void RenameIndexedTable() {
+            DropTables(this.regex);
+
+            Assert.IsFalse(Ns.TableExists("test-1"));
+            Assert.IsFalse(Ns.TableExists("test-2"));
+            Assert.IsFalse(Ns.TableExists("Test-2"));
+
+            const string Schema =
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>a</Name><Index>true</Index><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
+                "</AccessGroup></Schema>";
+
+            Ns.CreateTable("test-1", Schema, CreateDispositions.CreateIfNotExist);
+            Assert.IsTrue(Ns.TableExists("test-1"));
+
+            if (IsHyper || IsThrift) {
+                Assert.IsTrue(Ns.TableExists("^test-1"));
+                Assert.IsTrue(Ns.TableExists("^^test-1"));
+            }
+
+            using (var table = Ns.OpenTable("test-1")) {
+                Assert.AreEqual(table.Name, Ns.Name + "/test-1");
+            }
+
+            Ns.RenameTable("test-1", "test-2");
+            Assert.IsFalse(Ns.TableExists("test-1"));
+            Assert.IsTrue(Ns.TableExists("test-2"));
+
+            if (IsHyper || IsThrift) {
+                Assert.IsFalse(Ns.TableExists("^test-1"));
+                Assert.IsFalse(Ns.TableExists("^^test-1"));
+                Assert.IsTrue(Ns.TableExists("^test-2"));
+                Assert.IsTrue(Ns.TableExists("^^test-2"));
+            }
+
+            Ns.RenameTable("test-2", "Test-2");
+            Assert.IsFalse(Ns.TableExists("test-2"));
+            using (var table = Ns.OpenTable("Test-2")) {
+                Assert.AreEqual(table.Name, Ns.Name + "/Test-2");
+            }
+
+            Assert.IsTrue(Ns.TableExists("Test-2"));
+
+            if (IsHyper || IsThrift) {
+                Assert.IsFalse(Ns.TableExists("^test-2"));
+                Assert.IsFalse(Ns.TableExists("^^test-2"));
+                Assert.IsTrue(Ns.TableExists("^Test-2"));
+                Assert.IsTrue(Ns.TableExists("^^Test-2"));
             }
         }
 
@@ -236,13 +258,9 @@ namespace Hypertable.Test
             Assert.IsFalse(Ns.TableExists("Test-2"));
 
             const string Schema =
-                "<Schema>" +
-                "<AccessGroup name=\"default\">" +
-                "<ColumnFamily>" +
-                "<Name>a</Name>" +
-                "</ColumnFamily>" +
-                "</AccessGroup>" +
-                "</Schema>";
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+                "</AccessGroup></Schema>";
 
             Ns.CreateTable("test-1", Schema, CreateDispositions.CreateIfNotExist);
             Assert.IsTrue(Ns.TableExists("test-1"));
@@ -261,64 +279,6 @@ namespace Hypertable.Test
             }
 
             Assert.IsTrue(Ns.TableExists("Test-2"));
-        }
-
-        [TestMethod]
-        public void RenameIndexedTable() {
-            DropTables(this.regex);
-
-            Assert.IsFalse(Ns.TableExists("test-1"));
-            Assert.IsFalse(Ns.TableExists("test-2"));
-            Assert.IsFalse(Ns.TableExists("Test-2"));
-
-            const string Schema =
-                "<Schema>" +
-                "<AccessGroup name=\"default\">" +
-                "<ColumnFamily>" +
-                "<Name>a</Name>" +
-                "<Index>true</Index>" +
-                "<QualifierIndex>true</QualifierIndex>" +
-                "</ColumnFamily>" +
-                "</AccessGroup>" +
-                "</Schema>";
-
-            Ns.CreateTable("test-1", Schema, CreateDispositions.CreateIfNotExist);
-            Assert.IsTrue(Ns.TableExists("test-1"));
-            
-            if( IsHyper || IsThrift ) {
-                Assert.IsTrue(Ns.TableExists("^test-1"));
-                Assert.IsTrue(Ns.TableExists("^^test-1"));
-            }
-
-            using( var table = Ns.OpenTable("test-1") ) {
-                Assert.AreEqual(table.Name, Ns.Name + "/test-1");
-            }
-
-            Ns.RenameTable("test-1", "test-2");
-            Assert.IsFalse(Ns.TableExists("test-1"));
-            Assert.IsTrue(Ns.TableExists("test-2"));
-
-            if( IsHyper || IsThrift ) {
-                Assert.IsFalse(Ns.TableExists("^test-1"));
-                Assert.IsFalse(Ns.TableExists("^^test-1"));
-                Assert.IsTrue(Ns.TableExists("^test-2"));
-                Assert.IsTrue(Ns.TableExists("^^test-2"));
-            }
-
-            Ns.RenameTable("test-2", "Test-2");
-            Assert.IsFalse(Ns.TableExists("test-2"));
-            using( var table = Ns.OpenTable("Test-2") ) {
-                Assert.AreEqual(table.Name, Ns.Name + "/Test-2");
-            }
-
-            Assert.IsTrue(Ns.TableExists("Test-2"));
-
-            if( IsHyper || IsThrift ) {
-                Assert.IsFalse(Ns.TableExists("^test-2"));
-                Assert.IsFalse(Ns.TableExists("^^test-2"));
-                Assert.IsTrue(Ns.TableExists("^Test-2"));
-                Assert.IsTrue(Ns.TableExists("^^Test-2"));
-            }
         }
 
         #endregion

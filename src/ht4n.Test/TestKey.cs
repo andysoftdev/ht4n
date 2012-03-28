@@ -29,7 +29,7 @@ namespace Hypertable.Test
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
-    /// Test Key.
+    /// Test the key.
     /// </summary>
     [TestClass]
     public class TestKey
@@ -147,11 +147,11 @@ namespace Hypertable.Test
             Assert.AreEqual(Key.Decode(Key.Encode(guid)), guid);
 
             IList<string> guids = new List<string>();
-            for (int n = 0; n < 100000; ++n) {
+            for (var n = 0; n < 100000; ++n) {
                 guids.Add(Key.Generate());
             }
 
-            foreach (string s in guids) {
+            foreach (var s in guids) {
                 Assert.AreEqual(Key.Encode(Key.Decode(s)), s);
             }
         }

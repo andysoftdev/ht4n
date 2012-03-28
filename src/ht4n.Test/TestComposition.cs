@@ -33,6 +33,9 @@ namespace Hypertable.Test
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Custom export provider.
+    /// </summary>
     [ExportContextProvider("TestContextProvider")]
     public class CustomContextProvider : IContextProvider
     {
@@ -85,7 +88,7 @@ namespace Hypertable.Test
     }
 
     /// <summary>
-    /// Test Composition.
+    /// Test the composition.
     /// </summary>
     [TestClass]
     public class TestComposition
