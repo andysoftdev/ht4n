@@ -340,15 +340,16 @@ namespace Hypertable {
 			/// Adds a row to be returned in the scan.
 			/// </summary>
 			/// <param name="row">Row to add.</param>
+			/// <param name="moreRows">More rows to add.</param>
 			/// <returns>This ScanSpec instance.</returns>
-			ScanSpec^ AddRow( String^ row );
+			ScanSpec^ AddRow( String^ row, ... cli::array<String^>^ moreRows );
 
 			/// <summary>
 			/// Adds a bunch of rows to be returned in the scan.
 			/// </summary>
 			/// <param name="rows">Rows to add.</param>
 			/// <returns>This ScanSpec instance.</returns>
-			ScanSpec^ AddRows( IEnumerable<String^>^ rows );
+			ScanSpec^ AddRow( IEnumerable<String^>^ rows );
 
 			/// <summary>
 			/// Removes a row.
@@ -367,12 +368,23 @@ namespace Hypertable {
 			/// <summary>
 			/// Adds a column to be returned in the scan.
 			/// </summary>
-			/// <param name="column">Column family to add.</param>
+			/// <param name="column">Column to add.</param>
+			/// <param name="moreColumns">More columns to add.</param>
 			/// <returns>This ScanSpec instance.</returns>
 			/// <remarks>
 			/// column family[:[[^]column qualifier|column qualifier regexp]] defines a column.
 			/// </remarks>
-			ScanSpec^ AddColumn( String^ column );
+			ScanSpec^ AddColumn( String^ column, ... cli::array<String^>^ moreColumns );
+
+			/// <summary>
+			/// Adds a bunch of columns to be returned in the scan.
+			/// </summary>
+			/// <param name="columns">Columns to add.</param>
+			/// <returns>This ScanSpec instance.</returns>
+			/// <remarks>
+			/// column family[:[[^]column qualifier|column qualifier regexp]] defines a column.
+			/// </remarks>
+			ScanSpec^ AddColumn( IEnumerable<String^>^ columns );
 
 			/// <summary>
 			/// Removes a column family.
@@ -388,8 +400,16 @@ namespace Hypertable {
 			/// Adds a column predicate to the scan.
 			/// </summary>
 			/// <param name="columnPredicate">Column predicate to add.</param>
+			/// <param name="moreColumnPredicates">More column predicates to add.</param>
 			/// <returns>This ScanSpec instance.</returns>
-			ScanSpec^ AddColumnPredicate( ColumnPredicate^ columnPredicate );
+			ScanSpec^ AddColumnPredicate( ColumnPredicate^ columnPredicate, ... cli::array<ColumnPredicate^>^ moreColumnPredicates );
+
+			/// <summary>
+			/// Adds a bunch of column predicates to the scan.
+			/// </summary>
+			/// <param name="columnPredicates">Column predicates to add.</param>
+			/// <returns>This ScanSpec instance.</returns>
+			ScanSpec^ AddColumnPredicate( IEnumerable<ColumnPredicate^>^ columnPredicates );
 
 			/// <summary>
 			/// Removes a column predicate.
@@ -411,8 +431,16 @@ namespace Hypertable {
 			/// Adds a cell to be returned in the scan.
 			/// </summary>
 			/// <param name="key">Cell key.</param>
+			/// <param name="moreKeys">More cell keys.</param>
 			/// <returns>This ScanSpec instance.</returns>
-			ScanSpec^ AddCell( Key^ key );
+			ScanSpec^ AddCell( Key^ key, ... cli::array<Key^>^ moreKeys );
+
+			/// <summary>
+			/// Adds a bunch of cells to be returned in the scan.
+			/// </summary>
+			/// <param name="keys">Cell keys.</param>
+			/// <returns>This ScanSpec instance.</returns>
+			ScanSpec^ AddCell( IEnumerable<Key^>^ keys );
 
 			/// <summary>
 			/// Removes a cell.
@@ -434,8 +462,16 @@ namespace Hypertable {
 			/// Adds a row interval to be returned in the scan.
 			/// </summary>
 			/// <param name="rowInterval">Row interval to add.</param>
+			/// <param name="moreRowIntervals">More row intervals to add.</param>
 			/// <returns>This ScanSpec instance.</returns>
-			ScanSpec^ AddRowInterval( RowInterval^ rowInterval );
+			ScanSpec^ AddRowInterval( RowInterval^ rowInterval, ... cli::array<RowInterval^>^ moreRowIntervals );
+
+			/// <summary>
+			/// Adds a bunch of row intervals to be returned in the scan.
+			/// </summary>
+			/// <param name="rowIntervals">Row intervals to add.</param>
+			/// <returns>This ScanSpec instance.</returns>
+			ScanSpec^ AddRowInterval( IEnumerable<RowInterval^>^ rowIntervals );
 
 			/// <summary>
 			/// Removes a row interval.
@@ -448,8 +484,16 @@ namespace Hypertable {
 			/// Adds a cell interval to be returned in the scan.
 			/// </summary>
 			/// <param name="cellInterval">Cell interval to add.</param>
+			/// <param name="moreCellIntervals">More cell intervals to add.</param>
 			/// <returns>This ScanSpec instance.</returns>
-			ScanSpec^ AddCellInterval( CellInterval^ cellInterval );
+			ScanSpec^ AddCellInterval( CellInterval^ cellInterval, ... cli::array<CellInterval^>^ moreCellIntervals );
+
+			/// <summary>
+			/// Adds a cell intervals to be returned in the scan.
+			/// </summary>
+			/// <param name="cellIntervals">Cell intervals to add.</param>
+			/// <returns>This ScanSpec instance.</returns>
+			ScanSpec^ AddCellInterval( IEnumerable<CellInterval^>^ cellIntervals );
 
 			/// <summary>
 			/// Removes a cell interval.

@@ -106,24 +106,30 @@ namespace Hypertable {
 		return AsReadOnly( cellIntervals );
 	}
 
-	ScanSpec^ ScanSpec::AddRow( String^ row ) {
+	ScanSpec^ ScanSpec::AddRow( String^ row, ... cli::array<String^>^ moreRows ) {
 		if( String::IsNullOrEmpty(row) ) throw gcnew ArgumentNullException( L"row" );
 
 		if( rows == nullptr ) {
 			rows = CreateCollection<String^>();
 		}
 		rows->Add( row );
+
+		if( moreRows != nullptr ) {
+			for each( String^ row in moreRows ) {
+				AddRow( row );
+			}
+		}
 		return this;
 	}
 
-	ScanSpec^ ScanSpec::AddRows( IEnumerable<String^>^ _rows ) {
+	ScanSpec^ ScanSpec::AddRow( IEnumerable<String^>^ _rows ) {
 		if( _rows == nullptr ) throw gcnew ArgumentNullException( L"rows" );
 
 		if( rows == nullptr ) {
 			rows = CreateCollection<String^>();
 		}
 
-		List<String^>^ list = dynamic_cast<List<String^>^>( _rows );
+		List<String^>^ list = dynamic_cast<List<String^>^>( rows );
 		if( list == nullptr ) {
 			for each( String^ row in _rows ) {
 				rows->Add( row );
@@ -150,13 +156,28 @@ namespace Hypertable {
 		return rows != nullptr ? rows->Contains( row ) : false;
 	}
 
-	ScanSpec^ ScanSpec::AddColumn( String^ column ) {
+	ScanSpec^ ScanSpec::AddColumn( String^ column, ... cli::array<String^>^ moreColumns ) {
 		if( String::IsNullOrEmpty(column) ) throw gcnew ArgumentNullException( L"column" );
 
 		if( columns == nullptr ) {
 			columns = gcnew SortedSet<String^>();
 		}
 		columns->Add( column );
+
+		if( moreColumns != nullptr ) {
+			for each( String^ column in moreColumns ) {
+				AddColumn( column );
+			}
+		}
+		return this;
+	}
+
+	ScanSpec^ ScanSpec::AddColumn( IEnumerable<String^>^ _columns ) {
+		if( _columns == nullptr ) throw gcnew ArgumentNullException( L"columns" );
+
+		for each( String^ column in _columns ) {
+			AddColumn( column );
+		}
 		return this;
 	}
 
@@ -169,7 +190,7 @@ namespace Hypertable {
 		return this;
 	}
 
-	ScanSpec^ ScanSpec::AddColumnPredicate( ColumnPredicate^ columnPredicate ) {
+	ScanSpec^ ScanSpec::AddColumnPredicate( ColumnPredicate^ columnPredicate, ... cli::array<ColumnPredicate^>^ moreColumnPredicates ) {
 		if( columnPredicate == nullptr ) throw gcnew ArgumentNullException( L"columnPredicate" );
 		if( String::IsNullOrEmpty(columnPredicate->ColumnFamily) ) throw gcnew ArgumentException(L"Invalid column family in column predicate", L"columnPredicate");
 		if( columnPredicate->Match == MatchKind::Undefined ) throw gcnew ArgumentException(L"Invalid match kind in column predicate", L"columnPredicate");
@@ -178,6 +199,21 @@ namespace Hypertable {
 			columnPredicates = gcnew HashSet<ColumnPredicate^>();
 		}
 		columnPredicates->Add( columnPredicate );
+
+		if( moreColumnPredicates != nullptr ) {
+			for each( ColumnPredicate^ columnPredicate in moreColumnPredicates ) {
+				AddColumnPredicate( columnPredicate );
+			}
+		}
+		return this;
+	}
+
+	ScanSpec^ ScanSpec::AddColumnPredicate( IEnumerable<ColumnPredicate^>^ _columnPredicates ) {
+		if( _columnPredicates == nullptr ) throw gcnew ArgumentNullException( L"columnPredicates" );
+
+		for each( ColumnPredicate^ columnPredicate in _columnPredicates ) {
+			AddColumnPredicate( columnPredicate );
+		}
 		return this;
 	}
 
@@ -195,7 +231,7 @@ namespace Hypertable {
 		return this;
 	}
 
-	ScanSpec^ ScanSpec::AddCell( Key^ key ) {
+	ScanSpec^ ScanSpec::AddCell( Key^ key, ... cli::array<Key^>^ moreKeys ) {
 		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
 		if( String::IsNullOrEmpty(key->Row) ) throw gcnew ArgumentException( L"Invalid parameter key (key.Row null or empty)", L"key" );
 		if( String::IsNullOrEmpty(key->ColumnFamily) ) throw gcnew ArgumentException( L"Invalid parameter key (key.ColumnFamily null or empty)", L"key" );
@@ -204,6 +240,21 @@ namespace Hypertable {
 			keys = CreateCollection<Key^>();
 		}
 		keys->Add( key );
+
+		if( moreKeys != nullptr ) {
+			for each( Key^ key in moreKeys ) {
+				AddCell( key );
+			}
+		}
+		return this;
+	}
+
+	ScanSpec^ ScanSpec::AddCell( IEnumerable<Key^>^ _keys ) {
+		if( _keys == nullptr ) throw gcnew ArgumentNullException( L"keys" );
+
+		for each( Key^ key in _keys ) {
+			AddCell( key );
+		}
 		return this;
 	}
 
@@ -223,13 +274,28 @@ namespace Hypertable {
 		return this;
 	}
 
-	ScanSpec^ ScanSpec::AddRowInterval( RowInterval^ rowInterval ) {
+	ScanSpec^ ScanSpec::AddRowInterval( RowInterval^ rowInterval, ... cli::array<RowInterval^>^ moreRowIntervals ) {
 		if( rowInterval == nullptr ) throw gcnew ArgumentNullException( L"rowInterval" );
 
 		if( rowIntervals == nullptr ) {
 			rowIntervals = CreateCollection<RowInterval^>();
 		}
 		rowIntervals->Add( rowInterval );
+
+		if( moreRowIntervals != nullptr ) {
+			for each( RowInterval^ rowInterval in moreRowIntervals ) {
+				AddRowInterval( rowInterval );
+			}
+		}
+		return this;
+	}
+
+	ScanSpec^ ScanSpec::AddRowInterval( IEnumerable<RowInterval^>^ _rowIntervals ) {
+		if( _rowIntervals == nullptr ) throw gcnew ArgumentNullException( L"rowIntervals" );
+
+		for each( RowInterval^ rowInterval in _rowIntervals ) {
+			AddRowInterval( rowInterval );
+		}
 		return this;
 	}
 
@@ -242,7 +308,7 @@ namespace Hypertable {
 		return this;
 	}
 
-	ScanSpec^ ScanSpec::AddCellInterval( CellInterval^ cellInterval ) {
+	ScanSpec^ ScanSpec::AddCellInterval( CellInterval^ cellInterval, ... cli::array<CellInterval^>^ moreCellIntervals ) {
 		if( cellInterval == nullptr ) throw gcnew ArgumentNullException( L"cellInterval" );
 		if( String::IsNullOrEmpty(cellInterval->StartColumnFamily) ) throw gcnew ArgumentException( L"Invalid parameter cellInterval (cellInterval.StartColumnFamily null or empty)", L"cellInterval" );
 		if( String::IsNullOrEmpty(cellInterval->EndColumnFamily) ) throw gcnew ArgumentException( L"Invalid parameter cellInterval (cellInterval.EndColumnFamily null or empty)", L"cellInterval" );
@@ -251,6 +317,21 @@ namespace Hypertable {
 			cellIntervals = CreateCollection<CellInterval^>();
 		}
 		cellIntervals->Add( cellInterval );
+
+		if( moreCellIntervals != nullptr ) {
+			for each( CellInterval^ cellInterval in moreCellIntervals ) {
+				AddCellInterval( cellInterval );
+			}
+		}
+		return this;
+	}
+
+	ScanSpec^ ScanSpec::AddCellInterval( IEnumerable<CellInterval^>^ _cellIntervals ) {
+		if( _cellIntervals == nullptr ) throw gcnew ArgumentNullException( L"cellIntervals" );
+
+		for each( CellInterval^ cellInterval in _cellIntervals ) {
+			AddCellInterval( cellInterval );
+		}
 		return this;
 	}
 
@@ -369,19 +450,15 @@ namespace Hypertable {
 				scanSpec.addRow( CM2A(row) );
 			}
 		}
-		if( columns != nullptr && columns->Count > 0 ) {
-			scanSpec.reserveColumns( columns->Count );
-			for each( String^ column in columns ) {
-				scanSpec.addColumn( CM2A(column) );
-			}
-		}
+		HashSet<String^>^ _columnFamilies = gcnew HashSet<String^>();
 		if( columnPredicates != nullptr && columnPredicates->Count > 0 ) {
 			for each( ColumnPredicate^ columnPredicate in columnPredicates ) {
 				if( String::IsNullOrEmpty(columnPredicate->ColumnFamily) ) throw gcnew BadScanSpecException(L"Invalid column family in column predicate");
 				if( columnPredicate->Match == MatchKind::Undefined ) throw gcnew BadScanSpecException(L"Invalid match kind in column predicate");
 
-				if( columns == nullptr || !columns->Contains(columnPredicate->ColumnFamily) ) {
+				if( !_columnFamilies->Contains(columnPredicate->ColumnFamily) ) {
 					scanSpec.addColumn( CM2A(columnPredicate->ColumnFamily) );
+					_columnFamilies->Add( columnPredicate->ColumnFamily );
 				}
 
 				if( columnPredicate->SearchValue != nullptr ) {
@@ -395,6 +472,18 @@ namespace Hypertable {
 				}
 				else {
 					scanSpec.addColumnPredicate( CM2A(columnPredicate->ColumnFamily), (uint32_t)columnPredicate->Match, 0, 0 );
+				}
+			}
+		}
+		if( columns != nullptr && columns->Count > 0 ) {
+			scanSpec.reserveColumns( columns->Count );
+			for each( String^ column in columns ) {
+				cli::array<String^>^ _column = column->Split(L':');
+				if( !_columnFamilies->Contains(_column[0]) ) {
+					scanSpec.addColumn( CM2A(column) );
+					if( _column->Length == 1 ) {
+						_columnFamilies->Add( _column[0] );
+					}
 				}
 			}
 		}
