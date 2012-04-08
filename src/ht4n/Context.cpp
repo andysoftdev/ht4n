@@ -396,11 +396,11 @@ namespace Hypertable {
 #ifdef SUPPORT_HAMSTERDB
 
 			else if( String::Equals(providerName, gcnew String(Common::Config::ProviderHamster)) ) {
-				if(		 !uri->IsFile
+				if(    !uri->IsFile
 						&& !properties->ContainsKey(gcnew String(Common::Config::HamsterFilename))
 						&& !properties->ContainsKey(gcnew String(Common::Config::HamsterFilenameAlias)) ) {
 
-					throw gcnew ArgumentException( L"Invalid uri scheme, file://[drive][/path/]filename required", L"properties" );
+					throw gcnew ArgumentException( L"Invalid uri scheme, file:///[drive][/path/]filename required", L"properties" );
 				}
 			}
 
@@ -409,11 +409,11 @@ namespace Hypertable {
 #ifdef SUPPORT_SQLITEDB
 
 			else if( String::Equals(providerName, gcnew String(Common::Config::ProviderSQLite)) ) {
-				if(		 !uri->IsFile
+				if(    !uri->IsFile
 						&& !properties->ContainsKey(gcnew String(Common::Config::SQLiteFilename))
 						&& !properties->ContainsKey(gcnew String(Common::Config::SQLiteFilenameAlias)) ) {
 
-					throw gcnew ArgumentException( L"Invalid uri scheme, file://[drive][/path/]filename required", L"properties" );
+					throw gcnew ArgumentException( L"Invalid uri scheme, file:///[drive][/path/]filename required", L"properties" );
 				}
 			}
 
