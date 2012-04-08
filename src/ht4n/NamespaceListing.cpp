@@ -33,6 +33,14 @@ namespace Hypertable {
 	using namespace System::Globalization;
 	using namespace ht4c;
 
+	inline String^ getLeafName( const std::string& name ) {
+		std::string::size_type pos = name.find_last_of('/');
+		if( pos != std::string::npos ) {
+			return gcnew String( name.substr(pos + 1).c_str() );
+		}
+		return gcnew String( name.c_str() );
+	}
+
 	String^ NamespaceListing::ToString() {
 		return String::Format( CultureInfo::InvariantCulture
 												 , L"{0}(Name={1}, FullName={2}, Namespaces.Count={3}, Tables.Count={4})"
@@ -44,7 +52,7 @@ namespace Hypertable {
 	}
 
 	NamespaceListing::NamespaceListing( INamespace^ ns, const ht4c::Common::NamespaceListing& nsListing )
-	: name( gcnew String(nsListing.getName().c_str()) )
+	: name( getLeafName(nsListing.getName()) )
 	, namespaces( gcnew List<NamespaceListing^>() )
 	, tables( gcnew List<String^>() )
 	{
@@ -70,7 +78,7 @@ namespace Hypertable {
 	}
 
 	NamespaceListing^ NamespaceListing::GetListing( NamespaceListing^ parent, const ht4c::Common::NamespaceListing& _nsListing ) {
-		NamespaceListing^ nsListing = gcnew NamespaceListing( parent, gcnew String(_nsListing.getName().c_str()) );
+		NamespaceListing^ nsListing = gcnew NamespaceListing( parent, getLeafName(_nsListing.getName()) );
 		for( ht4c::Common::NamespaceListing::tables_t::const_iterator it = _nsListing.getTables().begin(); it != _nsListing.getTables().end(); ++it ) {
 			nsListing->tables->Add( gcnew String((*it).c_str()) );
 		}

@@ -50,7 +50,11 @@ namespace Hypertable {
 		HT4N_RETHROW
 	}
 
-	Client::Client( Context^ _ctx )
+	IContext^ Client::Context::get( ) {
+		return ctx;
+	}
+
+	Client::Client( Hypertable::Context^ _ctx )
 	: client( 0 )
 	, ctx( _ctx )
 	, disposed( false )

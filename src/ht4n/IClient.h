@@ -33,6 +33,7 @@ namespace Hypertable {
 	using namespace System;
 
 	interface class INamespace;
+	interface class IContext;
 
 	/// <summary>
 	/// Represents a Hypertable client, provides methods to handle Hypertable namespaces.
@@ -63,6 +64,14 @@ namespace Hypertable {
 	public interface class IClient : public IDisposable {
 
 		public:
+
+			/// <summary>
+			/// Gets the context.
+			/// </summary>
+			/// <seealso cref="IContext"/>
+			property IContext^ Context {
+				IContext^ get( );
+			}
 
 			/// <summary>
 			/// Gets a value indicating whether the object has been disposed.

@@ -60,6 +60,10 @@ namespace Hypertable {
 
 			#pragma region IClient properties
 
+			property IContext^ Context {
+				virtual IContext^ get( );
+			}
+
 			property bool IsDisposed {
 				virtual bool get( ) {
 					return disposed;
@@ -89,12 +93,12 @@ namespace Hypertable {
 
 		internal:
 
-			Client( Context^ _ctx );
+			Client( Hypertable::Context^ _ctx );
 
 		private:
 
 			Common::Client* client;
-			Context^ ctx;
+			Hypertable::Context^ ctx;
 			bool disposed;
 	};
 
