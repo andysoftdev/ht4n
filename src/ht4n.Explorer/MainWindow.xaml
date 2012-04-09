@@ -1,0 +1,64 @@
+﻿<?xml version="1.0"?>
+<Explorer:ChromeWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:Explorer="clr-namespace:Hypertable.Explorer"
+                       Title="Hypertable Explorer"
+                       x:Class="Hypertable.Explorer.MainWindow"
+                       x:ClassModifier="internal"
+                       Template="{DynamicResource ChromeWindow}"
+                       Icon="Resources/hypertable.ico"
+                       Width="852"
+                       Height="480"
+                       MinWidth="400"
+                       MinHeight="280">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes\ChromeWindow.xaml"/>
+                <ResourceDictionary Source="Themes\Transitions.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <!-- MenuStripText -->
+            <Style x:Key="MenuStripText" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="#FF919191"/>
+                <Setter Property="FontWeight" Value="Light"/>
+                <Setter Property="FontSize" Value="30"/>
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                <Style.Triggers>
+                    <Trigger Property="TextBlock.IsMouseOver" Value="True">
+                        <Setter Property="TextBlock.Foreground" Value="#FF616161"/>
+                    </Trigger>
+                    <Trigger Property="TextBlock.IsEnabled" Value="False">
+                        <Setter Property="TextBlock.Foreground" Value="Black"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <!-- MenuStrip -->
+            <ControlTemplate x:Key="MenuStrip" TargetType="ContentControl">
+                <DockPanel x:Name="MenuStrip">
+                    <Image Source="Resources\Mark.png"/>
+                    <TextBlock Text="connect" Style="{StaticResource MenuStripText}" Margin="10,0,0,0"/>
+                    <TextBlock Text="explore" Style="{StaticResource MenuStripText}" Margin="20,0,0,0"/>
+                    <TextBlock Text="about" Style="{StaticResource MenuStripText}" Margin="0,0,12,0"
+                               HorizontalAlignment="Right" DockPanel.Dock="Right"/>
+                </DockPanel>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid Margin="1,16,1,1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition/>
+                <RowDefinition Height="32"/>
+            </Grid.RowDefinitions>
+            <ContentControl x:Name="menuStrip" x:FieldModifier="private" Template="{DynamicResource MenuStrip}" Grid.Row="0"/>
+            <ContentControl x:Name="currentPage" x:FieldModifier="private" Template="{StaticResource FadeTransition}" Grid.Row="2"/>
+            <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10,0,0,6"
+                       Text="Hypertable Explorer by " FontSize="14" Foreground="#FF919191" FontWeight="Normal" Grid.Row="3">
+                <Hyperlink NavigateUri="http://ht4n.softdev.ch" Foreground="#FF919191" FontWeight="Normal" TextDecorations="None"
+                           RequestNavigate="HandleRequestNavigate">http://ht4n.softdev.ch</Hyperlink>
+            </TextBlock>
+        </Grid>
+    </Grid>
+</Explorer:ChromeWindow>

@@ -1,0 +1,71 @@
+﻿<?xml version="1.0"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Explorer="clr-namespace:Hypertable.Explorer">
+    <!-- FlipTransition -->
+    <ControlTemplate x:Key="FlipTransition" TargetType="ContentControl">
+        <Grid>
+            <Explorer:Transition x:Name="Transition" Source="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentControl}}}"/>
+            <ContentControl x:Name="First" Visibility="Hidden" Content="{Binding ElementName=Transition, Path=First}"/>
+            <ContentControl x:Name="Second" Visibility="Hidden" Content="{Binding ElementName=Transition, Path=Second}"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding ElementName=Transition, Path=State}" Value="First">
+                <Setter TargetName="First" Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding ElementName=Transition, Path=State}" Value="Second">
+                <Setter TargetName="Second" Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <!-- FadeTransition -->
+    <ControlTemplate x:Key="FadeTransition" TargetType="ContentControl">
+        <Grid>
+            <Explorer:Transition x:Name="Transition" Source="{Binding Tag, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ContentControl}}}"/>
+            <ContentControl x:Name="First" Visibility="Hidden" Opacity="1" Content="{Binding ElementName=Transition, Path=First}"/>
+            <ContentControl x:Name="Second" Visibility="Hidden" Opacity="1" Content="{Binding ElementName=Transition, Path=Second}"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding ElementName=Transition, Path=State}" Value="First">
+                <Setter TargetName="First" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="First" Property="Panel.ZIndex" Value="1"/>
+                <Setter TargetName="Second" Property="Panel.ZIndex" Value="0"/>
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="First" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" FillBehavior="Stop"/>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Second" Storyboard.TargetProperty="Visibility" Duration="0:0:0.5" FillBehavior="Stop">
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                    <DiscreteObjectKeyFrame.Value>
+                                        <Visibility>Visible</Visibility>
+                                    </DiscreteObjectKeyFrame.Value>
+                                </DiscreteObjectKeyFrame>
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimation Storyboard.TargetName="Second" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5" FillBehavior="Stop"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding ElementName=Transition, Path=State}" Value="Second">
+                <Setter TargetName="Second" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="Second" Property="Panel.ZIndex" Value="1"/>
+                <Setter TargetName="First" Property="Panel.ZIndex" Value="0"/>
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="Second" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" FillBehavior="Stop"/>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="First" Storyboard.TargetProperty="Visibility" Duration="0:0:0.5" FillBehavior="Stop">
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                    <DiscreteObjectKeyFrame.Value>
+                                        <Visibility>Visible</Visibility>
+                                    </DiscreteObjectKeyFrame.Value>
+                                </DiscreteObjectKeyFrame>
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimation Storyboard.TargetName="First" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5" FillBehavior="Stop"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+</ResourceDictionary>
