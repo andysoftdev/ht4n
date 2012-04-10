@@ -30,38 +30,6 @@ namespace Hypertable.Explorer
     using System.Windows.Data;
 
     [ValueConversion(typeof(Key), typeof(string))]
-    internal sealed class ColumnToStringConverter : IValueConverter
-    {
-        #region Public Methods
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (targetType == null) {
-                throw new ArgumentNullException("targetType");
-            }
-
-            var key = (Key)value;
-            if (targetType.IsAssignableFrom(typeof(string))) {
-                var sb = new StringBuilder();
-                sb.Append(key.ColumnFamily);
-                if (!string.IsNullOrEmpty(key.ColumnQualifier)) {
-                    sb.Append(":");
-                    sb.Append(key.ColumnQualifier);
-                }
-
-                return sb.ToString();
-            }
-
-            throw new NotImplementedException();
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
-
-    [ValueConversion(typeof(Key), typeof(string))]
     internal sealed class TimestampToStringConverter : IValueConverter
     {
         #region Public Methods

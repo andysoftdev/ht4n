@@ -67,6 +67,31 @@ namespace Hypertable {
 		Timestamp = key->Timestamp;
 	}
 
+	String^ Key::Column::get( ) {
+		if( ColumnFamily != nullptr ) {
+			StringBuilder^ sb = gcnew StringBuilder();
+			sb->Append(ColumnFamily);
+			if( !String::IsNullOrEmpty(ColumnQualifier) ) {
+					sb->Append(":");
+					sb->Append(ColumnQualifier);
+			}
+			return sb->ToString();
+		}
+		return nullptr;
+	}
+
+	void Key::Column::set( String^ value ) {
+		if( value != nullptr ) {
+			cli::array<String^>^ parts = value->Split(L':');
+			ColumnFamily = parts[0];
+			ColumnQualifier = parts->Length > 1 ? parts[1] : nullptr;
+		}
+		else {
+			ColumnFamily = nullptr;
+			ColumnQualifier = nullptr;
+		}
+	}
+
 	System::DateTime Key::DateTime::get() {
 		return timestampOrigin + TimeSpan::FromTicks(Timestamp / 100);
 	}

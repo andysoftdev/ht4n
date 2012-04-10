@@ -37,6 +37,34 @@ namespace Hypertable.Test
         #region Public Methods
 
         [TestMethod]
+        public void ColumnName() {
+            var x = new Key();
+            Assert.IsNull(x.ColumnFamily);
+            Assert.IsNull(x.ColumnQualifier);
+            Assert.IsNull(x.Column);
+
+            x = new Key { ColumnFamily = "CF" };
+            Assert.AreEqual("CF", x.ColumnFamily);
+            Assert.IsNull(x.ColumnQualifier);
+            Assert.AreEqual("CF", x.Column);
+
+            x = new Key { ColumnFamily = "CF", ColumnQualifier = "CQ" };
+            Assert.AreEqual("CF", x.ColumnFamily);
+            Assert.AreEqual("CQ", x.ColumnQualifier);
+            Assert.AreEqual("CF:CQ", x.Column);
+
+            x = new Key { Column = "CF" };
+            Assert.AreEqual("CF", x.ColumnFamily);
+            Assert.IsNull(x.ColumnQualifier);
+            Assert.AreEqual("CF", x.Column);
+
+            x = new Key { Column = "CF:CQ" };
+            Assert.AreEqual("CF", x.ColumnFamily);
+            Assert.AreEqual("CQ", x.ColumnQualifier);
+            Assert.AreEqual("CF:CQ", x.Column);
+        }
+
+        [TestMethod]
         public void Compare() {
             var x = new Key();
             Assert.IsTrue(x.CompareTo(null) > 0);

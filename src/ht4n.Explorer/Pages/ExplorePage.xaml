@@ -6,7 +6,6 @@
             <Setter Property="HorizontalAlignment" Value="Right"/>
         </Style>
         <!-- Converters -->
-        <Explorer:ColumnToStringConverter x:Key="ColumnToStringConverter"/>
         <Explorer:TimestampToStringConverter x:Key="TimestampToStringConverter"/>
         <Explorer:CellInfoValueToStringConverter x:Key="CellInfoValueToStringConverter"/>
         <Explorer:BytesToSixteenBytesConverter x:Key="BytesToSixteenBytesConverter"/>
@@ -87,7 +86,7 @@
                         <DataGridTextColumn Header="Row" MinWidth="50"
                                             Binding="{Binding Path=Key.Row}"/>
                         <DataGridTextColumn Header="Column" MinWidth="60"
-                                            Binding="{Binding Path=Key, Converter={StaticResource ColumnToStringConverter}}" SortMemberPath="Key.ColumnFamily"/>
+                                            Binding="{Binding Path=Key.Column}"/>
                         <DataGridTextColumn Header="Timestamp" MinWidth="80"
                                             Binding="{Binding Path=Key, Converter={StaticResource TimestampToStringConverter}}" SortMemberPath="Key.Timestamp"/>
                         <DataGridTextColumn Header="Value" MinWidth="60"

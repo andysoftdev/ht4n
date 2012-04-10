@@ -107,6 +107,17 @@ namespace Hypertable {
 			property String^ ColumnQualifier;
 
 			/// <summary>
+			/// Gets or sets the full qualified column name, ColumnFamily[:ColumnQualifier].
+			/// </summary>
+			/// <remark>
+			/// This property combines ColumnFamily and ColumnQualifier.
+			/// </remark>
+			property String^ Column {
+				String^ get( );
+				void set( String^ value );
+			}
+
+			/// <summary>
 			/// Gets or sets the timestamp in nanoseconds since 1970-01-01 00:00:00.0 UTC.
 			/// </summary>
 			/// <remarks>
