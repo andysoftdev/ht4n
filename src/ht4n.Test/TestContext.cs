@@ -206,6 +206,12 @@ namespace Hypertable.Test
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hamster.Filename"]);
             }
 
+            using( var context = Context.Create("Provider=Hamster; Uri=file:///c:/Temp/test.db") ) {
+                Assert.AreEqual("Hamster", context.Properties["Provider"]);
+                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
+                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hamster.Filename"]);
+            }
+
             using( var context = Context.Create("Provider=Hamster; Uri=\"file:///c/My Documents/Temp/test.db\"") ) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
@@ -260,6 +266,12 @@ namespace Hypertable.Test
             }
 
             using( var context = Context.Create("Provider=SQLite; Uri=file:///c/Temp/test.db") ) {
+                Assert.AreEqual("SQLite", context.Properties["Provider"]);
+                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
+                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["SQLite.Filename"]);
+            }
+
+            using( var context = Context.Create("Provider=SQLite; Uri=file:///c:/Temp/test.db") ) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["SQLite.Filename"]);
