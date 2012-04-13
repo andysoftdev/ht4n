@@ -174,7 +174,7 @@ namespace Hypertable {
 			property int MaxCellsColumnFamily;
 
 			/// <summary>
-			/// Sets or gets the number of rows to be skipped at the beginning of the query.
+			/// Gets or sets the number of rows to be skipped at the beginning of the query.
 			/// </summary>
 			/// <remarks>
 			/// Not valid in combination of cell offset. Applies to each row/cell interval individual.
@@ -337,7 +337,7 @@ namespace Hypertable {
 			}
 
 			/// <summary>
-			/// Adds a row to be returned in the scan.
+			/// Adds one or more rows to be returned in the scan.
 			/// </summary>
 			/// <param name="row">Row to add.</param>
 			/// <param name="moreRows">More rows to add.</param>
@@ -366,7 +366,7 @@ namespace Hypertable {
 			bool ContainsRow( String^ row );
 
 			/// <summary>
-			/// Adds a column to be returned in the scan.
+			/// Adds one or more columns to be returned in the scan.
 			/// </summary>
 			/// <param name="column">Column to add.</param>
 			/// <param name="moreColumns">More columns to add.</param>
@@ -397,7 +397,7 @@ namespace Hypertable {
 			ScanSpec^ RemoveColumn( String^ column );
 
 			/// <summary>
-			/// Adds a column predicate to the scan.
+			/// Adds one or more column predicates to the scan.
 			/// </summary>
 			/// <param name="columnPredicate">Column predicate to add.</param>
 			/// <param name="moreColumnPredicates">More column predicates to add.</param>
@@ -428,7 +428,7 @@ namespace Hypertable {
 			ScanSpec^ AddCell( String^ row, String^ columnFamily, String^ columnQualifier );
 
 			/// <summary>
-			/// Adds a cell to be returned in the scan.
+			/// Adds one or more cells to be returned in the scan.
 			/// </summary>
 			/// <param name="key">Cell key.</param>
 			/// <param name="moreKeys">More cell keys.</param>
@@ -459,7 +459,7 @@ namespace Hypertable {
 			ScanSpec^ RemoveCell( Key^ key );
 
 			/// <summary>
-			/// Adds a row interval to be returned in the scan.
+			/// Adds one or more row intervals to be returned in the scan.
 			/// </summary>
 			/// <param name="rowInterval">Row interval to add.</param>
 			/// <param name="moreRowIntervals">More row intervals to add.</param>
@@ -481,7 +481,7 @@ namespace Hypertable {
 			ScanSpec^ RemoveRowInterval( RowInterval^ rowInterval );
 
 			/// <summary>
-			/// Adds a cell interval to be returned in the scan.
+			/// Adds one or more cell intervals to be returned in the scan.
 			/// </summary>
 			/// <param name="cellInterval">Cell interval to add.</param>
 			/// <param name="moreCellIntervals">More cell intervals to add.</param>
@@ -489,7 +489,7 @@ namespace Hypertable {
 			ScanSpec^ AddCellInterval( CellInterval^ cellInterval, ... cli::array<CellInterval^>^ moreCellIntervals );
 
 			/// <summary>
-			/// Adds a cell intervals to be returned in the scan.
+			/// Adds a bunch of cell intervals to be returned in the scan.
 			/// </summary>
 			/// <param name="cellIntervals">Cell intervals to add.</param>
 			/// <returns>This ScanSpec instance.</returns>
