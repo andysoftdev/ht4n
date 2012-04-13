@@ -22,6 +22,7 @@
 namespace Hypertable.Explorer.Pages
 {
     using System.Diagnostics;
+    using System.Reflection;
     using System.Windows.Input;
 
     /// <summary>
@@ -33,11 +34,18 @@ namespace Hypertable.Explorer.Pages
 
         public AboutPage() {
             this.InitializeComponent();
+            this.description.Text = GetAssemblyAttribute<AssemblyDescriptionAttribute>().Description;
+            this.version.Text = "Version " + GetAssemblyAttribute<AssemblyFileVersionAttribute>().Version;
+            this.copyright.Text = GetAssemblyAttribute<AssemblyCopyrightAttribute>().Copyright;
         }
 
         #endregion
 
         #region Methods
+
+        private static T GetAssemblyAttribute<T>() {
+            return (T)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(T), false)[0];
+        }
 
         private void HandleMouseDown(object sender, MouseButtonEventArgs e) {
             Process.Start(new ProcessStartInfo("http://ht4n.softdev.ch"));
