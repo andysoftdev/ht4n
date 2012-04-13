@@ -88,6 +88,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CellInfo.cs" />
+    <Compile Include="ObservableStringCollectionDecorator.cs" />
     <Compile Include="DatabaseScanner.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ObservableList.cs" />

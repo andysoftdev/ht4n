@@ -34,5 +34,28 @@ namespace Hypertable.Explorer.Properties {
                 this["ConnectionString"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection RecentConnections {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["RecentConnections"]));
+            }
+            set {
+                this["RecentConnections"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int MaxRecentConnections {
+            get {
+                return ((int)(this["MaxRecentConnections"]));
+            }
+            set {
+                this["MaxRecentConnections"] = value;
+            }
+        }
     }
 }

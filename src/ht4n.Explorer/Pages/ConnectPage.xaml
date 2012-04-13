@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:properties="clr-namespace:Hypertable.Explorer.Properties"
-             x:Class="Hypertable.Explorer.Pages.ConnectPage"
+             xmlns:Pages="clr-namespace:Hypertable.Explorer.Pages" x:Class="Hypertable.Explorer.Pages.ConnectPage"
              x:ClassModifier="internal"
              mc:Ignorable="d"
              d:DesignHeight="300"
@@ -35,6 +35,13 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <DataTemplate x:Key="RecentConnections">
+            <TextBlock Padding = "0,5,0,0">
+                <Hyperlink NavigateUri="{Binding}" RequestNavigate="HandleRequestNavigate" Foreground="#FF919191" FontSize="14" FontWeight="Normal" TextDecorations="None" >
+                    <TextBlock Text="{Binding}" />
+                </Hyperlink>
+            </TextBlock>
+        </DataTemplate>
         <properties:Settings x:Key="Settings"/>
     </UserControl.Resources>
     <Grid>
@@ -55,9 +62,11 @@
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="5"/>
-                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="5"/>
-                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Please enter the connection string:" FontSize="18" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0"/>
             <TextBox x:Name="connectionString" x:FieldModifier="private" Text="{Binding Source={StaticResource Settings}, Path=Default.ConnectionString}"
@@ -66,11 +75,17 @@
                 <TextBlock Text="Connect" FontSize="18" Foreground="White"/>
             </Button>
             <TextBlock Text="e.g. Provider=[Hyper|Thrift];Uri=net.tcp://host[:port]" Margin="5,0,0,0"
-                       FontWeight="Normal" FontSize="14" VerticalAlignment="Top" Grid.Column="0" Grid.Row="5"/>
+                       FontWeight="Normal" FontSize="14" VerticalAlignment="Top" Grid.Column="0" Grid.Row="4"/>
             <Border x:Name="connectionError" x:FieldModifier="private" Padding="3" BorderBrush="Goldenrod" BorderThickness="1" Background="PaleGoldenrod"
-                    Visibility="Collapsed" HorizontalAlignment="Right" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5">
+                    Visibility="Collapsed" HorizontalAlignment="Right" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4">
                 <TextBlock Text="Connection failed." FontSize="14" Foreground="Black" />
             </Border>
+            <StackPanel x:Name="recentConnections" x:FieldModifier="private" Margin="5,0,0,0" Grid.Column="0" Grid.Row="6">
+                <TextBlock Text="Recent connections:" FontWeight="Normal" FontSize="14" />
+                <ListBox Margin="5,0,0,0" BorderBrush="Transparent"
+                         ItemsSource="{Binding RecentConnections, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Pages:ConnectPage}}}"
+                         ItemTemplate="{StaticResource RecentConnections}" />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>
