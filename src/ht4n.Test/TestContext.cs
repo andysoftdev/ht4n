@@ -24,6 +24,7 @@ namespace Hypertable.Test
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.IO;
     using System.Threading;
 
     using Hypertable;
@@ -200,25 +201,25 @@ namespace Hypertable.Test
                 Assert.AreEqual("Temp\\test.db", context.Properties["Hamster.Filename"]);
             }
 
-            using( var context = Context.Create("Provider=Hamster; Uri=file:///c/Temp/test.db") ) {
+            using (var context = Context.Create("Provider=Hamster; Uri=file:///c/Temp/test.db")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hamster.Filename"]);
             }
 
-            using( var context = Context.Create("Provider=Hamster; Uri=file:///c:/Temp/test.db") ) {
+            using (var context = Context.Create("Provider=Hamster; Uri=file:///c:/Temp/test.db")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hamster.Filename"]);
             }
 
-            using( var context = Context.Create("Provider=Hamster; Uri=\"file:///c/My Documents/Temp/test.db\"") ) {
+            using (var context = Context.Create("Provider=Hamster; Uri=\"file:///c/My Documents/Temp/test.db\"")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
                 Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hamster.Filename"]);
             }
 
-            using( var context = Context.Create("Provider=Hamster; Uri=file:///c/My%20Documents/Temp/test.db") ) {
+            using (var context = Context.Create("Provider=Hamster; Uri=file:///c/My%20Documents/Temp/test.db")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
                 Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hamster.Filename"]);
@@ -265,25 +266,25 @@ namespace Hypertable.Test
                 Assert.AreEqual("Temp\\test.db", context.Properties["SQLite.Filename"]);
             }
 
-            using( var context = Context.Create("Provider=SQLite; Uri=file:///c/Temp/test.db") ) {
+            using (var context = Context.Create("Provider=SQLite; Uri=file:///c/Temp/test.db")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["SQLite.Filename"]);
             }
 
-            using( var context = Context.Create("Provider=SQLite; Uri=file:///c:/Temp/test.db") ) {
+            using (var context = Context.Create("Provider=SQLite; Uri=file:///c:/Temp/test.db")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
                 Assert.AreEqual("c:\\Temp\\test.db", context.Properties["SQLite.Filename"]);
             }
 
-            using( var context = Context.Create("Provider=SQLite; Uri=\"file:///c/My Documents/Temp/test.db\"") ) {
+            using (var context = Context.Create("Provider=SQLite; Uri=\"file:///c/My Documents/Temp/test.db\"")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
                 Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["SQLite.Filename"]);
             }
 
-            using( var context = Context.Create("Provider=SQLite; Uri=file:///c/My%20Documents/Temp/test.db") ) {
+            using (var context = Context.Create("Provider=SQLite; Uri=file:///c/My%20Documents/Temp/test.db")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
                 Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
                 Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["SQLite.Filename"]);
@@ -483,6 +484,46 @@ namespace Hypertable.Test
                 Assert.AreEqual("of", ((IList<string>)context.Properties["strs"])[2]);
                 Assert.AreEqual("strings", ((IList<string>)context.Properties["strs"])[3]);
             }
+        }
+
+        [TestMethod]
+        public void DeleteFile() {
+
+#if SUPPORT_SQLITEDB
+
+            {
+                string filename;
+                using (var context = Context.Create("Provider=SQLite; Uri=file://test.sqlite"))
+                using (var client = context.CreateClient()) {
+                    Assert.IsTrue(client.NamespaceExists("/"));
+                    filename = (string)context.Properties["Hypertable.Client.SQLite.Filename"];
+                    Assert.IsTrue(File.Exists(filename));
+                }
+
+                Assert.IsNotNull(filename);
+                File.Delete(filename);
+            }
+
+#endif
+
+#if SUPPORT_HAMSTERDB 
+
+            {
+                string filename;
+
+                using( var context = Context.Create("Provider=Hamster; Uri=file://test.hamster") )
+                using (var client = context.CreateClient()) {
+                    Assert.IsTrue(client.NamespaceExists("/"));
+                    filename = (string)context.Properties["Hypertable.Client.Hamster.Filename"];
+                    Assert.IsTrue(File.Exists(filename));
+                }
+
+                Assert.IsNotNull(filename);
+                File.Delete(filename);
+            }
+
+#endif
+
         }
 
         [TestMethod]
