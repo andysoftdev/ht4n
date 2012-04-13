@@ -161,6 +161,9 @@
     <ClInclude Include="MatchKind.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="ScanSpecBuilder.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -242,6 +245,9 @@
       <Filter>Source Files\Composition</Filter>
     </ClCompile>
     <ClCompile Include="ColumnPredicate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScanSpecBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
