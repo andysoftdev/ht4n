@@ -62,7 +62,7 @@
             <TextBlock Text="Please enter the connection string:" FontSize="18" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0"/>
             <TextBox x:Name="connectionString" x:FieldModifier="private" Text="{Binding Source={StaticResource Settings}, Path=Default.ConnectionString}"
                      Margin="5,0,0,0" HorizontalAlignment="Stretch" Focusable="True" Grid.Column="0" Grid.Row="2"/>
-            <Button x:Name="connect" x:FieldModifier="private" Margin="2,0,0,0" Grid.Column="1" Grid.Row="2">
+            <Button x:Name="connect" x:FieldModifier="private" IsDefault="True" Margin="2,0,0,0" Grid.Column="1" Grid.Row="2">
                 <TextBlock Text="Connect" FontSize="18" Foreground="White"/>
             </Button>
             <TextBlock Text="e.g. Provider=[Hyper|Thrift];Uri=net.tcp://host[:port]" Margin="5,0,0,0"
