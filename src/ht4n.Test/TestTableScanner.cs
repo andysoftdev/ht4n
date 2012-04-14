@@ -1251,6 +1251,271 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
+        public void ScanTableDateTimeIntervalDesc() {
+            const string SchemaWithTimeOrder =
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>desc</Name><TimeOrder>DESC</TimeOrder></ColumnFamily>" +
+                "</AccessGroup></Schema>";
+
+            using( var _table = EnsureTable("ScanTableDateTimeIntervalDesc", SchemaWithTimeOrder) ) {
+                string[] items = { "0", "1", "2", "3" };
+                var dateTimeSet = new DateTime[items.Length + 1];
+
+                const int Wait = 100;
+                var c = 0;
+                var key = new Key("row") { ColumnFamily = "desc" };
+                using( var mutator = _table.CreateMutator() ) {
+                    foreach (var item in items) {
+                        dateTimeSet[c++] = key.DateTime = DateTime.UtcNow;
+                        mutator.Set(key, Encoding.GetBytes(item));
+                        Thread.Sleep(Wait);
+                    }
+                }
+
+                dateTimeSet[c] = DateTime.UtcNow;
+
+                using( var scanner = _table.CreateScanner() ) {
+                    var prevDateTime = new DateTime(0);
+                    c = 0;
+                    Cell cell;
+                    while( scanner.Next(out cell) ) {
+                        Assert.IsTrue(cell.Key.DateTime > prevDateTime);
+                        prevDateTime = cell.Key.DateTime;
+                        ++c;
+                    }
+
+                    Assert.AreEqual(items.Length, c);
+                }
+
+                var scanSpec = ScanSpecBuilder
+                    .Create()
+                        .WithColumns("desc")
+                        .WithRows()
+                    .Build();
+
+                using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    var prevDateTime = new DateTime(0);
+                    c = 0;
+                    Cell cell;
+                    while( scanner.Next(out cell) ) {
+                        Assert.IsTrue(cell.Key.DateTime > prevDateTime);
+                        prevDateTime = cell.Key.DateTime;
+                        ++c;
+                    }
+
+                    Assert.AreEqual(items.Length, c);
+                }
+
+                scanSpec = ScanSpecBuilder
+                    .Create()
+                        .WithColumns("desc")
+                        .WithRows()
+                        .StartDateTime(dateTimeSet[0])
+                        .EndDateTime(dateTimeSet[dateTimeSet.Length - 1])
+                    .Build();
+
+                using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    c = 0;
+                    Cell cell;
+                    while (scanner.Next(out cell)) {
+                        ++c;
+                    }
+
+                    Assert.AreEqual(items.Length, c);
+                }
+
+                for (var n = 0; n < items.Length; ++n) {
+                    scanSpec = ScanSpecBuilder
+                        .Create()
+                            .WithColumns("desc")
+                            .WithRows()
+                            .StartDateTime(dateTimeSet[n])
+                            .EndDateTime(dateTimeSet[n] + TimeSpan.FromMilliseconds(Wait / 2))
+                        .Build();
+
+                    using (var scanner = _table.CreateScanner(scanSpec)) {
+                        c = 0;
+                        Cell cell;
+                        while (scanner.Next(out cell)) {
+                            ++c;
+                        }
+
+                        Assert.AreEqual(1, c);
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ScanTableDateTimeIntervalAscDesc() {
+            const string SchemaWithTimeOrder =
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>asc</Name><TimeOrder>ASC</TimeOrder></ColumnFamily>" +
+                "<ColumnFamily><Name>desc</Name><TimeOrder>DESC</TimeOrder></ColumnFamily>" +
+                "</AccessGroup></Schema>";
+
+            using( var _table = EnsureTable("ScanTableDateTimeIntervalAscDesc", SchemaWithTimeOrder) ) {
+                string[] items = { "0", "1", "2", "3" };
+                var dateTimeSet = new DateTime[items.Length + 1];
+
+                const int Wait = 100;
+                var c = 0;
+                var key = new Key("row");
+                using( var mutator = _table.CreateMutator() ) {
+                    foreach( var item in items ) {
+                        dateTimeSet[c++] = key.DateTime = DateTime.UtcNow;
+                        key.ColumnFamily = "asc";
+                        mutator.Set(key, Encoding.GetBytes(item));
+                        key.ColumnFamily = "desc";
+                        mutator.Set(key, Encoding.GetBytes(item));
+                        Thread.Sleep(Wait);
+                    }
+                }
+
+                dateTimeSet[c] = DateTime.UtcNow;
+
+                // Ascending
+                var scanSpec = ScanSpecBuilder
+                    .Create()
+                        .WithColumns("asc")
+                        .WithRows()
+                    .Build();
+
+                using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    var prevDateTime = DateTime.UtcNow;
+                    c = 0;
+                    Cell cell;
+                    while( scanner.Next(out cell) ) {
+                        Assert.IsTrue(cell.Key.DateTime < prevDateTime);
+                        prevDateTime = cell.Key.DateTime;
+                        ++c;
+                    }
+
+                    Assert.AreEqual(items.Length, c);
+                }
+
+                scanSpec = ScanSpecBuilder
+                    .Create()
+                        .WithColumns("asc")
+                        .WithRows()
+                        .StartDateTime(dateTimeSet[0])
+                        .EndDateTime(dateTimeSet[dateTimeSet.Length - 1])
+                    .Build();
+
+                using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    c = 0;
+                    Cell cell;
+                    while( scanner.Next(out cell) ) {
+                        ++c;
+                    }
+
+                    Assert.AreEqual(items.Length, c);
+                }
+
+                for( var n = 0; n < items.Length; ++n ) {
+                    scanSpec = ScanSpecBuilder
+                        .Create()
+                            .WithColumns("asc")
+                            .WithRows()
+                            .StartDateTime(dateTimeSet[n])
+                            .EndDateTime(dateTimeSet[n] + TimeSpan.FromMilliseconds(Wait / 2))
+                        .Build();
+
+                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                        c = 0;
+                        Cell cell;
+                        while( scanner.Next(out cell) ) {
+                            ++c;
+                        }
+
+                        Assert.AreEqual(1, c);
+                    }
+                }
+
+                // Descending
+                scanSpec = ScanSpecBuilder
+                    .Create()
+                        .WithColumns("desc")
+                        .WithRows()
+                    .Build();
+
+                using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    var prevDateTime = new DateTime(0);
+                    c = 0;
+                    Cell cell;
+                    while( scanner.Next(out cell) ) {
+                        Assert.IsTrue(cell.Key.DateTime > prevDateTime);
+                        prevDateTime = cell.Key.DateTime;
+                        ++c;
+                    }
+
+                    Assert.AreEqual(items.Length, c);
+                }
+
+                scanSpec = ScanSpecBuilder
+                    .Create()
+                        .WithColumns("desc")
+                        .WithRows()
+                        .StartDateTime(dateTimeSet[0])
+                        .EndDateTime(dateTimeSet[dateTimeSet.Length - 1])
+                    .Build();
+
+                using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    c = 0;
+                    Cell cell;
+                    while( scanner.Next(out cell) ) {
+                        ++c;
+                    }
+
+                    Assert.AreEqual(items.Length, c);
+                }
+
+                for( var n = 0; n < items.Length; ++n ) {
+                    scanSpec = ScanSpecBuilder
+                        .Create()
+                            .WithColumns("desc")
+                            .WithRows()
+                            .StartDateTime(dateTimeSet[n])
+                            .EndDateTime(dateTimeSet[n] + TimeSpan.FromMilliseconds(Wait / 2))
+                        .Build();
+
+                    using( var scanner = _table.CreateScanner(scanSpec) ) {
+                        c = 0;
+                        Cell cell;
+                        while( scanner.Next(out cell) ) {
+                            ++c;
+                        }
+
+                        Assert.AreEqual(1, c);
+                    }
+                }
+
+                // Mixed
+                scanSpec = ScanSpecBuilder
+                    .Create()
+                        .WithColumns("asc", "desc")
+                        .WithRows()
+                        .StartDateTime(dateTimeSet[1])
+                        .EndDateTime(dateTimeSet[dateTimeSet.Length - 2])
+                    .Build();
+
+                using( var scanner = _table.CreateScanner(scanSpec) ) {
+                    c = 0;
+                    Cell cell;
+                    while( scanner.Next(out cell) ) {
+                        Assert.IsTrue(cell.Key.DateTime >= scanSpec.StartDateTime);
+                        Assert.IsTrue(cell.Key.DateTime < scanSpec.EndDateTime);
+                        var value = Encoding.GetString(cell.Value);
+                        Assert.IsTrue(value != items[0] && value != items[items.Length - 1]);
+                        ++c;
+                    }
+
+                    Assert.AreEqual(2 * (items.Length - 2), c);
+                }
+            }
+        }
+
+        [TestMethod]
         public void ScanTableKeyOnly() {
             using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true })) {
                 var c = 0;
