@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="ConnectionString" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Provider=Thrift;Uri=net.tcp://nbhome</Value>
+      <Value Profile="(Default)">Provider=Thrift;Uri=net.tcp://localhost</Value>
     </Setting>
     <Setting Name="RecentConnections" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />

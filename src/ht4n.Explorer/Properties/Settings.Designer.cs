@@ -25,7 +25,7 @@ namespace Hypertable.Explorer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Provider=Thrift;Uri=net.tcp://nbhome")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Provider=Thrift;Uri=net.tcp://localhost")]
         public string ConnectionString {
             get {
                 return ((string)(this["ConnectionString"]));
