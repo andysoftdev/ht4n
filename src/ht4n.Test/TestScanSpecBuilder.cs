@@ -42,6 +42,7 @@ namespace Hypertable.Test
             var scanSpec = ScanSpecBuilder
                 .Create()
                     .WithColumns()
+                    .WithRows()
                 .Build();
 
             Assert.IsNotNull(scanSpec);
@@ -50,6 +51,7 @@ namespace Hypertable.Test
             scanSpec = ScanSpecBuilder
                 .CreateOrdered()
                     .WithColumns()
+                    .WithRows()
                 .Build();
 
             Assert.IsNotNull(scanSpec);
@@ -58,6 +60,7 @@ namespace Hypertable.Test
             scanSpec = ScanSpecBuilder
                 .Create()
                     .WithColumns("a")
+                    .WithRows()
                .Build();
 
             Assert.IsNotNull(scanSpec);
@@ -67,6 +70,7 @@ namespace Hypertable.Test
             scanSpec = ScanSpecBuilder
                 .Create()
                     .WithColumns("x", "a", "z")
+                    .WithRows()
                .Build();
 
             Assert.IsNotNull(scanSpec);
@@ -76,6 +80,7 @@ namespace Hypertable.Test
             scanSpec = ScanSpecBuilder
                 .CreateOrdered()
                     .WithColumns(new[] { "x", "a", "z" })
+                    .WithRows()
                .Build();
 
             Assert.IsNotNull(scanSpec);

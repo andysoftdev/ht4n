@@ -130,6 +130,9 @@ namespace Hypertable {
 				: ScanSpecBuilderBaseOp( scanSpec ) {
 				}
 
+				virtual IScanSpecBuilderWithRowOp^ WithRows( ) {
+					return this;
+				}
 				virtual IScanSpecBuilderWithRowOp^ WithRows( String^ row, ... cli::array<String^>^ moreRows ) {
 					scanSpec->AddRow( row, moreRows );
 					return this;
@@ -207,6 +210,9 @@ namespace Hypertable {
 				: ScanSpecBuilderBase( scanSpec ) {
 				}
 
+				virtual IScanSpecBuilderWithRowOp^ WithRows( ) {
+					return Continue( ScanSpecBuilderWithRowOp );
+				}
 				virtual IScanSpecBuilderWithRowOp^ WithRows( String^ row, ... cli::array<String^>^ moreRows ) {
 					scanSpec->AddRow( row, moreRows );
 					return Continue( ScanSpecBuilderWithRowOp );
@@ -252,10 +258,6 @@ namespace Hypertable {
 				virtual IScanSpecBuilderWithCellOp^ WithCells( IEnumerable<CellInterval^>^ cellIntervals ) {
 					scanSpec->AddCellInterval( cellIntervals );
 					return Continue( ScanSpecBuilderWithCellOp );
-				}
-
-				virtual ScanSpec^ Build( ) {
-					return scanSpec;
 				}
 		};
 

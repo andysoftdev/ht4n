@@ -191,6 +191,12 @@ namespace Hypertable {
 			public:
 
 				/// <summary>
+				/// All rows in the scan.
+				/// </summary>
+				/// <returns>The scan specification row predicate builder, including common options and limits.</returns>
+				IScanSpecBuilderWithRowOp^ WithRows( );
+
+				/// <summary>
 				/// Adds one or more rows to be returned in the scan.
 				/// </summary>
 				/// <param name="row">Row to add.</param>
@@ -325,13 +331,6 @@ namespace Hypertable {
 																								 , public IScanSpecBuilderWithColumnPredicate
 																								 , public IScanSpecBuilderWithCell {
 
-			public:
-
-				/// <summary>
-				/// Returns the final scan specification.
-				/// </summary>
-				/// <returns>The final scan specification.</returns>
-				ScanSpec^ Build( );
 		};
 
 		/// <summary>
