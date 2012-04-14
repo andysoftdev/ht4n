@@ -50,6 +50,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{91501F8D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ht4n.Explorer", "src\ht4n.Explorer\ht4n.Explorer.csproj", "{54AB43C3-C8F5-41A7-A2DC-9D6AD087F1F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ht4n.GettingStarted", "src\ht4n.GettingStarted\ht4n.GettingStarted.csproj", "{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -138,6 +140,14 @@ Global
 		{54AB43C3-C8F5-41A7-A2DC-9D6AD087F1F3}.Release|Win32.Build.0 = Release|x86
 		{54AB43C3-C8F5-41A7-A2DC-9D6AD087F1F3}.Release|x64.ActiveCfg = Release|x64
 		{54AB43C3-C8F5-41A7-A2DC-9D6AD087F1F3}.Release|x64.Build.0 = Release|x64
+		{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46}.Debug|Win32.ActiveCfg = Debug|x86
+		{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46}.Debug|Win32.Build.0 = Debug|x86
+		{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46}.Debug|x64.ActiveCfg = Debug|x64
+		{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46}.Debug|x64.Build.0 = Debug|x64
+		{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46}.Release|Win32.ActiveCfg = Release|x86
+		{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46}.Release|Win32.Build.0 = Release|x86
+		{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46}.Release|x64.ActiveCfg = Release|x64
+		{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,5 +162,6 @@ Global
 		{67D88850-0B1E-4B14-B452-7688A968BECC} = {2055E666-5B5C-4F3A-AC08-A8DD83A583E1}
 		{1172DD80-7329-424C-B51D-B020312688DA} = {2055E666-5B5C-4F3A-AC08-A8DD83A583E1}
 		{54AB43C3-C8F5-41A7-A2DC-9D6AD087F1F3} = {91501F8D-EF57-41B4-A9B4-C990A130AB89}
+		{B0D731E8-EA1A-4D56-AF8E-2A62A7E4AF46} = {91501F8D-EF57-41B4-A9B4-C990A130AB89}
 	EndGlobalSection
 EndGlobal
