@@ -90,6 +90,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestScanSpec.cs" />
     <Compile Include="TestScanSpecBuilder.cs" />
     <Compile Include="TestAsyncTableMutator.cs" />
     <Compile Include="TestAsyncTableScanner.cs" />

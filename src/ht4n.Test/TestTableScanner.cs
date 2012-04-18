@@ -2400,6 +2400,104 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
+        public void ScanTableThreaded() {
+            var t1 = new Thread(
+                () =>
+                    {
+                        using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("a"))) {
+                            Thread.Sleep(100);
+
+                            var c = 0;
+                            Cell cell;
+                            while (scanner.Next(out cell)) {
+                                Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                                ++c;
+                            }
+
+                            Assert.AreEqual(CountA, c);
+                        }
+                    });
+
+            var t2 = new Thread(
+                () =>
+                    {
+                        using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("b"))) {
+                            Thread.Sleep(50);
+
+                            var c = 0;
+                            Cell cell;
+                            while (scanner.Next(out cell)) {
+                                Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                                ++c;
+                            }
+
+                            Assert.AreEqual(CountB, c);
+                        }
+                    });
+
+            var t3 = new Thread(
+                () =>
+                    {
+                        using (var scanner = table.CreateScanner(new ScanSpec().AddColumn("c"))) {
+                            Thread.Sleep(25);
+
+                            var c = 0;
+                            Cell cell;
+                            while (scanner.Next(out cell)) {
+                                Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                                ++c;
+                            }
+
+                            Assert.AreEqual(CountC, c);
+                        }
+                    });
+
+            t1.Start();
+            t2.Start();
+            t3.Start();
+            t1.Join();
+            t2.Join();
+            t3.Join();
+
+            using( var _table = EnsureTable("ScanTableThreaded", Schema) ) {
+                var action = new Action<string>(
+                    cf => {
+                        using( var t = Ns.OpenTable("ScanTableThreaded") ) {
+                            var key = new Key { ColumnFamily = cf };
+                            using (var mutator = t.CreateMutator()) {
+                                for (var i = 0; i < 10000; ++i) {
+                                    key.Row = i.ToString("D6");
+                                    mutator.Set(key, BitConverter.GetBytes(i));
+                                }
+                            }
+
+                            using (var scanner = t.CreateScanner(new ScanSpec().AddColumn(cf))) {
+                                var c = 0;
+                                Cell cell;
+                                while (scanner.Next(out cell)) {
+                                    Assert.AreEqual(c.ToString("D6"), cell.Key.Row);
+                                    Assert.AreEqual(c, BitConverter.ToInt32(cell.Value, 0));
+                                    ++c;
+                                }
+
+                                Assert.AreEqual(10000, c);
+                            }
+                        }
+                    });
+
+                t1 = new Thread(() => action("a"));
+                t2 = new Thread(() => action("b"));
+                t3 = new Thread(() => action("c"));
+                t1.Start();
+                t2.Start();
+                t3.Start();
+                t1.Join();
+                t2.Join();
+                t3.Join();
+            }
+        }
+
+        [TestMethod]
         public void ScanTableValueIndex() {
             const string ScanTableValueIndexSchema =
                 "<Schema><AccessGroup name=\"default\" blksz=\"1024\">" +
