@@ -38,6 +38,7 @@ namespace Hypertable {
 	using namespace System;
 	using namespace System::Collections::Generic;
 	using namespace System::Collections::ObjectModel;
+	using namespace System::Runtime::InteropServices;
 	using namespace ht4c;
 
 	ref class Key;
@@ -507,6 +508,27 @@ namespace Hypertable {
 			/// </summary>
 			/// <returns>A string that represents the current object.</returns>
 			virtual String^ ToString() override;
+
+			/// <summary>
+			/// Returns distinct columns from a sequence of columns.
+			/// </summary>
+			/// <param name="source">The columns to remove redundant elements from.</param>
+			/// <returns>Columns that contains distinct elements from the source sequence.</returns>
+			/// <remarks>
+			/// column family[:[[^]column qualifier|column qualifier regexp]] defines a column.
+			/// </remarks>
+			static ISet<String^>^ DistictColumn( IEnumerable<String^>^ source );
+
+			/// <summary>
+			/// Returns distinct columns from a sequence of columns.
+			/// </summary>
+			/// <param name="source">The columns to remove redundant elements from.</param>
+			/// <param name="columnFamilies">Receives the column families. This parameter is passed uninitialized.</param>
+			/// <returns>Columns that contains distinct elements from the source sequence.</returns>
+			/// <remarks>
+			/// column family[:[[^]column qualifier|column qualifier regexp]] defines a column.
+			/// </remarks>
+			static ISet<String^>^ DistictColumn( IEnumerable<String^>^ source, [Out] ISet<String^>^% columnFamilies );
 
 		internal:
 

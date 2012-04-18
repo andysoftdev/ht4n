@@ -408,6 +408,42 @@ namespace Hypertable {
 		#undef APPEND_INT
 	}
 
+	ISet<String^>^ ScanSpec::DistictColumn( IEnumerable<String^>^ source ) {
+		if( source == nullptr ) {
+			return nullptr;
+		}
+
+		SortedSet<String^>^ _source = gcnew SortedSet<String^>( source );
+		SortedSet<String^>^ distinct = gcnew SortedSet<String^>( );
+		for each( String^ column in _source ) {
+			cli::array<String^>^ _column = column->Split(L':');
+			if( !distinct->Contains(_column[0]) ) {
+				distinct->Add( column );
+			}
+		}
+
+		return distinct;
+	}
+
+	ISet<String^>^ ScanSpec::DistictColumn( IEnumerable<String^>^ source, [Out] ISet<String^>^% columnFamilies ) {
+		if( source == nullptr ) {
+			return nullptr;
+		}
+
+		columnFamilies = gcnew SortedSet<String^>( );
+		SortedSet<String^>^ _source = gcnew SortedSet<String^>( source );
+		SortedSet<String^>^ distinct = gcnew SortedSet<String^>( );
+		for each( String^ column in _source ) {
+			cli::array<String^>^ _column = column->Split(L':');
+			if( !distinct->Contains(_column[0]) ) {
+				distinct->Add( column );
+				columnFamilies->Add(_column[0]);
+			}
+		}
+
+		return distinct;
+	}
+
 	void ScanSpec::To( Common::ScanSpec& scanSpec ) {
 		if( MaxRows > 0 ) {
 			scanSpec.maxRows( MaxRows );

@@ -17,3 +17,4 @@ CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Security", "CA2102:CatchNonClsCompliantExc
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA2210:AssembliesShouldHaveValidStrongNames");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Scope="member", Target="Hypertable.Composition.IContextProvider.#Provider");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId="ProviderName", Scope="member", Target="Hypertable.Context.#.cctor()");
+CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1", Scope="member", Target="Hypertable.ScanSpec.#DistictColumn(System.Collections.Generic.IEnumerable`1<System.String>,System.Collections.Generic.ISet`1<System.String>&)");
