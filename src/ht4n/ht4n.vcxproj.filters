@@ -25,9 +25,6 @@
     <ClInclude Include="Client.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="CM2A.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Context.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -162,6 +159,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="ScanSpecBuilder.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CM2U8.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

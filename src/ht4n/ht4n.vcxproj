@@ -291,7 +291,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="CellInterval.h" />
     <ClInclude Include="ChunkedTableMutator.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="CM2A.h" />
+    <ClInclude Include="CM2U8.h" />
     <ClInclude Include="Context.h" />
     <ClInclude Include="CreateDispositions.h" />
     <ClInclude Include="CrossAppDomainFunc.h" />

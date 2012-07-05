@@ -25,7 +25,7 @@
 #include "Key.h"
 #include "Cell.h"
 #include "Exception.h"
-#include "CM2A.h"
+#include "CM2U8.h"
 
 #include "ht4c.Common/TableMutator.h"
 #include "ht4c.Common/Cells.h"
@@ -86,11 +86,11 @@ namespace Hypertable {
 				if( cell != nullptr && cell->Key != nullptr ) {
 					Key^ key = cell->Key;
 					if( createRowKey || String::IsNullOrEmpty(key->Row) ) {
-						key->Row = gcnew String( Common::KeyBuilder().c_str() );
+						key->Row = CM2U8::ToString( Common::KeyBuilder().c_str() );
 					}
 					UInt32 len = cell->Value != nullptr ? cell->Value->Length : 0;
 					pin_ptr<Byte> pv = len ? &cell->Value[0] : nullptr;
-					_cells->add( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp, pv, len, (Byte)cell->Flag );
+					_cells->add( CM2U8(key->Row), CM2U8(key->ColumnFamily), CM2U8(key->ColumnQualifier), key->Timestamp, pv, len, (Byte)cell->Flag );
 				}
 			}
 			msclr::lock sync( syncRoot );
@@ -108,7 +108,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(row) ) throw gcnew ArgumentException( L"Invalid parameter row (null or empty)", L"row" );
 		HT4N_TRY {
 			msclr::lock sync( syncRoot );
-			tableMutator->del( CM2A(row), 0, 0, 0 );
+			tableMutator->del( CM2U8(row), 0, 0, 0 );
 		} 
 		HT4N_RETHROW
 	}
@@ -119,7 +119,7 @@ namespace Hypertable {
 		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
 		HT4N_TRY {
 			msclr::lock sync( syncRoot );
-			tableMutator->del( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp );
+			tableMutator->del( CM2U8(key->Row), CM2U8(key->ColumnFamily), CM2U8(key->ColumnQualifier), key->Timestamp );
 		} 
 		HT4N_RETHROW
 	}
@@ -132,7 +132,7 @@ namespace Hypertable {
 			msclr::lock sync( syncRoot );
 			for each( Key^ key in keys ) {
 				if( key != nullptr ) {
-					tableMutator->del( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp );
+					tableMutator->del( CM2U8(key->Row), CM2U8(key->ColumnFamily), CM2U8(key->ColumnQualifier), key->Timestamp );
 				}
 			}
 		} 
@@ -149,7 +149,7 @@ namespace Hypertable {
 				if( cell != nullptr ) {
 					Key^ key = cell->Key;
 					if( key != nullptr ) {
-						tableMutator->del( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp );
+						tableMutator->del( CM2U8(key->Row), CM2U8(key->ColumnFamily), CM2U8(key->ColumnQualifier), key->Timestamp );
 					}
 				}
 			}
@@ -185,14 +185,14 @@ namespace Hypertable {
 				{
 					msclr::lock sync( syncRoot );
 					pin_ptr<Byte> pv = len ? &value[0] : nullptr;
-					tableMutator->set( CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp, pv, len, row );
+					tableMutator->set( CM2U8(key->ColumnFamily), CM2U8(key->ColumnQualifier), key->Timestamp, pv, len, row );
 				}
-				key->Row = gcnew String( row.c_str() );
+				key->Row = CM2U8::ToString( row.c_str() );
 			}
 			else {
 				msclr::lock sync( syncRoot );
 				pin_ptr<Byte> pv = len ? &value[0] : nullptr;
-				tableMutator->set( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp, pv, len, (uint8_t)cellFlag );
+				tableMutator->set( CM2U8(key->Row), CM2U8(key->ColumnFamily), CM2U8(key->ColumnQualifier), key->Timestamp, pv, len, (uint8_t)cellFlag );
 			}
 		}
 		HT4N_RETHROW

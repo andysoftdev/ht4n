@@ -29,7 +29,7 @@
 #include "AppDomainHandler.h"
 #include "Composition/IContextProvider.h"
 #include "Composition/IContextProviderMetadata.h"
-#include "CM2A.h"
+#include "CM2U8.h"
 
 #include "ht4c.Common/Config.h"
 #include "ht4c.Common/Properties.h"
@@ -85,7 +85,7 @@ namespace Hypertable {
 			if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException(L"Invalid property name", L"name");
 			if( obj == nullptr ) throw gcnew ArgumentNullException(L"Invalid property value", L"obj");
 
-			std::string propName = CM2A(name);
+			std::string propName = CM2U8(name);
 
 			INSERT_ANY( bool, Boolean )
 			INSERT_ANY( uint16_t, UInt16 )
@@ -97,13 +97,13 @@ namespace Hypertable {
 			INSERT_ANY_COLLECTION( double, Double )
 
 			if( obj->GetType() == String::typeid ) {
-				std::string value( CM2A(dynamic_cast<String^>(obj)) );
+				std::string value( CM2U8(dynamic_cast<String^>(obj)) );
 				return prop->addOrUpdate( propName, value );
 			}
 			if( dynamic_cast<IEnumerable<String^>^>(obj) ) {
 				std::vector<std::string> value;
 				for each( String^ str in dynamic_cast<IEnumerable<String^>^>(obj) ) {
-					value.push_back( std::string(CM2A(str)) );
+					value.push_back( std::string(CM2U8(str)) );
 				}
 				return prop->addOrUpdate( propName, value );
 			}
@@ -155,7 +155,7 @@ namespace Hypertable {
 			else if( type == typeid(std::string) ) {
 				std::string value;
 				if( prop->get(propName, value) ) {
-					return gcnew String( value.c_str() );
+					return CM2U8::ToString( value.c_str() );
 				}
 			}
 			else if( type == typeid(std::vector<std::string>) ) {
@@ -163,7 +163,7 @@ namespace Hypertable {
 				if( prop->get(propName, values) ) {
 					IList<String^>^ l = gcnew List<String^>( (int)values.size() );
 					for each( const std::string& value in values ) {
-						l->Add( gcnew String(value.c_str()) );
+						l->Add( CM2U8::ToString(value.c_str()) );
 					}
 					return l;
 				}
@@ -429,7 +429,7 @@ namespace Hypertable {
 			HT4N_TRY {
 				Dictionary<String^, Object^>^ remainingProperties;
 				properties = From( _properties, remainingProperties );
-				ht4c::Context::mergeProperties( CM2A(connectionString), LoggingLevel(), *properties );
+				ht4c::Context::mergeProperties( CM2U8(connectionString), LoggingLevel(), *properties );
 				_properties = From( properties );
 				for each( KeyValuePair<String^, Object^> kv in remainingProperties ) {
 					_properties->Add( kv.Key, kv.Value );
@@ -454,7 +454,7 @@ namespace Hypertable {
 			std::vector<std::string> names;
 			_properties->names( names );
 			for each( const std::string& name in names ) {
-				properties->Add( gcnew String(name.c_str()), prop_get(_properties, name) );
+				properties->Add( CM2U8::ToString(name.c_str()), prop_get(_properties, name) );
 			}
 		}
 		return properties;

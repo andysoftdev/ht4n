@@ -25,7 +25,7 @@
 #include "Exception.h"
 #include "AppDomainHandler.h"
 #include "CrossAppDomainAction.h"
-#include "CM2A.h"
+#include "CM2U8.h"
 
 #include "ht4c.Context/Logging.h"
 
@@ -93,7 +93,7 @@ namespace Hypertable {
 					traceEventType = TraceEventType::Information;
 				}
 
-				action->Invoke( traceEventType, gcnew String(logEvent->second) );
+				action->Invoke( traceEventType, CM2U8::ToString(logEvent->second) );
 			}
 
 			virtual void logMessage( const std::string& message ) {
@@ -101,7 +101,7 @@ namespace Hypertable {
 			}
 
 			virtual void invoke( Action<String^>^ action, const char* message ) {
-				action->Invoke( gcnew String(message) );
+				action->Invoke( CM2U8::ToString(message) );
 			}
 
 			CrossAppDomainAction<Action<TraceEventType, String^>^, const std::pair<int, const char*>*> logEventAction;
@@ -138,7 +138,7 @@ namespace Hypertable {
 	String^ Logging::Logfile::get( ) {
 		HT4N_TRY {
 			msclr::lock sync( syncRoot );
-			return gcnew String( ht4c::Logging::getLogfile().c_str() );
+			return CM2U8::ToString( ht4c::Logging::getLogfile().c_str() );
 		}
 		HT4N_RETHROW
 	}
@@ -146,7 +146,7 @@ namespace Hypertable {
 	void Logging::Logfile::set( String^ logfile ) {
 		HT4N_TRY {
 			msclr::lock sync( syncRoot );
-			ht4c::Logging::setLogfile( CM2A(logfile) );
+			ht4c::Logging::setLogfile( CM2U8(logfile) );
 		}
 		HT4N_RETHROW
 	}

@@ -22,7 +22,7 @@
 #include "stdafx.h"
 
 #include "Key.h"
-#include "CM2A.h"
+#include "CM2U8.h"
 
 #include "ht4c.Common/Cell.h"
 #include "ht4c.Common/KeyBuilder.h"
@@ -107,9 +107,9 @@ namespace Hypertable {
 	}
 
 	void Key::From( const Common::Cell& cell ) {
-		Row = gcnew String( cell.row() );
-		ColumnFamily = gcnew String( cell.columnFamily() );
-		ColumnQualifier = cell.columnQualifier() ? gcnew String( cell.columnQualifier() ) : nullptr;
+		Row = CM2U8::ToString( cell.row() );
+		ColumnFamily = CM2U8::ToString( cell.columnFamily() );
+		ColumnQualifier = cell.columnQualifier() ? CM2U8::ToString( cell.columnQualifier() ) : nullptr;
 		Timestamp = cell.timestamp();
 	}
 
@@ -218,7 +218,7 @@ namespace Hypertable {
 		cli::array<Byte>^ guid = gcnew cli::array<Byte>( Common::KeyBuilder::sizeGuid );
 		{
 			pin_ptr<Byte> pguid = &guid[0];
-			Common::KeyBuilder::decode( CM2A(value), pguid );
+			Common::KeyBuilder::decode( CM2U8(value), pguid );
 		}
 		return System::Guid( guid );
 	}

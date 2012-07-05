@@ -27,7 +27,7 @@
 #include "Table.h"
 #include "Cell.h"
 #include "Exception.h"
-#include "CM2A.h"
+#include "CM2U8.h"
 
 #include "ht4c.Common/Namespace.h"
 #include "ht4c.Common/Cells.h"
@@ -58,7 +58,7 @@ namespace Hypertable {
 		HT4N_THROW_OBJECTDISPOSED( );
 
 		HT4N_TRY {
-			return gcnew String( ns->getName().c_str() );
+			return CM2U8::ToString( ns->getName().c_str() );
 		}
 		HT4N_RETHROW
 	}
@@ -93,7 +93,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(schema) ) throw gcnew ArgumentNullException( L"schema" );
 		HT4N_TRY {
-			ns->createTable( CM2A(name), CM2A(schema) );
+			ns->createTable( CM2U8(name), CM2U8(schema) );
 		}
 		HT4N_RETHROW
 	}
@@ -113,7 +113,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(like) ) throw gcnew ArgumentNullException( L"like" );
 		HT4N_TRY {
-			ns->createTableLike( CM2A(name), CM2A(like) );
+			ns->createTableLike( CM2U8(name), CM2U8(like) );
 		}
 		HT4N_RETHROW
 	}
@@ -133,7 +133,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(schema) ) throw gcnew ArgumentNullException( L"schema" );
 		HT4N_TRY {
-			ns->alterTable( CM2A(name), CM2A(schema) );
+			ns->alterTable( CM2U8(name), CM2U8(schema) );
 		}
 		HT4N_RETHROW
 	}
@@ -147,7 +147,7 @@ namespace Hypertable {
 
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		HT4N_TRY {
-			return gcnew Table( ns->openTable(CM2A(name), (dispo & OpenDispositions::Force) == OpenDispositions::Force) );
+			return gcnew Table( ns->openTable(CM2U8(name), (dispo & OpenDispositions::Force) == OpenDispositions::Force) );
 		}
 		HT4N_RETHROW
 	}
@@ -169,7 +169,7 @@ namespace Hypertable {
 				CreateTable( name, schema );
 				break;
 			}
-			return gcnew Table( ns->openTable(CM2A(name), (dispo & OpenDispositions::Force) == OpenDispositions::Force) );
+			return gcnew Table( ns->openTable(CM2U8(name), (dispo & OpenDispositions::Force) == OpenDispositions::Force) );
 		}
 		HT4N_RETHROW
 	}
@@ -181,7 +181,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(nameNew) ) throw gcnew ArgumentNullException( L"nameNew" );
 		HT4N_TRY {
 			if( nameOld != nameNew ) {
-				ns->renameTable( CM2A(nameOld), CM2A(nameNew) );
+				ns->renameTable( CM2U8(nameOld), CM2U8(nameNew) );
 			}
 		}
 		HT4N_RETHROW
@@ -196,7 +196,7 @@ namespace Hypertable {
 
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		HT4N_TRY {
-			ns->dropTable( CM2A(name), (dispo & DropDispositions::IfExists) == DropDispositions::IfExists );
+			ns->dropTable( CM2U8(name), (dispo & DropDispositions::IfExists) == DropDispositions::IfExists );
 		}
 		HT4N_RETHROW
 	}
@@ -225,7 +225,7 @@ namespace Hypertable {
 
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		HT4N_TRY {
-			return ns->existsTable( CM2A(name) );
+			return ns->existsTable( CM2U8(name) );
 		} 
 		HT4N_RETHROW
 	}
@@ -239,7 +239,7 @@ namespace Hypertable {
 
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		HT4N_TRY {
-			return gcnew String( ns->getTableSchema(CM2A(name), withIds).c_str() );
+			return CM2U8::ToString( ns->getTableSchema(CM2U8(name), withIds).c_str() );
 		}
 		HT4N_RETHROW
 	}
@@ -328,7 +328,7 @@ namespace Hypertable {
 			for each( String^ command in commands ) {
 				String^ commandTrimmed = command->Trim();
 				if( !String::IsNullOrEmpty(commandTrimmed) ) {
-					ns->exec( CM2A(command) );
+					ns->exec( CM2U8(command) );
 				}
 			}
 		}
@@ -348,7 +348,7 @@ namespace Hypertable {
 				for each( String^ command in commands ) {
 					String^ commandTrimmed = command->Trim();
 					if( !String::IsNullOrEmpty(commandTrimmed) ) {
-						_cells = ns->query( CM2A(commandTrimmed) );
+						_cells = ns->query( CM2U8(commandTrimmed) );
 						if( _cells ) {
 							cells->Capacity += (int)_cells->size();
 							_cell = Common::Cell::create();

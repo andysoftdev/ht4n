@@ -33,7 +33,7 @@
 #include "AsyncScannerContext.h"
 #include "AsyncMutatorContext.h"
 #include "Exception.h"
-#include "CM2A.h"
+#include "CM2U8.h"
 
 #include "ht4c.Common/Types.h"
 #include "ht4c.Common/Table.h"
@@ -67,7 +67,7 @@ namespace Hypertable {
 		HT4N_THROW_OBJECTDISPOSED( );
 
 		HT4N_TRY {
-			return gcnew String( table->getName().c_str() );
+			return CM2U8::ToString( table->getName().c_str() );
 		}
 		HT4N_RETHROW
 	}
@@ -76,7 +76,7 @@ namespace Hypertable {
 		HT4N_THROW_OBJECTDISPOSED( );
 
 		HT4N_TRY {
-			return gcnew String( table->getSchema().c_str() );
+			return CM2U8::ToString( table->getSchema().c_str() );
 		} 
 		HT4N_RETHROW
 	}

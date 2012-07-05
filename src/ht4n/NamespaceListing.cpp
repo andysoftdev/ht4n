@@ -24,7 +24,7 @@
 #include "NamespaceListing.h"
 #include "INamespace.h"
 #include "Exception.h"
-#include "CM2A.h"
+#include "CM2U8.h"
 
 #include "ht4c.Common/NamespaceListing.h"
 
@@ -36,9 +36,9 @@ namespace Hypertable {
 	inline String^ getLeafName( const std::string& name ) {
 		std::string::size_type pos = name.find_last_of('/');
 		if( pos != std::string::npos ) {
-			return gcnew String( name.substr(pos + 1).c_str() );
+			return CM2U8::ToString( name.substr(pos + 1).c_str() );
 		}
-		return gcnew String( name.c_str() );
+		return CM2U8::ToString( name.c_str() );
 	}
 
 	String^ NamespaceListing::ToString() {
@@ -59,7 +59,7 @@ namespace Hypertable {
 		if( ns == nullptr ) throw gcnew ArgumentNullException(L"ns");
 		fullName = ns->Name;
 		for( ht4c::Common::NamespaceListing::tables_t::const_iterator it = nsListing.getTables().begin(); it != nsListing.getTables().end(); ++it ) {
-			tables->Add( gcnew String((*it).c_str()) );
+			tables->Add( CM2U8::ToString((*it).c_str()) );
 		}
 		for( ht4c::Common::NamespaceListing::namespaces_t::const_iterator it = nsListing.getNamespaces().begin(); it != nsListing.getNamespaces().end(); ++it ) {
 			namespaces->Add( GetListing(this, *it) );
@@ -80,7 +80,7 @@ namespace Hypertable {
 	NamespaceListing^ NamespaceListing::GetListing( NamespaceListing^ parent, const ht4c::Common::NamespaceListing& _nsListing ) {
 		NamespaceListing^ nsListing = gcnew NamespaceListing( parent, getLeafName(_nsListing.getName()) );
 		for( ht4c::Common::NamespaceListing::tables_t::const_iterator it = _nsListing.getTables().begin(); it != _nsListing.getTables().end(); ++it ) {
-			nsListing->tables->Add( gcnew String((*it).c_str()) );
+			nsListing->tables->Add( CM2U8::ToString((*it).c_str()) );
 		}
 		for( ht4c::Common::NamespaceListing::namespaces_t::const_iterator it = _nsListing.getNamespaces().begin(); it != _nsListing.getNamespaces().end(); ++it ) {
 			nsListing->namespaces->Add( GetListing(nsListing, *it) );

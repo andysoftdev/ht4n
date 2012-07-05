@@ -25,7 +25,7 @@
 #include "Key.h"
 #include "Cell.h"
 #include "Exception.h"
-#include "CM2A.h"
+#include "CM2U8.h"
 
 #include "ht4c.Common/TableMutator.h"
 #include "ht4c.Common/Cells.h"
@@ -59,7 +59,7 @@ namespace Hypertable {
 			UInt32 len = value != nullptr ? value->Length : 0;
 			msclr::lock sync( syncRoot );
 			pin_ptr<Byte> pv = len ? &value[0] : nullptr;
-			cellChunk->add( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp, pv, len, (Byte)CellFlag::Default );
+			cellChunk->add( CM2U8(key->Row), CM2U8(key->ColumnFamily), CM2U8(key->ColumnQualifier), key->Timestamp, pv, len, (Byte)CellFlag::Default );
 			lenTotal += len;
 			SetChunk( false );
 		}
@@ -77,7 +77,7 @@ namespace Hypertable {
 			UInt32 len = cell->Value != nullptr ? cell->Value->Length : 0;
 			msclr::lock sync( syncRoot );
 			pin_ptr<Byte> pv = len ? &cell->Value[0] : nullptr;
-			cellChunk->add( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp, pv, len, (Byte)cell->Flag );
+			cellChunk->add( CM2U8(key->Row), CM2U8(key->ColumnFamily), CM2U8(key->ColumnQualifier), key->Timestamp, pv, len, (Byte)cell->Flag );
 			lenTotal += len;
 			SetChunk( false );
 		}
@@ -97,7 +97,7 @@ namespace Hypertable {
 						UInt32 len = cell->Value != nullptr ? cell->Value->Length : 0;
 						msclr::lock sync( syncRoot );
 						pin_ptr<Byte> pv = len ? &cell->Value[0] : nullptr;
-						cellChunk->add( CM2A(key->Row), CM2A(key->ColumnFamily), CM2A(key->ColumnQualifier), key->Timestamp, pv, len, (Byte)cell->Flag );
+						cellChunk->add( CM2U8(key->Row), CM2U8(key->ColumnFamily), CM2U8(key->ColumnQualifier), key->Timestamp, pv, len, (Byte)cell->Flag );
 						lenTotal += len;
 						SetChunk( false );
 					}

@@ -25,7 +25,7 @@
 #include "Context.h"
 #include "Namespace.h"
 #include "Exception.h"
-#include "CM2A.h"
+#include "CM2U8.h"
 
 #include "ht4c.Common/Client.h"
 #include "ht4c.Context/Context.h"
@@ -88,7 +88,7 @@ namespace Hypertable {
 		}
 
 		HT4N_TRY {
-			client->createNamespace( CM2A(name)
+			client->createNamespace( CM2U8(name)
 														 , nsBase != nullptr ? nsBase->get() : 0
 														 , (dispo & CreateDispositions::CreateIntermediate) == CreateDispositions::CreateIntermediate
 														 , (dispo & CreateDispositions::CreateIfNotExist) == CreateDispositions::CreateIfNotExist );
@@ -126,7 +126,7 @@ namespace Hypertable {
 				break;
 			case OpenDispositions::CreateAlways:
 				if( NamespaceExists(name, nsBase) ) {
-					INamespace^ ns = gcnew Namespace( this, client->openNamespace(CM2A(name), nsBase != nullptr ? nsBase->get() : 0) );
+					INamespace^ ns = gcnew Namespace( this, client->openNamespace(CM2U8(name), nsBase != nullptr ? nsBase->get() : 0) );
 					try {
 						ns->DropTables();
 						ns->DropNamespaces( DropDispositions::Complete );
@@ -142,7 +142,7 @@ namespace Hypertable {
 				}
 				break;
 			}
-			return gcnew Namespace( this, client->openNamespace(CM2A(name), nsBase != nullptr ? nsBase->get() : 0) );
+			return gcnew Namespace( this, client->openNamespace(CM2U8(name), nsBase != nullptr ? nsBase->get() : 0) );
 		}
 		HT4N_RETHROW
 	}
@@ -170,7 +170,7 @@ namespace Hypertable {
 		}
 
 		HT4N_TRY {
-			client->dropNamespace( CM2A(name)
+			client->dropNamespace( CM2U8(name)
 								 , nsBase != nullptr ? nsBase->get() : 0
 								 , (dispo & DropDispositions::IfExists) == DropDispositions::IfExists
 								 , (dispo & DropDispositions::IncludeTables) == DropDispositions::IncludeTables
@@ -193,7 +193,7 @@ namespace Hypertable {
 		}
 
 		HT4N_TRY {
-			return client->existsNamespace( CM2A(name), nsBase != nullptr ? nsBase->get() : 0 );
+			return client->existsNamespace( CM2U8(name), nsBase != nullptr ? nsBase->get() : 0 );
 		}
 		HT4N_RETHROW
 	}

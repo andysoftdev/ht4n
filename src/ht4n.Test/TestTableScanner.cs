@@ -2849,6 +2849,77 @@ namespace Hypertable.Test
             }
         }
 
+        [TestMethod]
+        public void ScanTableWithUnicodeCharacters() {
+            var rows = new [] {
+                "프1000_1",
+                "1프1000_",
+                "_1000_1프"
+            };
+
+            var key = new Key { ColumnFamily = "d" };
+            using( var mutator = table.CreateMutator() ) {
+                foreach( var row in rows ) {
+                    key.Row = row;
+                    mutator.Set(key, Encoding.GetBytes(key.Row));
+                }
+            }
+
+            using( var scanner = table.CreateScanner(new ScanSpec().AddColumn("d")) ) {
+                var c = 0;
+                Cell cell;
+                while( scanner.Next(out cell) ) {
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    ++c;
+
+                    Assert.IsTrue(rows.Contains(cell.Key.Row));
+                }
+
+                Assert.AreEqual(rows.Length, c);
+            }
+
+            foreach( var row in Shuffle(rows) ) {
+                using( var scanner = table.CreateScanner(new ScanSpec(row).AddColumn("d")) ) {
+                    Cell cell;
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    Assert.IsFalse(scanner.Next(out cell));
+                }
+            }
+
+            foreach( var row in Shuffle(rows) ) {
+                using( var scanner = table.CreateScanner(new ScanSpec(row) { ScanAndFilter = true }.AddColumn("d")) ) {
+                    Cell cell;
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                    Assert.IsFalse(scanner.Next(out cell));
+                }
+            }
+
+            for( int i = 0; i < 10; ++i ) {
+                var rowsScanAndFilter = new HashSet<string>();
+                foreach( var row in Shuffle(rows) ) {
+                    rowsScanAndFilter.Add(row);
+                    if( rowsScanAndFilter.Count >= 3 ) {
+                        break;
+                    }
+                }
+
+                using( var scanner = table.CreateScanner(new ScanSpec { ScanAndFilter = true }.AddColumn("d").AddRow(rowsScanAndFilter)) ) {
+                    var c = 0;
+                    Cell cell;
+                    while( scanner.Next(out cell) ) {
+                        Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
+                        ++c;
+
+                        Assert.IsTrue(rowsScanAndFilter.Contains(cell.Key.Row));
+                    }
+
+                    Assert.AreEqual(rowsScanAndFilter.Count, c);
+                }
+            }
+        }
+
         [TestInitialize]
         public void TestInitialize() {
             DeleteColumnFamily(table, "d");
