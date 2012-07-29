@@ -302,6 +302,36 @@ namespace Hypertable {
 	HT4N_DECLARE_EXCEPTION(ServerShuttingDown)
 
 	/// <summary>
+	/// The exception that is thrown if the location has not been asssigned.
+	/// </summary>
+	HT4N_DECLARE_EXCEPTION(LocationUnassigned)
+
+	/// <summary>
+	/// The exception that is thrown if a cell already exists.
+	/// </summary>
+	HT4N_DECLARE_EXCEPTION(AlreadyExists)
+
+	/// <summary>
+	/// The exception that is thrown if a checksum mismatch occured.
+	/// </summary>
+	HT4N_DECLARE_EXCEPTION(ChecksumMismatch)
+
+	/// <summary>
+	/// The exception that is thrown if the database is closed.
+	/// </summary>
+	HT4N_DECLARE_EXCEPTION(Closed)
+
+	/// <summary>
+	/// The exception that is thrown if the range server has not been found.
+	/// </summary>
+	HT4N_DECLARE_EXCEPTION(RangeServerNotFound)
+
+	/// <summary>
+	/// The exception that is thrown if the connection has not been initialized.
+	/// </summary>
+	HT4N_DECLARE_EXCEPTION(ConnectionNotInitialized)
+
+	/// <summary>
 	/// The exception that is thrown as the result of a configuration error.
 	/// </summary>
 	HT4N_DECLARE_EXCEPTION(Config)
