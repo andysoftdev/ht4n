@@ -128,7 +128,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-gd-1_44.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-gd-1_51.lib</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/IGNORE:4248 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Xdcmake>
@@ -164,7 +164,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-gd-1_44.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-gd-1_51.lib</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/IGNORE:4248 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Xdcmake>
@@ -204,7 +204,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-1_44.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-1_51.lib</IgnoreSpecificDefaultLibraries>
       <ForceSymbolReferences>
       </ForceSymbolReferences>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -247,7 +247,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-1_44.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-1_51.lib</IgnoreSpecificDefaultLibraries>
       <ForceSymbolReferences>
       </ForceSymbolReferences>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
