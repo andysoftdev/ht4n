@@ -29,7 +29,6 @@
 #pragma comment( lib, "log4cpp.lib" )				// LGPL v2.1
 #pragma comment( lib, "zlib.lib" )					// free of charge
 #pragma comment( lib, "expat.lib" )					// free of charge
-#pragma comment( lib, "pthread.lib" )				// LGPL v2.1
 #pragma comment( lib, "thrift.lib" )				// Apache License 2.0
 #ifdef _USE_SIGAR
 #pragma comment( lib, "sigar.lib" )					// GPL v2

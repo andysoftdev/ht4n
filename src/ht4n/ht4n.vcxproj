@@ -111,11 +111,11 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;PTW32_STATIC_LIB;_DEBUG;_LIB;SUPPORT_HAMSTERDB;SUPPORT_SQLITEDB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;SUPPORT_HAMSTERDB;SUPPORT_SQLITEDB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\pthread;$(ProjectDir)\..\..\..\ht4w\deps\log4cpp\include;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\log4cpp\include;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnablePREfast>false</EnablePREfast>
@@ -147,11 +147,11 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;PTW32_STATIC_LIB;_DEBUG;_LIB;SUPPORT_HAMSTERDB;SUPPORT_SQLITEDB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;SUPPORT_HAMSTERDB;SUPPORT_SQLITEDB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\pthread;$(ProjectDir)\..\..\..\ht4w\deps\log4cpp\include;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\log4cpp\include;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnablePREfast>false</EnablePREfast>
@@ -185,12 +185,12 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;PTW32_STATIC_LIB;NDEBUG;_LIB;SUPPORT_HAMSTERDB;SUPPORT_SQLITEDB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;SUPPORT_HAMSTERDB;SUPPORT_SQLITEDB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\pthread;$(ProjectDir)\..\..\..\ht4w\deps\log4cpp\include;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\log4cpp\include;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -228,12 +228,12 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;PTW32_STATIC_LIB;NDEBUG;_LIB;SUPPORT_HAMSTERDB;SUPPORT_SQLITEDB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;SUPPORT_HAMSTERDB;SUPPORT_SQLITEDB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\pthread;$(ProjectDir)\..\..\..\ht4w\deps\log4cpp\include;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\log4cpp\include;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>

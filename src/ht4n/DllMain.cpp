@@ -24,7 +24,6 @@
 #endif
 
 #include "Common/Compat.h"
-#include "pthread.h"
 
 #pragma push_macro("_WIN32_WINNT")
 #pragma push_macro("WINVER")
@@ -57,7 +56,6 @@ extern "C" BOOL WINAPI DllMain(HANDLE /*hInstance*/, DWORD dwReason, LPVOID /*lp
 	switch( dwReason )
 	{
 		case DLL_PROCESS_ATTACH: {
-			pthread_win32_process_attach_np();
 			boost::on_process_enter();
 			boost::on_thread_enter();
 			break;
@@ -98,7 +96,6 @@ extern "C" BOOL WINAPI DllMain(HANDLE /*hInstance*/, DWORD dwReason, LPVOID /*lp
 				>::free();
 
 			boost::on_process_exit();
-			pthread_win32_process_detach_np();
 			break;
 		}
 	}
