@@ -47,6 +47,27 @@ namespace Hypertable {
 
 		class AsyncScannerCtx;
 
+		class Lock {
+
+			public:
+
+				inline Lock( CRITICAL_SECTION* _pcs )
+				: pcs( _pcs ) {
+					::EnterCriticalSection( pcs );
+				}
+
+				inline ~Lock( ) {
+					::LeaveCriticalSection( pcs );
+				}
+
+			private:
+
+				CRITICAL_SECTION* pcs;
+		};
+
+		/// <summary>
+		/// CrossAppDomainAsyncScannerCallbackBase.
+		/// </summary>
 		typedef CrossAppDomainFunc<AsyncScannerCallback^, AsyncScannerCtx*, Common::AsyncCallbackResult> CrossAppDomainAsyncScannerCallbackBase;
 
 		/// <summary>
@@ -210,37 +231,27 @@ namespace Hypertable {
 
 			void attachAsyncScanner( AsyncScannerContext^ asyncScannerContext, AsyncScannerCallback^ callback ) {
 				AsyncScannerCtx* ctx = new AsyncScannerCtx( asyncScannerContext, callback );
-				::EnterCriticalSection( &async_scanner_crit );
-				try {
-					async_scanner_map_t::iterator it = async_scanner_map.find( asyncScannerContext->Id );
-					if( it == async_scanner_map.end() ) {
-						async_scanner_map.insert( async_scanner_map_t::value_type(asyncScannerContext->Id, ctx) );
-					}
-					else {
-						AsyncScannerCtx::free( (*it).second );
-						(*it).second = ctx;
-					}
+				Lock lock( &async_scanner_crit );
+				async_scanner_map_t::iterator it = async_scanner_map.find( asyncScannerContext->Id );
+				if( it == async_scanner_map.end() ) {
+					async_scanner_map.insert( async_scanner_map_t::value_type(asyncScannerContext->Id, ctx) );
 				}
-				finally {
-					::LeaveCriticalSection( &async_scanner_crit );
+				else {
+					AsyncScannerCtx::free( (*it).second );
+					(*it).second = ctx;
 				}
 			}
 
 			void attachAsyncMutator( AsyncMutatorContext^ asyncMutatorContext ) {
 				AsyncMutatorCtx* ctx = new AsyncMutatorCtx( asyncMutatorContext );
-				::EnterCriticalSection( &async_mutator_crit );
-				try {
-					async_mutator_map_t::iterator it = async_mutator_map.find( asyncMutatorContext->Id );
-					if( it == async_mutator_map.end() ) {
-						async_mutator_map.insert( async_mutator_map_t::value_type(asyncMutatorContext->Id, ctx) );
-					}
-					else {
-						AsyncMutatorCtx::free( (*it).second );
-						(*it).second = ctx;
-					}
+				Lock lock( &async_mutator_crit );
+				async_mutator_map_t::iterator it = async_mutator_map.find( asyncMutatorContext->Id );
+				if( it == async_mutator_map.end() ) {
+					async_mutator_map.insert( async_mutator_map_t::value_type(asyncMutatorContext->Id, ctx) );
 				}
-				finally {
-					::LeaveCriticalSection( &async_mutator_crit );
+				else {
+					AsyncMutatorCtx::free( (*it).second );
+					(*it).second = ctx;
 				}
 			}
 
@@ -266,12 +277,16 @@ namespace Hypertable {
 				Common::Cell* _cell = 0;
 				AsyncScannerCtx* ctx = 0;
 
-				::EnterCriticalSection( &async_scanner_crit );
-				try {
-					ctx = async_scanner_map[asyncScannerId];
-				}
-				finally {
-					::LeaveCriticalSection( &async_scanner_crit );
+				// FIXME, under certain, very rare, conditions the async scanner delivers results
+				// before the async scanner context has been attached (see TestAsyncTableScanner.ScanMultipleTableAsync)
+				for( int t = 0; t < 10; ++t ) {
+					{
+						Lock lock( &async_scanner_crit );
+						if( ctx = async_scanner_map[asyncScannerId] ) {
+							break;
+						}
+					}
+					::Sleep( t );
 				}
 
 				if( ctx ) {
@@ -289,6 +304,7 @@ namespace Hypertable {
 						ctx->cells = 0;
 					}
 				}
+
 				return Common::ACR_Continue;
 			}
 
@@ -304,54 +320,34 @@ namespace Hypertable {
 			}
 
 			void freeAsyncScannerCtx( ) {
-				::EnterCriticalSection( &async_scanner_crit );
-				try {
-					for( async_scanner_map_t::iterator it = async_scanner_map.begin(); it != async_scanner_map.end(); ++it ) {
-						AsyncScannerCtx::free( (*it).second );
-					}
-				}
-				finally {
-					::LeaveCriticalSection( &async_scanner_crit );
+				Lock lock( &async_scanner_crit );
+				for( async_scanner_map_t::iterator it = async_scanner_map.begin(); it != async_scanner_map.end(); ++it ) {
+					AsyncScannerCtx::free( (*it).second );
 				}
 			}
 
 			void freeAsyncScannerCtx( int64_t asyncScannerId ) {
-				::EnterCriticalSection( &async_scanner_crit );
-				try {
-					async_scanner_map_t::iterator it = async_scanner_map.find( asyncScannerId );
-					if( it != async_scanner_map.end() ) {
-						AsyncScannerCtx::free( (*it).second );
-						async_scanner_map.erase( it );
-					}
-				}
-				finally {
-					::LeaveCriticalSection( &async_scanner_crit );
+				Lock lock( &async_scanner_crit );
+				async_scanner_map_t::iterator it = async_scanner_map.find( asyncScannerId );
+				if( it != async_scanner_map.end() ) {
+					AsyncScannerCtx::free( (*it).second );
+					async_scanner_map.erase( it );
 				}
 			}
 
 			void freeAsyncMutatorCtx( ) {
-				::EnterCriticalSection( &async_mutator_crit );
-				try {
-					for( async_mutator_map_t::iterator it = async_mutator_map.begin(); it != async_mutator_map.end(); ++it ) {
-						AsyncMutatorCtx::free( (*it).second );
-					}
-				}
-				finally {
-					::LeaveCriticalSection( &async_mutator_crit );
+				Lock lock( &async_mutator_crit );
+				for( async_mutator_map_t::iterator it = async_mutator_map.begin(); it != async_mutator_map.end(); ++it ) {
+					AsyncMutatorCtx::free( (*it).second );
 				}
 			}
 
 			void freeAsyncMutatorCtx( int64_t asyncMutatorId ) {
-				::EnterCriticalSection( &async_mutator_crit );
-				try {
-					async_mutator_map_t::iterator it = async_mutator_map.find( asyncMutatorId );
-					if( it != async_mutator_map.end() ) {
-						AsyncMutatorCtx::free( (*it).second );
-						async_mutator_map.erase( it );
-					}
-				}
-				finally {
-					::LeaveCriticalSection( &async_mutator_crit );
+				Lock lock( &async_mutator_crit );
+				async_mutator_map_t::iterator it = async_mutator_map.find( asyncMutatorId );
+				if( it != async_mutator_map.end() ) {
+					AsyncMutatorCtx::free( (*it).second );
+					async_mutator_map.erase( it );
 				}
 			}
 

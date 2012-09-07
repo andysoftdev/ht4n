@@ -91,7 +91,7 @@ namespace Hypertable.Test
             var tables = new List<ITable>();
             try {
                 for (var t = 0; t < CountTables; ++t) {
-                    var testTable = EnsureTable(string.Format("ScanMultipleTableBlockingAsync-{0}", t), Schema);
+                    var testTable = EnsureTable(string.Format("ScanMultipleTableAsync-{0}", t), Schema);
                     InitializeTableData(testTable);
                     tables.Add(testTable);
                 }
@@ -120,8 +120,8 @@ namespace Hypertable.Test
                 using (var asyncResult = new AsyncResult()) {
                     tables.ForEach(
                         t => t.BeginScan(
-                            asyncResult, 
-                            new ScanSpec().AddColumn("b"), 
+                            asyncResult,
+                            new ScanSpec().AddColumn("b"),
                             (ctx, cells) =>
                                 {
                                     foreach (var cell in cells) {
@@ -133,8 +133,8 @@ namespace Hypertable.Test
                                 }));
                     tables.ForEach(
                         t => t.BeginScan(
-                            asyncResult, 
-                            new ScanSpec().AddColumn("c"), 
+                            asyncResult,
+                            new ScanSpec().AddColumn("c"),
                             (ctx, cells) =>
                                 {
                                     foreach (var cell in cells) {
@@ -154,7 +154,7 @@ namespace Hypertable.Test
             finally {
                 tables.ForEach(t => t.Dispose());
                 for (var t = 0; t < CountTables; ++t) {
-                    Ns.DropTable(string.Format("ScanMultipleTableBlockingAsync-{0}", t), DropDispositions.IfExists);
+                    Ns.DropTable(string.Format("ScanMultipleTableAsync-{0}", t), DropDispositions.IfExists);
                 }
             }
         }
@@ -460,7 +460,7 @@ namespace Hypertable.Test
                     asyncResult.Cancel();
                     Assert.IsTrue(asyncResult.IsCancelled);
 
-                    // The official Hypertable version does not support re-using of the future object using the thridt API
+                    // The official Hypertable version does not support re-using of the future object using the thrift API
                     if (!IsThrift) {
                         c = 0;
                         table.BeginScan(
