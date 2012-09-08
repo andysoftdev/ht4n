@@ -18,11 +18,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="ht4n.GettingStarted.CLR.cpp" />
     <ClCompile Include="Properties\AssemblyInfo.cpp">
       <Filter>Properties</Filter>
     </ClCompile>
     <ClCompile Include="GlobalSuppressions.cpp" />
+    <ClCompile Include="Program.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\app.rc">
