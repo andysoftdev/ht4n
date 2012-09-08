@@ -72,7 +72,7 @@ namespace Hypertable {
 				}
 			}
 
-			virtual bool Next( Cell^ cell );
+			virtual bool Move( Cell^ cell );
 			virtual bool Next( [Out] Cell^% cell );
 
 			virtual IEnumerator<Cell^>^ generic_GetEnumerator( ) = IEnumerable<Cell^>::GetEnumerator;

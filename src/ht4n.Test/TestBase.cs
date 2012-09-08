@@ -202,7 +202,7 @@ namespace Hypertable.Test
             using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true })) {
                 using (var mutator = table.CreateMutator()) {
                     var cell = new Cell();
-                    while (scanner.Next(cell)) {
+                    while( scanner.Move(cell) ) {
                         mutator.Delete(cell.Key);
                     }
                 }
@@ -211,7 +211,7 @@ namespace Hypertable.Test
             var c = 0;
             using (var scanner = table.CreateScanner()) {
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     ++c;
                 }
             }
@@ -229,7 +229,7 @@ namespace Hypertable.Test
             using (var scanner = table.CreateScanner(scanSpec)) {
                 using (var mutator = table.CreateMutator()) {
                     var cell = new Cell();
-                    while (scanner.Next(cell)) {
+                    while( scanner.Move(cell) ) {
                         mutator.Delete(cell.Key);
                     }
                 }

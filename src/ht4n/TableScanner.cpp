@@ -88,7 +88,7 @@ namespace Hypertable {
 		HT4N_RETHROW
 	}
 
-	bool TableScanner::Next( Cell^ cell ) {
+	bool TableScanner::Move( Cell^ cell ) {
 		HT4N_THROW_OBJECTDISPOSED( );
 
 		if( cell == nullptr ) throw gcnew ArgumentNullException( L"cell" );

@@ -103,7 +103,7 @@ namespace Hypertable.Test
             var rowKeys = new SortedSet<string>();
             using (var scanner = table.CreateScanner()) {
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     rowKeys.Add(cell.Key.Row);
                 }
             }
@@ -139,7 +139,7 @@ namespace Hypertable.Test
             rowKeys = new SortedSet<string>();
             using (var scanner = table.CreateScanner()) {
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while (scanner.Move(cell)) {
                     rowKeys.Add(cell.Key.Row);
                 }
             }
@@ -251,7 +251,7 @@ namespace Hypertable.Test
 
             using (var scanner = table.CreateScanner()) {
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.AreEqual("a", cell.Key.ColumnFamily);
                 }
             }
@@ -331,7 +331,7 @@ namespace Hypertable.Test
 
             using (var scanner = table.CreateScanner()) {
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.AreEqual("a", cell.Key.ColumnFamily);
                 }
             }
@@ -1699,7 +1699,7 @@ namespace Hypertable.Test
             var c = 0;
             using (var scanner = t.CreateScanner()) {
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     ++c;
                 }
             }

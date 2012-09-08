@@ -162,7 +162,7 @@ namespace Hypertable.Test
             using (var mutator = tableB.CreateMutator()) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     mutator.Set(cell);
@@ -176,7 +176,7 @@ namespace Hypertable.Test
             using (var mutator = tableA.CreateMutator()) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     mutator.Set(cell);
@@ -189,7 +189,7 @@ namespace Hypertable.Test
             using (var scanner = tableA.CreateScanner(new ScanSpec().AddColumn("a"))) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -201,7 +201,7 @@ namespace Hypertable.Test
             using (var scanner = tableA.CreateScanner(new ScanSpec().AddColumn("b"))) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -213,7 +213,7 @@ namespace Hypertable.Test
             using (var scanner = tableB.CreateScanner(new ScanSpec().AddColumn("a"))) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -225,7 +225,7 @@ namespace Hypertable.Test
             using (var scanner = tableB.CreateScanner(new ScanSpec().AddColumn("b"))) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -239,8 +239,8 @@ namespace Hypertable.Test
                 var c = 0;
                 var cellA = new Cell();
                 var cellB = new Cell();
-                while (scannerA.Next(cellA)) {
-                    Assert.IsTrue(scannerB.Next(cellB));
+                while( scannerA.Move(cellA) ) {
+                    Assert.IsTrue(scannerB.Move(cellB));
                     Assert.IsTrue(cellA.Key.Row.StartsWith("A"));
                     Assert.AreEqual(cellA.Key.Row, Encoding.GetString(cellA.Value));
                     Assert.IsTrue(cellB.Key.Row.StartsWith("A"));
@@ -249,7 +249,7 @@ namespace Hypertable.Test
                     ++c;
                 }
 
-                Assert.IsFalse(scannerB.Next(cellB));
+                Assert.IsFalse(scannerB.Move(cellB));
                 Assert.AreEqual(CountC, c);
             }
 
@@ -258,8 +258,8 @@ namespace Hypertable.Test
                 var c = 0;
                 var cellB = new Cell();
                 var cellA = new Cell();
-                while (scannerB.Next(cellB)) {
-                    Assert.IsTrue(scannerA.Next(cellA));
+                while( scannerB.Move(cellB) ) {
+                    Assert.IsTrue(scannerA.Move(cellA));
                     Assert.IsTrue(cellA.Key.Row.StartsWith("B"));
                     Assert.AreEqual(cellA.Key.Row, Encoding.GetString(cellA.Value));
                     Assert.IsTrue(cellB.Key.Row.StartsWith("B"));
@@ -268,7 +268,7 @@ namespace Hypertable.Test
                     ++c;
                 }
 
-                Assert.IsFalse(scannerA.Next(cellB));
+                Assert.IsFalse(scannerA.Move(cellB));
                 Assert.AreEqual(CountC, c);
             }
         }
@@ -294,7 +294,7 @@ namespace Hypertable.Test
             using (var scanner = tableA.CreateScanner(new ScanSpec { KeysOnly = true })) {
                 using (var mutator = tableA.CreateMutator()) {
                     var cell = new Cell();
-                    while (scanner.Next(cell)) {
+                    while( scanner.Move(cell) ) {
                         mutator.Delete(cell.Key);
                     }
                 }
@@ -303,7 +303,7 @@ namespace Hypertable.Test
             using (var scanner = tableA.CreateScanner()) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -315,7 +315,7 @@ namespace Hypertable.Test
             using (var scanner = tableB.CreateScanner(new ScanSpec { KeysOnly = true })) {
                 using (var mutator = tableB.CreateMutator()) {
                     var cell = new Cell();
-                    while (scanner.Next(cell)) {
+                    while( scanner.Move(cell) ) {
                         mutator.Delete(cell.Key);
                     }
                 }
@@ -324,7 +324,7 @@ namespace Hypertable.Test
             using (var scanner = tableB.CreateScanner()) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -451,7 +451,7 @@ namespace Hypertable.Test
             using (var scanner = tableA.CreateScanner()) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("A"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -463,7 +463,7 @@ namespace Hypertable.Test
             using (var scanner = tableB.CreateScanner()) {
                 var c = 0;
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     Assert.IsTrue(cell.Key.Row.StartsWith("B"));
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
@@ -487,7 +487,7 @@ namespace Hypertable.Test
             var c = 0;
             using (var scanner = _table.CreateScanner()) {
                 var cell = new Cell();
-                while (scanner.Next(cell)) {
+                while( scanner.Move(cell) ) {
                     ++c;
                 }
             }

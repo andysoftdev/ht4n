@@ -140,7 +140,7 @@ namespace Hypertable.GettingStarted
                             scanSpec = new ScanSpec("banana").AddColumn("vitamins");
                             using (var scanner = table.CreateScanner(scanSpec)) {
                                 var cell = new Cell();
-                                while (scanner.Next(cell)) { // caution, re-use cell instance
+                                while (scanner.Move(cell)) { // caution, re-use cell instance
                                     Console.WriteLine("{0} {1} {2}mg", cell.Key.Row, cell.Key.Column, BitConverter.ToDouble(cell.Value, 0));
                                 }
                             }

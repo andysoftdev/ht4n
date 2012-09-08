@@ -94,7 +94,7 @@ namespace Hypertable {
 			/// <remarks>
 			/// The methods updates the cell instance specified.
 			/// </remarks>
-			bool Next( Cell^ cell );
+			bool Move( Cell^ cell );
 
 			/// <summary>
 			/// Gets the next available cell, creating a new cell instance.
