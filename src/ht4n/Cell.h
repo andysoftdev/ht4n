@@ -49,7 +49,7 @@ namespace Hypertable {
 	/// <code>
 	/// using( var scanner = table.CreateScanner() ) {
 	///    Cell cell = new Cell();
-	///    while( scanner.Next(cell) ) {
+	///    while( scanner.Move(cell) ) {
 	///       // process cell
 	///    }
 	/// }
