@@ -145,6 +145,12 @@ namespace Hypertable {
 			MutatorSpec( Hypertable::MutatorKind mutatorKind );
 
 			/// <summary>
+			/// Initializes a new instance of the MutatorSpec class identical to the specified mutator spec.
+			/// </summary>
+			/// <param name="other">Mutator spec to copy.</param>
+			MutatorSpec( MutatorSpec^ other );
+
+			/// <summary>
 			/// Returns a string that represents the current object.
 			/// </summary>
 			/// <returns>A string that represents the current object.</returns>

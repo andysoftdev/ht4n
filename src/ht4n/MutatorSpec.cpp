@@ -39,6 +39,20 @@ namespace Hypertable {
 		MaxCellCount = MaxCellCountDefault;
 	}
 
+	MutatorSpec::MutatorSpec( MutatorSpec^ other ) {
+		if( other == nullptr ) throw gcnew ArgumentNullException( L"other" );
+
+		MutatorKind = other->MutatorKind;
+		Timeout = other->Timeout;
+		FlushInterval = other->FlushInterval;
+		MaxChunkSize = other->MaxChunkSize;
+		MaxCellCount = other->MaxCellCount;
+		FlushEachChunk = other->FlushEachChunk;
+		Queued = other->Queued;
+		Capacity = other->Capacity;
+		Flags = other->Flags;
+	}
+
 	String^ MutatorSpec::ToString() {
 
 		#define APPEND_INT( what ) if( what > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
