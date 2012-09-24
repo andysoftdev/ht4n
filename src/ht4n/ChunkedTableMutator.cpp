@@ -143,7 +143,7 @@ namespace Hypertable {
 
 	ChunkedTableMutator::ChunkedTableMutator( Common::TableMutator* _tableMutator, UInt32 _maxChunkSize, UInt32 _maxCellCount, bool _flushEachChunk )
 	: TableMutator( _tableMutator )
-	, cellChunk( Common::Cells::create(_maxCellCount) )
+	, cellChunk( Common::Cells::create(__min(_maxCellCount, 64 * 1024)) )
 	, lenTotal( 0 )
 	, maxChunkSize( _maxChunkSize )
 	, maxCellCount( _maxCellCount )
