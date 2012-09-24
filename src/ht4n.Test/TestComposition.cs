@@ -115,7 +115,7 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ContextProvider() {
-            var properties = new Dictionary<string, object> { { "Hypertable.Composition.ComposablePartCatalogs", new AssemblyCatalog(Assembly.GetAssembly(this.GetType())) } };
+            var properties = new Dictionary<string, object> { { "Ht4n.Composition.ComposablePartCatalogs", new AssemblyCatalog(Assembly.GetAssembly(this.GetType())) } };
             using (var context = Context.Create("Provider=TestContextProvider", properties)) {
                 Assert.IsNull(context.CreateClient());
             }

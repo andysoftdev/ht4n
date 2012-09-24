@@ -54,11 +54,11 @@ namespace Hypertable { namespace Composition {
 	/// }
 	/// 
 	/// void foo() {
-	///    // set the "Hypertable.Composition.ComposablePartCatalogs" property which expects
+	///    // set the "Ht4n.Composition.ComposablePartCatalogs" property which expects
 	///    // a ComposablePartCatalog or an IEnumerable&lt;ComposablePartCatalog&gt;
 	///    var properties = new Dictionary&lt;string, object&gt;
 	///       {
-	///          { "Hypertable.Composition.ComposablePartCatalogs", new AssemblyCatalog(Assembly.GetExecutingAssembly()) }
+	///          { "Ht4n.Composition.ComposablePartCatalogs", new AssemblyCatalog(Assembly.GetExecutingAssembly()) }
 	///       };
 	///    using (var context = Context.Create("Provider=SampleContextProvider", properties)) {
 	///       // use the context

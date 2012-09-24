@@ -54,9 +54,9 @@ namespace Hypertable.Test
         [DeploymentItem(@"..\ht4n\src\ht4n.Test\conf\TestConfiguration.cfg")]
         public void CreateContexConfigurationFile() {
             using (var context = Context.Create("--config TestConfiguration.cfg")) {
-                Assert.AreEqual("Thrift", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Thrift", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
-                Assert.AreEqual("net.tcp://google.com", context.Properties["Hypertable.Client.Uri"]);
+                Assert.AreEqual("net.tcp://google.com", context.Properties["Ht4n.Uri"]);
                 Assert.AreEqual("net.tcp://google.com", context.Properties["Uri"]);
                 Assert.AreEqual(60000, context.Properties["ThriftBroker.Timeout"]);
                 Assert.AreEqual(60000, context.Properties["thrift-timeout"]);
@@ -87,7 +87,7 @@ namespace Hypertable.Test
 
             using (var context = Context.Create(string.Empty)) {
                 Assert.AreEqual("Hyper", context.Properties["Provider"]);
-                Assert.AreEqual("Hyper", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Hyper", context.Properties["Ht4n.Provider"]);
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("localhost", ((IList<string>)context.Properties["hs-host"])[0]);
@@ -99,7 +99,7 @@ namespace Hypertable.Test
 
             using (var context = Context.Create("Provider=Hyper")) {
                 Assert.AreEqual("Hyper", context.Properties["Provider"]);
-                Assert.AreEqual("Hyper", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Hyper", context.Properties["Ht4n.Provider"]);
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("localhost", ((IList<string>)context.Properties["hs-host"])[0]);
@@ -108,7 +108,7 @@ namespace Hypertable.Test
 
             using (var context = Context.Create(" ;; ; ; ; ;;;Provider=Thrift ; ; ; ;;; ;")) {
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
-                Assert.AreEqual("Thrift", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Thrift", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("localhost", context.Properties["thrift-host"]);
                 Assert.AreEqual((ushort)38080, context.Properties["thrift-port"]);
             }
@@ -116,16 +116,16 @@ namespace Hypertable.Test
             using (var context = Context.Create("Provider=Hyper; Uri=net.tcp://google.com:1000; ConnectionTimeout=1000")) {
                 Assert.AreEqual("Hyper", context.Properties["Provider"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Uri"]);
-                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Hypertable.Client.Uri"]);
+                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Ht4n.Uri"]);
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("google.com", ((IList<string>)context.Properties["hs-host"])[0]);
                 Assert.AreEqual((ushort)1000, context.Properties["hs-port"]);
                 Assert.AreEqual(1000, context.Properties["ConnectionTimeout"]);
-                Assert.AreEqual(1000, context.Properties["Hypertable.Client.ConnectionTimeout"]);
+                Assert.AreEqual(1000, context.Properties["Ht4n.ConnectionTimeout"]);
             }
 
-            using (var context = Context.Create("Hypertable.Client.Provider=Hyper; Hypertable.Client.Uri net.tcp://google.com:1000")) {
+            using (var context = Context.Create("Ht4n.Provider=Hyper; Ht4n.Uri net.tcp://google.com:1000")) {
                 Assert.AreEqual("Hyper", context.Properties["Provider"]);
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
@@ -141,11 +141,11 @@ namespace Hypertable.Test
                 Assert.AreEqual((ushort)38040, context.Properties["hs-port"]);
             }
 
-            using (var context = Context.Create("Hypertable.Client.Provider=Thrift; Uri=net.tcp://google.com:1000")) {
+            using (var context = Context.Create("Ht4n.Provider=Thrift; Uri=net.tcp://google.com:1000")) {
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
-                Assert.AreEqual("Thrift", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Thrift", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Uri"]);
-                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Hypertable.Client.Uri"]);
+                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Ht4n.Uri"]);
                 Assert.AreEqual("google.com", context.Properties["thrift-host"]);
                 Assert.AreEqual((ushort)1000, context.Properties["thrift-port"]);
             }
@@ -156,25 +156,25 @@ namespace Hypertable.Test
                 Assert.AreEqual((ushort)38080, context.Properties["thrift-port"]);
             }
 
-            using (var context = Context.Create("Hypertable.Client.Provider Hyper; hyperspace=qwerty:12345")) {
+            using (var context = Context.Create("Ht4n.Provider Hyper; hyperspace=qwerty:12345")) {
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("qwerty", ((IList<string>)context.Properties["hs-host"])[0]);
                 Assert.AreEqual((ushort)12345, context.Properties["hs-port"]);
             }
 
-            using (var context = Context.Create("Hypertable.Client.Provider Thrift; thrift-broker=qwerty:12345")) {
+            using (var context = Context.Create("Ht4n.Provider Thrift; thrift-broker=qwerty:12345")) {
                 Assert.AreEqual("qwerty", context.Properties["thrift-host"]);
                 Assert.AreEqual((ushort)12345, context.Properties["thrift-port"]);
             }
 
-            using (var context = Context.Create("Hypertable.Client.Provider=Hyper; Hyperspace.Replica.Port=12345; verbose; X.Y.String=Unknown")) {
+            using (var context = Context.Create("Ht4n.Provider=Hyper; Hyperspace.Replica.Port=12345; verbose; X.Y.String=Unknown")) {
                 Assert.AreEqual((ushort)12345, context.Properties["hs-port"]);
                 Assert.AreEqual(true, context.Properties["Hypertable.Verbose"]);
                 Assert.IsFalse(context.Properties.ContainsKey("X.Y.String"));
             }
 
-            using (var context = Context.Create("\"--Hypertable.Client.Provider Thrift\" \"--thrift-broker\" \"qwerty:42345\" \"--verbose\" \"--X.Y.String\" \"Unknown\"")) {
+            using (var context = Context.Create("\"--Ht4n.Provider Thrift\" \"--thrift-broker\" \"qwerty:42345\" \"--verbose\" \"--X.Y.String\" \"Unknown\"")) {
                 Assert.AreEqual("qwerty", context.Properties["thrift-host"]);
                 Assert.AreEqual((ushort)42345, context.Properties["thrift-port"]);
                 Assert.AreEqual(true, context.Properties["Hypertable.Verbose"]);
@@ -191,63 +191,54 @@ namespace Hypertable.Test
 
             using (var context = Context.Create("Provider=Hamster; Uri=file://test.db")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.AreEqual("test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
-                Assert.AreEqual("test.db", context.Properties["Hamster.Filename"]);
+                Assert.AreEqual("test.db", context.Properties["Ht4n.Hamster.Filename"]);
             }
 
             using (var context = Context.Create("Provider=Hamster; Uri=file://Temp/test.db")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.AreEqual("Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
-                Assert.AreEqual("Temp\\test.db", context.Properties["Hamster.Filename"]);
+                Assert.AreEqual("Temp\\test.db", context.Properties["Ht4n.Hamster.Filename"]);
             }
 
             using (var context = Context.Create("Provider=Hamster; Uri=file:///c/Temp/test.db")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
-                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hamster.Filename"]);
+                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Ht4n.Hamster.Filename"]);
             }
 
             using (var context = Context.Create("Provider=Hamster; Uri=file:///c:/Temp/test.db")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
-                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hamster.Filename"]);
+                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Ht4n.Hamster.Filename"]);
             }
 
             using (var context = Context.Create("Provider=Hamster; Uri=\"file:///c/My Documents/Temp/test.db\"")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
-                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hamster.Filename"]);
+                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Ht4n.Hamster.Filename"]);
             }
 
             using (var context = Context.Create("Provider=Hamster; Uri=file:///c/My%20Documents/Temp/test.db")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
-                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hamster.Filename"]);
+                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Ht4n.Hamster.Filename"]);
             }
 
             using (var context = Context.Create("Provider=Hamster; Uri=file://%TEMP%/test.db")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.IsTrue(((string)context.Properties["Hypertable.Client.Hamster.Filename"]).EndsWith("\\test.db"));
-                Assert.IsTrue(((string)context.Properties["Hamster.Filename"]).EndsWith("\\test.db"));
+                Assert.IsTrue(((string)context.Properties["Ht4n.Hamster.Filename"]).EndsWith("\\test.db"));
             }
 
-            using (var context = Context.Create("--Provider Hamster --Hypertable.Client.Hamster.Filename \"My Documents/test.db\"")) {
+            using (var context = Context.Create("--Provider Hamster --Ht4n.Hamster.Filename \"My Documents/test.db\"")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.AreEqual("My Documents/test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
-                Assert.AreEqual("My Documents/test.db", context.Properties["Hamster.Filename"]);
+                Assert.AreEqual("My Documents/test.db", context.Properties["Ht4n.Hamster.Filename"]);
             }
 
-            using (var context = Context.Create("--Provider Hamster --Hamster.Filename \"C:\\My Documents\\test.db\"")) {
+            using( var context = Context.Create("--Provider Hamster --Ht4n.Hamster.Filename \"C:\\My Documents\\test.db\"") ) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["Hypertable.Client.Hamster.Filename"]);
-                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["Hamster.Filename"]);
+                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["Ht4n.Hamster.Filename"]);
             }
 
-            using (var context = Context.Create("Provider=Hamster; Uri=file://test.db; Hamster.PageSizeKB=128; Hamster.CacheSizeMB=32; Hamster.EnableAutoRecovery=true")) {
+            using (var context = Context.Create("Provider=Hamster; Uri=file://test.db; Ht4n.Hamster.PageSizeKB=128; Ht4n.Hamster.CacheSizeMB=32; Ht4n.Hamster.EnableAutoRecovery=true")) {
                 Assert.AreEqual("Hamster", context.Properties["Provider"]);
-                Assert.AreEqual(128, context.Properties["Hypertable.Client.Hamster.PageSizeKB"]);
-                Assert.AreEqual(32, context.Properties["Hypertable.Client.Hamster.CacheSizeMB"]);
-                Assert.IsTrue((bool)context.Properties["Hypertable.Client.Hamster.EnableAutoRecovery"]);
+                Assert.AreEqual(128, context.Properties["Ht4n.Hamster.PageSizeKB"]);
+                Assert.AreEqual(32, context.Properties["Ht4n.Hamster.CacheSizeMB"]);
+                Assert.IsTrue((bool)context.Properties["Ht4n.Hamster.EnableAutoRecovery"]);
             }
 
 #endif
@@ -256,73 +247,69 @@ namespace Hypertable.Test
 
             using (var context = Context.Create("Provider=SQLite; Uri=file://test.db")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.AreEqual("test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
-                Assert.AreEqual("test.db", context.Properties["SQLite.Filename"]);
+                Assert.AreEqual("test.db", context.Properties["Ht4n.SQLite.Filename"]);
             }
 
             using (var context = Context.Create("Provider=SQLite; Uri=file://Temp/test.db")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.AreEqual("Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
-                Assert.AreEqual("Temp\\test.db", context.Properties["SQLite.Filename"]);
+                Assert.AreEqual("Temp\\test.db", context.Properties["Ht4n.SQLite.Filename"]);
             }
 
             using (var context = Context.Create("Provider=SQLite; Uri=file:///c/Temp/test.db")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
-                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["SQLite.Filename"]);
+                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Ht4n.SQLite.Filename"]);
             }
 
             using (var context = Context.Create("Provider=SQLite; Uri=file:///c:/Temp/test.db")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
-                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["SQLite.Filename"]);
+                Assert.AreEqual("c:\\Temp\\test.db", context.Properties["Ht4n.SQLite.Filename"]);
             }
 
             using (var context = Context.Create("Provider=SQLite; Uri=\"file:///c/My Documents/Temp/test.db\"")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
-                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["SQLite.Filename"]);
+                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Ht4n.SQLite.Filename"]);
             }
 
             using (var context = Context.Create("Provider=SQLite; Uri=file:///c/My%20Documents/Temp/test.db")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
-                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["SQLite.Filename"]);
+                Assert.AreEqual("c:\\My Documents\\Temp\\test.db", context.Properties["Ht4n.SQLite.Filename"]);
             }
 
             using (var context = Context.Create("Provider=SQLite; Uri=file://%TEMP%/test.db")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.IsTrue(((string)context.Properties["Hypertable.Client.SQLite.Filename"]).EndsWith("\\test.db"));
-                Assert.IsTrue(((string)context.Properties["SQLite.Filename"]).EndsWith("\\test.db"));
+                Assert.IsTrue(((string)context.Properties["Ht4n.SQLite.Filename"]).EndsWith("\\test.db"));
             }
 
-            using (var context = Context.Create("--Provider SQLite --Hypertable.Client.SQLite.Filename \"My Documents/test.db\"")) {
+            using (var context = Context.Create("--Provider SQLite --Ht4n.SQLite.Filename \"My Documents/test.db\"")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.AreEqual("My Documents/test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
-                Assert.AreEqual("My Documents/test.db", context.Properties["SQLite.Filename"]);
+                Assert.AreEqual("My Documents/test.db", context.Properties["Ht4n.SQLite.Filename"]);
             }
 
-            using (var context = Context.Create("--Provider SQLite --SQLite.Filename \"C:\\My Documents\\test.db\"")) {
+            using( var context = Context.Create("--Provider SQLite --Ht4n.SQLite.Filename \"C:\\My Documents\\test.db\"") ) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["Hypertable.Client.SQLite.Filename"]);
-                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["SQLite.Filename"]);
+                Assert.AreEqual("C:\\My Documents\\test.db", context.Properties["Ht4n.SQLite.Filename"]);
             }
 
-            using (var context = Context.Create("Provider=SQLite; Uri=file://test.db; SQLite.PageSizeKB=16; SQLite.CacheSizeMB=32; SQLite.Synchronous=yes")) {
+            using (var context = Context.Create("Provider=SQLite; Uri=file://test.db; Ht4n.SQLite.PageSizeKB=16; Ht4n.SQLite.CacheSizeMB=32; Ht4n.SQLite.Synchronous=yes")) {
                 Assert.AreEqual("SQLite", context.Properties["Provider"]);
-                Assert.AreEqual(16, context.Properties["Hypertable.Client.SQLite.PageSizeKB"]);
-                Assert.AreEqual(32, context.Properties["Hypertable.Client.SQLite.CacheSizeMB"]);
-                Assert.IsTrue((bool)context.Properties["Hypertable.Client.SQLite.Synchronous"]);
+                Assert.AreEqual(16, context.Properties["Ht4n.SQLite.PageSizeKB"]);
+                Assert.AreEqual(32, context.Properties["Ht4n.SQLite.CacheSizeMB"]);
+                Assert.IsTrue((bool)context.Properties["Ht4n.SQLite.Synchronous"]);
+                Assert.IsFalse((bool)context.Properties["Ht4n.SQLite.Index.Column"]);
+                Assert.IsFalse((bool)context.Properties["Ht4n.SQLite.Index.ColumnFamily"]);
+                Assert.IsFalse((bool)context.Properties["Ht4n.SQLite.Index.ColumnQualifier"]);
+                Assert.IsFalse((bool)context.Properties["Ht4n.SQLite.Index.Timestamp"]);
             }
 
 #endif
+
         }
 
         [TestMethod]
         public void CreateContextProperties() {
             using (var context = Context.Create(new Dictionary<string, object>())) {
                 Assert.AreEqual("Hyper", context.Properties["Provider"]);
-                Assert.AreEqual("Hyper", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Hyper", context.Properties["Ht4n.Provider"]);
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("localhost", ((IList<string>)context.Properties["hs-host"])[0]);
@@ -331,26 +318,26 @@ namespace Hypertable.Test
                 Assert.AreEqual((ushort)38080, context.Properties["thrift-port"]);
             }
 
-            var properties = new Dictionary<string, object> { { "Hypertable.Client.Provider", "Hyper" }, { "Hypertable.Client.Uri", "net.tcp://google.com:1000" } };
+            var properties = new Dictionary<string, object> { { "Ht4n.Provider", "Hyper" }, { "Ht4n.Uri", "net.tcp://google.com:1000" } };
 
             using (var context = Context.Create(properties)) {
                 Assert.AreEqual("Hyper", context.Properties["Provider"]);
-                Assert.AreEqual("Hyper", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Hyper", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Uri"]);
-                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Hypertable.Client.Uri"]);
+                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Ht4n.Uri"]);
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("google.com", ((IList<string>)context.Properties["hs-host"])[0]);
                 Assert.AreEqual((ushort)1000, context.Properties["hs-port"]);
             }
 
-            properties = new Dictionary<string, object> { { "Hypertable.Client.Provider", "Thrift" }, { "Hypertable.Client.Uri", "net.tcp://google.com:1000" } };
+            properties = new Dictionary<string, object> { { "Ht4n.Provider", "Thrift" }, { "Ht4n.Uri", "net.tcp://google.com:1000" } };
 
             using (var context = Context.Create(properties)) {
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
-                Assert.AreEqual("Thrift", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Thrift", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Uri"]);
-                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Hypertable.Client.Uri"]);
+                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Ht4n.Uri"]);
                 Assert.AreEqual("google.com", context.Properties["thrift-host"]);
                 Assert.AreEqual((ushort)1000, context.Properties["thrift-port"]);
             }
@@ -359,9 +346,9 @@ namespace Hypertable.Test
 
             using (var context = Context.Create(properties)) {
                 Assert.AreEqual("Hyper", context.Properties["Provider"]);
-                Assert.AreEqual("Hyper", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Hyper", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Uri"]);
-                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Hypertable.Client.Uri"]);
+                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Ht4n.Uri"]);
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("google.com", ((IList<string>)context.Properties["hs-host"])[0]);
@@ -372,9 +359,9 @@ namespace Hypertable.Test
 
             using (var context = Context.Create(properties)) {
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
-                Assert.AreEqual("Thrift", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Thrift", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Uri"]);
-                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Hypertable.Client.Uri"]);
+                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Ht4n.Uri"]);
                 Assert.AreEqual("google.com", context.Properties["thrift-host"]);
                 Assert.AreEqual((ushort)1000, context.Properties["thrift-port"]);
             }
@@ -383,9 +370,9 @@ namespace Hypertable.Test
 
             using (var context = Context.Create("Provider=Thrift, Uri=microsoft.com:1001", properties)) {
                 Assert.AreEqual("Hyper", context.Properties["Provider"]);
-                Assert.AreEqual("Hyper", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Hyper", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Uri"]);
-                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Hypertable.Client.Uri"]);
+                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Ht4n.Uri"]);
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("google.com", ((IList<string>)context.Properties["hs-host"])[0]);
@@ -396,21 +383,21 @@ namespace Hypertable.Test
 
             using (var context = Context.Create("Provider=Hyper, Uri=microsoft.com:1001", properties)) {
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
-                Assert.AreEqual("Thrift", context.Properties["Hypertable.Client.Provider"]);
+                Assert.AreEqual("Thrift", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Uri"]);
-                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Hypertable.Client.Uri"]);
+                Assert.AreEqual("net.tcp://google.com:1000", context.Properties["Ht4n.Uri"]);
                 Assert.AreEqual("google.com", context.Properties["thrift-host"]);
                 Assert.AreEqual((ushort)1000, context.Properties["thrift-port"]);
             }
 
-            properties = new Dictionary<string, object> { { "Hypertable.Client.Provider", "Thrift" }, { "Hypertable.Logging.Level", "debug" } };
+            properties = new Dictionary<string, object> { { "Ht4n.Provider", "Thrift" }, { "Hypertable.Logging.Level", "debug" } };
 
             using (var context = Context.Create(properties)) {
                 Assert.AreEqual("debug", context.Properties["logging-level"]);
                 Assert.AreEqual("debug", context.Properties["Hypertable.Logging.Level"]);
             }
 
-            properties = new Dictionary<string, object> { { "Hypertable.Client.Provider", "Thrift" }, { "Hypertable.Logging.Level", "crit" } };
+            properties = new Dictionary<string, object> { { "Ht4n.Provider", "Thrift" }, { "Hypertable.Logging.Level", "crit" } };
 
             using (var context = Context.Create(properties)) {
                 Assert.AreEqual("crit", context.Properties["logging-level"]);
@@ -418,10 +405,10 @@ namespace Hypertable.Test
             }
 
             properties = new Dictionary<string, object> {
-                    { "Hypertable.Client.Provider", "Thrift" }, 
+                    { "Ht4n.Provider", "Thrift" }, 
                     { "Hypertable.Silent", true }, 
                     { "Hypertable.Logging.Level", "debug" }, 
-                    { "Hypertable.Client.Workers", 5 }, 
+                    { "Ht4n.Workers", 5 }, 
                     { "DfsBroker.Port", (ushort)1234 }, 
                     { "Hypertable.RangeServer.MemoryLimit", 128000000L }, 
                     { "false-positive", 0.0123 }, 
@@ -442,7 +429,7 @@ namespace Hypertable.Test
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
                 Assert.AreEqual(true, context.Properties["Hypertable.Silent"]);
                 Assert.AreEqual("debug", context.Properties["Hypertable.Logging.Level"]);
-                Assert.AreEqual(5, context.Properties["Hypertable.Client.Workers"]);
+                Assert.AreEqual(5, context.Properties["Ht4n.Workers"]);
                 Assert.AreEqual((ushort)1234, context.Properties["DfsBroker.Port"]);
                 Assert.AreEqual(128000000L, context.Properties["Hypertable.RangeServer.MemoryLimit"]);
                 Assert.AreEqual(0.0123, context.Properties["false-positive"]);
@@ -496,7 +483,7 @@ namespace Hypertable.Test
                 using (var context = Context.Create("Provider=SQLite; Uri=file://test.sqlite"))
                 using (var client = context.CreateClient()) {
                     Assert.IsTrue(client.NamespaceExists("/"));
-                    filename = (string)context.Properties["Hypertable.Client.SQLite.Filename"];
+                    filename = (string)context.Properties["Ht4n.SQLite.Filename"];
                     Assert.IsTrue(File.Exists(filename));
                 }
 
@@ -514,7 +501,7 @@ namespace Hypertable.Test
                 using( var context = Context.Create("Provider=Hamster; Uri=file://test.hamster") )
                 using (var client = context.CreateClient()) {
                     Assert.IsTrue(client.NamespaceExists("/"));
-                    filename = (string)context.Properties["Hypertable.Client.Hamster.Filename"];
+                    filename = (string)context.Properties["Ht4n.Hamster.Filename"];
                     Assert.IsTrue(File.Exists(filename));
                 }
 

@@ -225,7 +225,7 @@
 			Condition="$(SupportHamsterDb) == true"
 			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
 			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
-			Value="--Provider=Hamster --Hamster.Filename=test.Hamster.db" />
+			Value="--Provider=Hamster --Ht4n.Hamster.Filename=test.Hamster.db" />
 
 		<Exec
 			Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
@@ -240,7 +240,7 @@
 			Condition="$(SupportSQLiteDb) == true"
 			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
 			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
-			Value="--Provider=SQLite --SQLite.Filename=test.SQLite.db" />
+			Value="--Provider=SQLite --Ht4n.SQLite.Filename=test.SQLite.db" />
 
 		<Exec
 			Condition="$(SupportSQLiteDb) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"

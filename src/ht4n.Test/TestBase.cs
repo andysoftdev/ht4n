@@ -148,7 +148,7 @@ namespace Hypertable.Test
         /// </summary>
         protected static string ProviderName {
             get {
-                return (string)context.Properties["Hypertable.Client.Provider"];
+                return (string)context.Properties["Ht4n.Provider"];
             }
         }
 
