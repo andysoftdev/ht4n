@@ -1,11 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Make" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
-	 <!-- Master files to make -->
+	<!-- Embedded db support -->
+	<PropertyGroup>
+		<SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
+		<SupportSQLiteDb Condition="'$(SupportSQLiteDb)' == ''">true</SupportSQLiteDb>
+	</PropertyGroup>
+
+	<!-- Master files to make -->
 	<PropertyGroup>
 		<Version>0.9.6.4</Version>
-		<Master_x86>dist\ht4n-$(Version)-win-x86.zip</Master_x86>
-		<Master_x64>dist\ht4n-$(Version)-win-x64.zip</Master_x64>
+		<FxVersion Condition="'$(FxVersion)' == ''">4.0</FxVersion>
+		<VcVersion Condition="'$(VcVersion)' == ''">10.0</VcVersion>
+
+		<Master_x86>dist\ht4n-$(Version)-x86-fx$(FxVersion)-vc$(VcVersion).zip</Master_x86>
+		<Master_x64>dist\ht4n-$(Version)-x64-fx$(FxVersion)-vc$(VcVersion).zip</Master_x64>
+
+		<Master_x86 Condition="$(SupportHamsterDb) != true">dist\ht4n-$(Version)-x86-fx$(FxVersion)-vc$(VcVersion)-no-hamsterdb.zip</Master_x86>
+		<Master_x64 Condition="$(SupportHamsterDb) != true">dist\ht4n-$(Version)-x64-fx$(FxVersion)-vc$(VcVersion)-no-hamsterdb.zip</Master_x64>
+
 		<Master_ApiDoc>dist\ht4n-$(Version)-api-doc.zip</Master_ApiDoc>
 	</PropertyGroup>
 
@@ -54,12 +67,6 @@
 	<!-- Default provider uri -->
 	<PropertyGroup>
 		<ProviderUri Condition="'$(ProviderUri)' == ''">net.tcp://localhost</ProviderUri>
-	</PropertyGroup>
-
-	<!-- Embedded db support -->
-	<PropertyGroup>
-		<SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
-		<SupportSQLiteDb Condition="'$(SupportSQLiteDb)' == ''">true</SupportSQLiteDb>
 	</PropertyGroup>
 
 	<!-- Configuration group -->
@@ -121,7 +128,7 @@
 		<MSBuild
 			Projects="ht4n.sln"
 			Targets="Build"
-			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform)"
+			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform);SupportHamsterDb=$(SupportHamsterDb);SupportSQLiteDb=$(SupportSQLiteDb)"
 			ContinueOnError="false" />
 	</Target>
 
