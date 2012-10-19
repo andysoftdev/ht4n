@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer
 {
     using System;
@@ -31,7 +30,11 @@ namespace Hypertable.Explorer
     {
         #region Constructors and Destructors
 
-        private App() {
+        /// <summary>
+        /// Prevents a default instance of the <see cref="App"/> class from being created.
+        /// </summary>
+        private App()
+        {
             this.Startup += (s, e) => { AppDomain.CurrentDomain.UnhandledException += this.HandleAppDomainUnhandledException; };
         }
 
@@ -39,22 +42,52 @@ namespace Hypertable.Explorer
 
         #region Methods
 
-        private void HandleAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e) {
+        /// <summary>
+        /// The handle app domain unhandled exception.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void HandleAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
             this.HandleException(e.ExceptionObject as Exception);
         }
 
-        private void HandleDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
+        /// <summary>
+        /// The handle dispatcher unhandled exception.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void HandleDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
             this.HandleException(e.Exception);
             e.Handled = true;
         }
 
-        private void HandleException(Exception e) {
+        /// <summary>
+        /// The handle exception.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void HandleException(Exception e)
+        {
             var mainWindow = this.MainWindow as MainWindow;
-            if (mainWindow != null) {
-                try {
+            if (mainWindow != null)
+            {
+                try
+                {
                     mainWindow.ShowExceptionPage(e);
                 }
-                catch {
+                catch
+                {
                 }
             }
         }

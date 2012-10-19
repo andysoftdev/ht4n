@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer
 {
     using System;
@@ -37,10 +36,16 @@ namespace Hypertable.Explorer
     /// </summary>
     internal partial class MainWindow : IDisposable
     {
-        #region Constants and Fields
+        #region Fields
 
+        /// <summary>
+        /// The menu strip items.
+        /// </summary>
         private List<TextBlock> menuStripItems;
 
+        /// <summary>
+        /// The pages.
+        /// </summary>
         private Control[] pages;
 
         #endregion
@@ -50,14 +55,16 @@ namespace Hypertable.Explorer
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
-        public MainWindow() {
+        public MainWindow()
+        {
             this.InitializeComponent();
 
             this.Loaded += (s, e) =>
                 {
                     var menuDockPanel = (DockPanel)this.menuStrip.Template.FindName("MenuStrip", this.menuStrip);
                     this.menuStripItems = menuDockPanel.Children.OfType<TextBlock>().ToList();
-                    foreach (var menuStripItem in this.menuStripItems) {
+                    foreach (var menuStripItem in this.menuStripItems)
+                    {
                         menuStripItem.PreviewMouseDown += this.HandleMenuStripPreviewMouseDown;
                     }
 
@@ -67,17 +74,20 @@ namespace Hypertable.Explorer
 
             this.Closed += (s, e) =>
                 {
-                    try {
+                    try
+                    {
                         Settings.Default.Save();
                         DatabaseSession.Disconnect();
                     }
-                    catch {
+                    catch
+                    {
                     }
                 };
 
             DatabaseSession.ConnectionStateChanged += (s, e) =>
                 {
-                    if (e.ConnectionState == ConnectionState.Connected) {
+                    if (e.ConnectionState == ConnectionState.Connected)
+                    {
                         this.SelectMenuStripItem(this.menuStripItems[1]);
                     }
                 };
@@ -85,9 +95,13 @@ namespace Hypertable.Explorer
 
         #endregion
 
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public void Dispose() {
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        public void Dispose()
+        {
             DatabaseSession.Disconnect();
         }
 
@@ -95,25 +109,61 @@ namespace Hypertable.Explorer
 
         #region Methods
 
-        internal void ShowExceptionPage(Exception e) {
-            foreach (var menuStripItem in this.menuStripItems) {
+        /// <summary>
+        /// The show exception page.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        internal void ShowExceptionPage(Exception e)
+        {
+            foreach (var menuStripItem in this.menuStripItems)
+            {
                 menuStripItem.IsEnabled = true;
             }
 
             this.currentPage.Tag = new ExceptionPage(e);
         }
 
-        private void HandleMenuStripPreviewMouseDown(object sender, RoutedEventArgs e) {
+        /// <summary>
+        /// The handle menu strip preview mouse down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void HandleMenuStripPreviewMouseDown(object sender, RoutedEventArgs e)
+        {
             this.SelectMenuStripItem(sender as TextBlock);
         }
 
-        private void HandleRequestNavigate(object sender, RequestNavigateEventArgs e) {
+        /// <summary>
+        /// The handle request navigate.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void HandleRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
 
-        private void SelectMenuStripItem(TextBlock selectedMenuStripItem) {
-            foreach (var menuStripItem in this.menuStripItems) {
+        /// <summary>
+        /// The select menu strip item.
+        /// </summary>
+        /// <param name="selectedMenuStripItem">
+        /// The selected menu strip item.
+        /// </param>
+        private void SelectMenuStripItem(TextBlock selectedMenuStripItem)
+        {
+            foreach (var menuStripItem in this.menuStripItems)
+            {
                 menuStripItem.IsEnabled = menuStripItem != selectedMenuStripItem;
             }
 

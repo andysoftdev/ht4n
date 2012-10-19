@@ -18,28 +18,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer
 {
     using System.Windows;
 
+    /// <summary>
+    /// The transition.
+    /// </summary>
     internal class Transition : FrameworkElement
     {
-        #region Constants and Fields
+        #region Static Fields
 
+        /// <summary>
+        /// The first property.
+        /// </summary>
         public static DependencyProperty FirstProperty;
 
+        /// <summary>
+        /// The second property.
+        /// </summary>
         public static DependencyProperty SecondProperty;
 
+        /// <summary>
+        /// The source property.
+        /// </summary>
         public static DependencyProperty SourceProperty;
 
+        /// <summary>
+        /// The state property.
+        /// </summary>
         public static DependencyProperty StateProperty;
 
         #endregion
 
         #region Constructors and Destructors
 
-        static Transition() {
+        /// <summary>
+        /// Initializes static members of the <see cref="Transition"/> class.
+        /// </summary>
+        static Transition()
+        {
             SourceProperty = DependencyProperty.Register("Source", typeof(object), typeof(Transition), new PropertyMetadata((obj, args) => ((Transition)obj).Swap()));
             FirstProperty = DependencyProperty.Register("First", typeof(object), typeof(Transition));
             SecondProperty = DependencyProperty.Register("Second", typeof(object), typeof(Transition));
@@ -50,10 +68,19 @@ namespace Hypertable.Explorer
 
         #region Enums
 
+        /// <summary>
+        /// The transition state.
+        /// </summary>
         public enum TransitionState
         {
+            /// <summary>
+            /// The first.
+            /// </summary>
             First, 
 
+            /// <summary>
+            /// The second.
+            /// </summary>
             Second
         }
 
@@ -61,42 +88,66 @@ namespace Hypertable.Explorer
 
         #region Public Properties
 
-        public object First {
-            get {
+        /// <summary>
+        /// Gets or sets the first.
+        /// </summary>
+        public object First
+        {
+            get
+            {
                 return this.GetValue(FirstProperty);
             }
 
-            set {
+            set
+            {
                 this.SetValue(FirstProperty, value);
             }
         }
 
-        public object Second {
-            get {
+        /// <summary>
+        /// Gets or sets the second.
+        /// </summary>
+        public object Second
+        {
+            get
+            {
                 return this.GetValue(SecondProperty);
             }
 
-            set {
+            set
+            {
                 this.SetValue(SecondProperty, value);
             }
         }
 
-        public object Source {
-            get {
+        /// <summary>
+        /// Gets or sets the source.
+        /// </summary>
+        public object Source
+        {
+            get
+            {
                 return this.GetValue(SourceProperty);
             }
 
-            set {
+            set
+            {
                 this.SetValue(SourceProperty, value);
             }
         }
 
-        public TransitionState State {
-            get {
+        /// <summary>
+        /// Gets or sets the state.
+        /// </summary>
+        public TransitionState State
+        {
+            get
+            {
                 return (TransitionState)this.GetValue(StateProperty);
             }
 
-            set {
+            set
+            {
                 this.SetValue(StateProperty, value);
             }
         }
@@ -105,12 +156,18 @@ namespace Hypertable.Explorer
 
         #region Methods
 
-        private void Swap() {
-            if (this.State == TransitionState.First) {
+        /// <summary>
+        /// The swap.
+        /// </summary>
+        private void Swap()
+        {
+            if (this.State == TransitionState.First)
+            {
                 this.Second = this.Source;
                 this.State = TransitionState.Second;
             }
-            else {
+            else
+            {
                 this.First = this.Source;
                 this.State = TransitionState.First;
             }

@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer
 {
     using System;
@@ -38,10 +37,19 @@ namespace Hypertable.Explorer
     /// </summary>
     internal enum ScannerState
     {
+        /// <summary>
+        /// The begin.
+        /// </summary>
         Begin, 
 
+        /// <summary>
+        /// The executing.
+        /// </summary>
         Executing, 
 
+        /// <summary>
+        /// The completed.
+        /// </summary>
         Completed
     }
 
@@ -52,7 +60,11 @@ namespace Hypertable.Explorer
     {
         #region Constructors and Destructors
 
-        public NotifyScannerStateChangedEventArgs() {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotifyScannerStateChangedEventArgs"/> class.
+        /// </summary>
+        public NotifyScannerStateChangedEventArgs()
+        {
             this.Id = Guid.NewGuid();
             this.ScannerState = ScannerState.Begin;
         }
@@ -61,24 +73,51 @@ namespace Hypertable.Explorer
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets the bytes scanned.
+        /// </summary>
         public long BytesScanned { get; private set; }
 
+        /// <summary>
+        /// Gets the cells scanned.
+        /// </summary>
         public long CellsScanned { get; private set; }
 
+        /// <summary>
+        /// Gets the id.
+        /// </summary>
         public Guid Id { get; private set; }
 
+        /// <summary>
+        /// Gets the scanner state.
+        /// </summary>
         public ScannerState ScannerState { get; private set; }
 
         #endregion
 
         #region Methods
 
-        internal NotifyScannerStateChangedEventArgs Completed() {
+        /// <summary>
+        /// The completed.
+        /// </summary>
+        /// <returns>
+        /// </returns>
+        internal NotifyScannerStateChangedEventArgs Completed()
+        {
             this.ScannerState = ScannerState.Completed;
             return this;
         }
 
-        internal NotifyScannerStateChangedEventArgs Executing(IList<Cell> cells) {
+        /// <summary>
+        /// The executing.
+        /// </summary>
+        /// <param name="cells">
+        /// The cells.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        internal NotifyScannerStateChangedEventArgs Executing(IList<Cell> cells)
+        {
             this.CellsScanned += cells.Count;
             this.BytesScanned += cells.Sum(cell => cell.Value != null ? cell.Value.Length : 0);
             this.ScannerState = ScannerState.Executing;
@@ -93,26 +132,55 @@ namespace Hypertable.Explorer
     /// </summary>
     internal static class DatabaseScanner
     {
-        #region Constants and Fields
+        #region Static Fields
 
-        private static readonly object syncRoot = new object();
+        /// <summary>
+        /// The sync root.
+        /// </summary>
+        private static readonly object SyncRoot = new object();
 
+        /// <summary>
+        /// The current scan.
+        /// </summary>
         private static Guid currentScan = Guid.Empty;
 
+        /// <summary>
+        /// The tasks.
+        /// </summary>
         private static List<Task> tasks = new List<Task>();
 
         #endregion
 
         #region Public Events
 
+        /// <summary>
+        /// The scanner state changed.
+        /// </summary>
         public static event NotifyScannerStateChangedEventHandler ScannerStateChanged;
 
         #endregion
 
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public static void BeginScan(IClient client, string nsName, string tableName, Action<IList<Cell>> action) {
-            lock (syncRoot) {
+        /// <summary>
+        /// The begin scan.
+        /// </summary>
+        /// <param name="client">
+        /// The client.
+        /// </param>
+        /// <param name="namespaceName">
+        /// The namespace name.
+        /// </param>
+        /// <param name="tableName">
+        /// The table name.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        public static void BeginScan(IClient client, string namespaceName, string tableName, Action<IList<Cell>> action)
+        {
+            lock (SyncRoot)
+            {
                 tasks = tasks.Where(t => !t.IsCompleted).ToList();
             }
 
@@ -120,60 +188,73 @@ namespace Hypertable.Explorer
             var beginScan = Task.Factory.StartNew(
                 () =>
                     {
-                        using (var ns = client.OpenNamespace(nsName))
-                        using (var table = ns.OpenTable(tableName)) {
+                        using (var ns = client.OpenNamespace(namespaceName))
+                        using (var table = ns.OpenTable(tableName))
+                        {
                             var notify = new NotifyScannerStateChangedEventArgs();
-                            lock (syncRoot) {
+                            lock (SyncRoot)
+                            {
                                 currentScan = notify.Id;
                             }
 
                             FireScannerStateChanged(dispatcher, notify);
 
-                            if (client.Context.HasFeature(ContextFeature.AsyncTableScanner)) {
+                            if (client.Context.HasFeature(ContextFeature.AsyncTableScanner))
+                            {
                                 using (var asyncResult = new AsyncResult(
                                     (asyncScannerContext, cells) =>
                                         {
-                                            if (!IsCancelled(notify)) {
+                                            if (!IsCancelled(notify))
+                                            {
                                                 FireScannerStateChanged(dispatcher, notify.Executing(cells));
                                                 action(cells);
                                                 return AsyncCallbackResult.Continue;
                                             }
 
                                             return AsyncCallbackResult.Abort;
-                                        })) {
+                                        }))
+                                {
                                     table.BeginScan(asyncResult);
                                     asyncResult.Join();
                                 }
                             }
-                            else {
+                            else
+                            {
                                 using (var scanner = table.CreateScanner())
-                                using (var bc = new BlockingCollection<List<Cell>>()) {
+                                using (var bc = new BlockingCollection<List<Cell>>())
+                                {
                                     var task = Task.Factory.StartNew(
                                         () =>
                                             {
-                                                try {
-                                                    while (!IsCancelled(notify)) {
+                                                try
+                                                {
+                                                    while (!IsCancelled(notify))
+                                                    {
                                                         var cells = bc.Take();
                                                         FireScannerStateChanged(dispatcher, notify.Executing(cells));
                                                         action(cells);
                                                     }
                                                 }
-                                                catch (InvalidOperationException) {
+                                                catch (InvalidOperationException)
+                                                {
                                                 }
                                             });
 
                                     const int ChunkSize = 2500;
                                     var chunk = new List<Cell>(ChunkSize);
                                     Cell cell;
-                                    for (var c = 1; !IsCancelled(notify) && scanner.Next(out cell); ++c) {
+                                    for (var c = 1; !IsCancelled(notify) && scanner.Next(out cell); ++c)
+                                    {
                                         chunk.Add(cell);
-                                        if ((c % chunk.Capacity) == 0) {
+                                        if ((c % chunk.Capacity) == 0)
+                                        {
                                             bc.Add(chunk);
                                             chunk = new List<Cell>(ChunkSize);
                                         }
                                     }
 
-                                    if (!IsCancelled(notify) && chunk.Count > 0) {
+                                    if (!IsCancelled(notify) && chunk.Count > 0)
+                                    {
                                         bc.Add(chunk);
                                     }
 
@@ -186,32 +267,60 @@ namespace Hypertable.Explorer
                         }
                     });
 
-            lock (syncRoot) {
+            lock (SyncRoot)
+            {
                 tasks.Add(beginScan);
             }
         }
 
-        public static void Cancel() {
+        /// <summary>
+        /// The cancel.
+        /// </summary>
+        public static void Cancel()
+        {
             int countAlive;
-            lock (syncRoot) {
+            lock (SyncRoot)
+            {
                 currentScan = Guid.Empty;
                 countAlive = tasks.Count(t => !t.IsCompleted);
             }
 
             var dispatcher = Dispatcher.CurrentDispatcher;
             var expire = DateTime.Now.AddSeconds(20).Ticks;
-            while (countAlive > 0 && DateTime.Now.Ticks < expire) {
+            while (countAlive > 0 && DateTime.Now.Ticks < expire)
+            {
                 dispatcher.Invoke(DispatcherPriority.Background, (DispatcherOperationCallback)(unused => null), null);
-                lock (syncRoot) {
+                lock (SyncRoot)
+                {
                     countAlive = tasks.Count(t => !t.IsCompleted);
                 }
             }
         }
 
-        public static Cell Find(IClient client, string nsName, string tableName, Key key) {
-            using (var ns = client.OpenNamespace(nsName))
-            using (var table = ns.OpenTable(tableName)) {
-                using (var scanner = table.CreateScanner(new ScanSpec(key))) {
+        /// <summary>
+        /// The find.
+        /// </summary>
+        /// <param name="client">
+        /// The client.
+        /// </param>
+        /// <param name="namespaceName">
+        /// The namespace name.
+        /// </param>
+        /// <param name="tableName">
+        /// The table name.
+        /// </param>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static Cell Find(IClient client, string namespaceName, string tableName, Key key)
+        {
+            using (var ns = client.OpenNamespace(namespaceName))
+            using (var table = ns.OpenTable(tableName))
+            {
+                using (var scanner = table.CreateScanner(new ScanSpec(key)))
+                {
                     Cell cell;
                     return scanner.Next(out cell) ? cell : null;
                 }
@@ -222,28 +331,53 @@ namespace Hypertable.Explorer
 
         #region Methods
 
-        private static void FireScannerStateChanged(Dispatcher dispatcher, NotifyScannerStateChangedEventArgs e) {
+        /// <summary>
+        /// The fire scanner state changed.
+        /// </summary>
+        /// <param name="dispatcher">
+        /// The dispatcher.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private static void FireScannerStateChanged(Dispatcher dispatcher, NotifyScannerStateChangedEventArgs e)
+        {
             NotifyScannerStateChangedEventHandler scannerStateChanged;
-            lock (syncRoot) {
-                if (currentScan != e.Id) {
+            lock (SyncRoot)
+            {
+                if (currentScan != e.Id)
+                {
                     return;
                 }
 
                 scannerStateChanged = ScannerStateChanged;
             }
 
-            if (scannerStateChanged != null) {
-                if (dispatcher.CheckAccess()) {
+            if (scannerStateChanged != null)
+            {
+                if (dispatcher.CheckAccess())
+                {
                     scannerStateChanged(null, e);
                 }
-                else {
+                else
+                {
                     dispatcher.Invoke(new Action<Dispatcher, NotifyScannerStateChangedEventArgs>(FireScannerStateChanged), DispatcherPriority.Send, dispatcher, e);
                 }
             }
         }
 
-        private static bool IsCancelled(NotifyScannerStateChangedEventArgs e) {
-            lock (syncRoot) {
+        /// <summary>
+        /// The is cancelled.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        private static bool IsCancelled(NotifyScannerStateChangedEventArgs e)
+        {
+            lock (SyncRoot)
+            {
                 return currentScan != e.Id;
             }
         }

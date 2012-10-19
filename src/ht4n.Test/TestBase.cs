@@ -35,7 +35,7 @@ namespace Hypertable.Test
 
     /// <summary>
     /// Base class for most of the ht4n test, provides some common methods/properties
-    /// and reads the appconfig.
+    /// and reads the app config.
     /// </summary>
     [TestClass]
     public abstract class TestBase
@@ -76,7 +76,7 @@ namespace Hypertable.Test
         }
 
         /// <summary>
-        /// Returns true if the actual privider supports asynchronous table mutator.
+        /// Returns true if the actual provider supports asynchronous table mutator.
         /// </summary>
         protected static bool HasAsyncTableMutator {
             get {
@@ -85,7 +85,7 @@ namespace Hypertable.Test
         }
 
         /// <summary>
-        /// Returns true if the actual privider supports asynchronous table scanner.
+        /// Returns true if the actual provider supports asynchronous table scanner.
         /// </summary>
         protected static bool HasAsyncTableScanner {
             get {
@@ -94,7 +94,7 @@ namespace Hypertable.Test
         }
 
         /// <summary>
-        /// Returns true if the actual privider supports HQL.
+        /// Returns true if the actual provider supports HQL.
         /// </summary>
         protected static bool HasHQL {
             get {
@@ -103,7 +103,7 @@ namespace Hypertable.Test
         }
 
         /// <summary>
-        /// Returns true if the actual privider supports periodic flush table mutator.
+        /// Returns true if the actual provider supports periodic flush table mutator.
         /// </summary>
         protected static bool HasPeriodicFlushTableMutator {
             get {
@@ -179,7 +179,7 @@ namespace Hypertable.Test
         /// <summary>
         /// Initialize the assembly, read the appconfig.
         /// </summary>
-        /// <param name = "testContext">The tets context.</param>
+        /// <param name = "testContext">The test context.</param>
         [AssemblyInitialize]
         public static void AssemblyInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext) {
             ConnectionString = ConfigurationManager.AppSettings["ConnectionString"].Trim();
@@ -239,7 +239,7 @@ namespace Hypertable.Test
         /// <summary>
         /// Drop tables from 'test' namespace.
         /// </summary>
-        /// <param name = "regex">Table anme regular expression.</param>
+        /// <param name = "regex">Table name regular expression.</param>
         protected static void DropTables(Regex regex) {
             Ns.DropTables(regex, DropDispositions.IfExists);
         }
@@ -249,7 +249,7 @@ namespace Hypertable.Test
         /// </summary>
         /// <param name = "type">Table name (type.Name).</param>
         /// <param name = "schema">Table xml schema.</param>
-        /// <returns>Opend table.</returns>
+        /// <returns>Opened table.</returns>
         protected static ITable EnsureTable(Type type, string schema) {
             return EnsureTable(type.Name, schema);
         }
@@ -259,7 +259,7 @@ namespace Hypertable.Test
         /// </summary>
         /// <param name = "tableName">Table name.</param>
         /// <param name = "schema">Table xml schema.</param>
-        /// <returns>Opend table.</returns>
+        /// <returns>Opened table.</returns>
         protected static ITable EnsureTable(string tableName, string schema) {
             return Ns.OpenTable(tableName, schema, OpenDispositions.CreateAlways);
         }
@@ -271,7 +271,7 @@ namespace Hypertable.Test
         /// The enumerable.
         /// </param>
         /// <returns>
-        /// The shuffeled enumerable.
+        /// The shuffled enumerable.
         /// </returns>
         protected static IEnumerable<T> Shuffle<T>(IEnumerable<T> enumerable) {
             if (enumerable == null) {

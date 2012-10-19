@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer
 {
     using System;
@@ -33,19 +32,32 @@ namespace Hypertable.Explorer
     /// </summary>
     internal sealed class ObservableList<T> : IList<T>, INotifyCollectionChanged
     {
-        #region Constants and Fields
+        #region Fields
 
+        /// <summary>
+        /// The dispatcher.
+        /// </summary>
         private readonly Dispatcher dispatcher;
 
+        /// <summary>
+        /// The list.
+        /// </summary>
         private readonly List<T> list = new List<T>();
 
+        /// <summary>
+        /// The sync root.
+        /// </summary>
         private readonly object syncRoot = new object();
 
         #endregion
 
         #region Constructors and Destructors
 
-        public ObservableList() {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObservableList{T}"/> class.
+        /// </summary>
+        public ObservableList()
+        {
             this.dispatcher = Dispatcher.CurrentDispatcher;
         }
 
@@ -53,36 +65,58 @@ namespace Hypertable.Explorer
 
         #region Public Events
 
+        /// <summary>
+        /// The collection changed.
+        /// </summary>
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         #endregion
 
         #region Public Properties
 
-        public int Capacity {
-            get {
-                lock (this.syncRoot) {
+        /// <summary>
+        /// Gets or sets the capacity.
+        /// </summary>
+        public int Capacity
+        {
+            get
+            {
+                lock (this.syncRoot)
+                {
                     return this.list.Capacity;
                 }
             }
 
-            set {
-                lock (this.syncRoot) {
+            set
+            {
+                lock (this.syncRoot)
+                {
                     this.list.Capacity = value;
                 }
             }
         }
 
-        public int Count {
-            get {
-                lock (this.syncRoot) {
+        /// <summary>
+        /// Gets the count.
+        /// </summary>
+        public int Count
+        {
+            get
+            {
+                lock (this.syncRoot)
+                {
                     return this.list.Count;
                 }
             }
         }
 
-        public bool IsReadOnly {
-            get {
+        /// <summary>
+        /// Gets a value indicating whether is read only.
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get
+            {
                 return false;
             }
         }
@@ -91,15 +125,26 @@ namespace Hypertable.Explorer
 
         #region Public Indexers
 
-        public T this[int index] {
-            get {
-                lock (this.syncRoot) {
+        /// <summary>
+        /// The this.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        public T this[int index]
+        {
+            get
+            {
+                lock (this.syncRoot)
+                {
                     return this.list[index];
                 }
             }
 
-            set {
-                lock (this.syncRoot) {
+            set
+            {
+                lock (this.syncRoot)
+                {
                     this.list[index] = value;
                 }
             }
@@ -107,83 +152,172 @@ namespace Hypertable.Explorer
 
         #endregion
 
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public void Add(T item) {
-            if (this.dispatcher.CheckAccess()) {
-                lock (this.syncRoot) {
+        /// <summary>
+        /// The add.
+        /// </summary>
+        /// <param name="item">
+        /// The item.
+        /// </param>
+        public void Add(T item)
+        {
+            if (this.dispatcher.CheckAccess())
+            {
+                lock (this.syncRoot)
+                {
                     this.list.Add(item);
                     this.FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
                 }
             }
-            else {
+            else
+            {
                 this.dispatcher.Invoke(new Action<T>(this.Add), DispatcherPriority.Send, item);
             }
         }
 
-        public void AddRange(IEnumerable<T> items) {
-            if (this.dispatcher.CheckAccess()) {
-                lock (this.syncRoot) {
+        /// <summary>
+        /// The add range.
+        /// </summary>
+        /// <param name="items">
+        /// The items.
+        /// </param>
+        public void AddRange(IEnumerable<T> items)
+        {
+            if (this.dispatcher.CheckAccess())
+            {
+                lock (this.syncRoot)
+                {
                     this.list.AddRange(items);
                     this.FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items.ToList()));
                 }
             }
-            else {
+            else
+            {
                 this.dispatcher.Invoke(new Action<IEnumerable<T>>(this.AddRange), DispatcherPriority.Send, items);
             }
         }
 
-        public void Clear() {
-            if (this.dispatcher.CheckAccess()) {
-                lock (this.syncRoot) {
+        /// <summary>
+        /// The clear.
+        /// </summary>
+        public void Clear()
+        {
+            if (this.dispatcher.CheckAccess())
+            {
+                lock (this.syncRoot)
+                {
                     this.list.Clear();
                     this.FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
             }
-            else {
+            else
+            {
                 this.dispatcher.Invoke(new Action(this.Clear), DispatcherPriority.Send);
             }
         }
 
-        public bool Contains(T item) {
-            lock (this.syncRoot) {
+        /// <summary>
+        /// The contains.
+        /// </summary>
+        /// <param name="item">
+        /// The item.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public bool Contains(T item)
+        {
+            lock (this.syncRoot)
+            {
                 return this.list.Contains(item);
             }
         }
 
-        public void CopyTo(T[] array, int arrayIndex) {
-            lock (this.syncRoot) {
+        /// <summary>
+        /// The copy to.
+        /// </summary>
+        /// <param name="array">
+        /// The array.
+        /// </param>
+        /// <param name="arrayIndex">
+        /// The array index.
+        /// </param>
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            lock (this.syncRoot)
+            {
                 this.list.CopyTo(array, arrayIndex);
             }
         }
 
-        public IEnumerator<T> GetEnumerator() {
-            lock (this.syncRoot) {
+        /// <summary>
+        /// The get enumerator.
+        /// </summary>
+        /// <returns>
+        /// </returns>
+        public IEnumerator<T> GetEnumerator()
+        {
+            lock (this.syncRoot)
+            {
                 return this.list.GetEnumerator();
             }
         }
 
-        public int IndexOf(T item) {
-            lock (this.syncRoot) {
+        /// <summary>
+        /// The index of.
+        /// </summary>
+        /// <param name="item">
+        /// The item.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public int IndexOf(T item)
+        {
+            lock (this.syncRoot)
+            {
                 return this.list.IndexOf(item);
             }
         }
 
-        public void Insert(int index, T item) {
-            if (this.dispatcher.CheckAccess()) {
-                lock (this.syncRoot) {
+        /// <summary>
+        /// The insert.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="item">
+        /// The item.
+        /// </param>
+        public void Insert(int index, T item)
+        {
+            if (this.dispatcher.CheckAccess())
+            {
+                lock (this.syncRoot)
+                {
                     this.list.Insert(index, item);
                     this.FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
                 }
             }
-            else {
+            else
+            {
                 this.dispatcher.Invoke(new Action<int, T>(this.Insert), DispatcherPriority.Send, index, item);
             }
         }
 
-        public bool Remove(T item) {
-            if (this.dispatcher.CheckAccess()) {
-                lock (this.syncRoot) {
+        /// <summary>
+        /// The remove.
+        /// </summary>
+        /// <param name="item">
+        /// The item.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public bool Remove(T item)
+        {
+            if (this.dispatcher.CheckAccess())
+            {
+                lock (this.syncRoot)
+                {
                     var index = this.list.IndexOf(item);
                     var result = this.list.Remove(item);
                     this.FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index));
@@ -194,15 +328,25 @@ namespace Hypertable.Explorer
             return (bool)this.dispatcher.Invoke(new Func<T, bool>(this.Remove), DispatcherPriority.Send, item);
         }
 
-        public void RemoveAt(int index) {
-            if (this.dispatcher.CheckAccess()) {
-                lock (this.syncRoot) {
+        /// <summary>
+        /// The remove at.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        public void RemoveAt(int index)
+        {
+            if (this.dispatcher.CheckAccess())
+            {
+                lock (this.syncRoot)
+                {
                     var item = this.list[index];
                     this.list.RemoveAt(index);
                     this.FireCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index));
                 }
             }
-            else {
+            else
+            {
                 this.dispatcher.Invoke(new Action<int>(this.RemoveAt), DispatcherPriority.Send, index);
             }
         }
@@ -211,7 +355,13 @@ namespace Hypertable.Explorer
 
         #region Explicit Interface Methods
 
-        IEnumerator IEnumerable.GetEnumerator() {
+        /// <summary>
+        /// The get enumerator.
+        /// </summary>
+        /// <returns>
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
             return this.GetEnumerator();
         }
 
@@ -219,8 +369,16 @@ namespace Hypertable.Explorer
 
         #region Methods
 
-        private void FireCollectionChanged(NotifyCollectionChangedEventArgs e) {
-            if (this.CollectionChanged != null) {
+        /// <summary>
+        /// The fire collection changed.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void FireCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            if (this.CollectionChanged != null)
+            {
                 this.CollectionChanged(this, e);
             }
         }

@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer
 {
     using System;
@@ -28,26 +27,54 @@ namespace Hypertable.Explorer
     /// </summary>
     internal sealed class CellInfo
     {
-        #region Constants and Fields
+        #region Constants
 
+        /// <summary>
+        /// The limit.
+        /// </summary>
         public const int Limit = 64;
 
+        #endregion
+
+        #region Fields
+
+        /// <summary>
+        /// The cell.
+        /// </summary>
         private readonly Cell cell;
 
+        /// <summary>
+        /// The directory info.
+        /// </summary>
         private readonly DatabaseDirectoryInfo directoryInfo;
 
+        /// <summary>
+        /// The value.
+        /// </summary>
         private readonly byte[] value;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public CellInfo(DatabaseDirectoryInfo directoryInfo, Cell cell) {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CellInfo"/> class.
+        /// </summary>
+        /// <param name="directoryInfo">
+        /// The directory info.
+        /// </param>
+        /// <param name="cell">
+        /// The cell.
+        /// </param>
+        public CellInfo(DatabaseDirectoryInfo directoryInfo, Cell cell)
+        {
             this.directoryInfo = directoryInfo;
             this.cell = cell;
-            if (this.cell.Value != null) {
+            if (this.cell.Value != null)
+            {
                 this.CellValueSize = this.cell.Value.Length;
-                if (this.CellValueSize > Limit) {
+                if (this.CellValueSize > Limit)
+                {
                     this.value = this.cell.Value;
                     Array.Resize(ref this.value, Limit);
                     this.cell.Value = null;
@@ -59,19 +86,34 @@ namespace Hypertable.Explorer
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets the cell value size.
+        /// </summary>
         public int CellValueSize { get; private set; }
 
-        public Key Key {
-            get {
+        /// <summary>
+        /// Gets the key.
+        /// </summary>
+        public Key Key
+        {
+            get
+            {
                 return this.cell.Key;
             }
         }
 
-        public byte[] Value {
-            get {
-                if (this.cell.Value == null && this.CellValueSize > 0) {
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        public byte[] Value
+        {
+            get
+            {
+                if (this.cell.Value == null && this.CellValueSize > 0)
+                {
                     var c = this.directoryInfo.Find(this.cell.Key);
-                    if (c != null) {
+                    if (c != null)
+                    {
                         return c.Value;
                     }
                 }
@@ -80,8 +122,13 @@ namespace Hypertable.Explorer
             }
         }
 
-        public byte[] ValueInfo {
-            get {
+        /// <summary>
+        /// Gets the value info.
+        /// </summary>
+        public byte[] ValueInfo
+        {
+            get
+            {
                 return this.value ?? this.cell.Value;
             }
         }

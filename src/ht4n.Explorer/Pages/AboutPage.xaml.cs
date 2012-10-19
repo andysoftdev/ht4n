@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer.Pages
 {
     using System.Diagnostics;
@@ -32,7 +31,11 @@ namespace Hypertable.Explorer.Pages
     {
         #region Constructors and Destructors
 
-        public AboutPage() {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AboutPage"/> class.
+        /// </summary>
+        public AboutPage()
+        {
             this.InitializeComponent();
             this.description.Text = GetAssemblyAttribute<AssemblyDescriptionAttribute>().Description;
             this.version.Text = "Version " + GetAssemblyAttribute<AssemblyFileVersionAttribute>().Version;
@@ -43,11 +46,29 @@ namespace Hypertable.Explorer.Pages
 
         #region Methods
 
-        private static T GetAssemblyAttribute<T>() {
+        /// <summary>
+        /// The get assembly attribute.
+        /// </summary>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <returns>
+        /// </returns>
+        private static T GetAssemblyAttribute<T>()
+        {
             return (T)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(T), false)[0];
         }
 
-        private void HandleMouseDown(object sender, MouseButtonEventArgs e) {
+        /// <summary>
+        /// The handle mouse down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void HandleMouseDown(object sender, MouseButtonEventArgs e)
+        {
             Process.Start(new ProcessStartInfo("http://ht4n.softdev.ch"));
             e.Handled = true;
         }

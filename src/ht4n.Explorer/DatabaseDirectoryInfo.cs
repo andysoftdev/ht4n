@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer
 {
     using System;
@@ -30,22 +29,45 @@ namespace Hypertable.Explorer
     /// </summary>
     internal sealed class DatabaseDirectoryInfo
     {
-        #region Constants and Fields
+        #region Fields
 
-        private readonly NamespaceListing nsListing;
+        /// <summary>
+        /// The namespace listing.
+        /// </summary>
+        private readonly NamespaceListing namespaceListing;
 
+        /// <summary>
+        /// The table.
+        /// </summary>
         private readonly Tuple<string, string> table;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public DatabaseDirectoryInfo(NamespaceListing nsListing) {
-            this.nsListing = nsListing;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseDirectoryInfo"/> class.
+        /// </summary>
+        /// <param name="namespaceListing">
+        /// The ns listing.
+        /// </param>
+        public DatabaseDirectoryInfo(NamespaceListing namespaceListing)
+        {
+            this.namespaceListing = namespaceListing;
         }
 
-        private DatabaseDirectoryInfo(string nsName, string tableName) {
-            this.table = new Tuple<string, string>(nsName, tableName);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseDirectoryInfo"/> class.
+        /// </summary>
+        /// <param name="namespaceName">
+        /// The namespace name.
+        /// </param>
+        /// <param name="tableName">
+        /// The table name.
+        /// </param>
+        private DatabaseDirectoryInfo(string namespaceName, string tableName)
+        {
+            this.table = new Tuple<string, string>(namespaceName, tableName);
         }
 
         #endregion
@@ -55,10 +77,13 @@ namespace Hypertable.Explorer
         /// <summary>
         /// Gets the cells.
         /// </summary>
-        public ObservableList<CellInfo> Cells {
-            get {
+        public ObservableList<CellInfo> Cells
+        {
+            get
+            {
                 var observable = new ObservableList<CellInfo>();
-                if (this.table != null) {
+                if (this.table != null)
+                {
                     DatabaseSession.Instance.BeginScan(this.table.Item1, this.table.Item2, cells => observable.AddRange(cells.Select(c => new CellInfo(this, c)).ToList()));
                 }
 
@@ -69,19 +94,24 @@ namespace Hypertable.Explorer
         /// <summary>
         /// Gets namespaces and tables.
         /// </summary>
-        public ObservableList<DatabaseDirectoryInfo> Directories {
-            get {
+        public ObservableList<DatabaseDirectoryInfo> Directories
+        {
+            get
+            {
                 var observable = new ObservableList<DatabaseDirectoryInfo>();
-                if (this.nsListing != null && (this.nsListing.Namespaces.Count > 0 || this.nsListing.Tables.Count > 0)) {
+                if (this.namespaceListing != null && (this.namespaceListing.Namespaces.Count > 0 || this.namespaceListing.Tables.Count > 0))
+                {
                     Task.Factory.StartNew(
                         () =>
                             {
-                                foreach (var ns in this.nsListing.Namespaces) {
+                                foreach (var ns in this.namespaceListing.Namespaces)
+                                {
                                     observable.Add(DatabaseSession.Instance.GetDirectoryInfo(ns.FullName));
                                 }
 
-                                foreach (var t in this.nsListing.Tables) {
-                                    observable.Add(new DatabaseDirectoryInfo(this.nsListing.FullName, t));
+                                foreach (var t in this.namespaceListing.Tables)
+                                {
+                                    observable.Add(new DatabaseDirectoryInfo(this.namespaceListing.FullName, t));
                                 }
                             });
                 }
@@ -93,27 +123,41 @@ namespace Hypertable.Explorer
         /// <summary>
         /// Gets the full name
         /// </summary>
-        public string FullName {
-            get {
-                return "/" + (this.nsListing != null ? this.nsListing.FullName : this.table.Item1 + "/" + this.table.Item2);
+        public string FullName
+        {
+            get
+            {
+                return "/" + (this.namespaceListing != null ? this.namespaceListing.FullName : this.table.Item1 + "/" + this.table.Item2);
             }
         }
 
         /// <summary>
         /// Gets the namespace name
         /// </summary>
-        public string Name {
-            get {
-                return this.nsListing != null ? !string.IsNullOrEmpty(this.nsListing.Name) ? this.nsListing.Name : "/" : this.table.Item2;
+        public string Name
+        {
+            get
+            {
+                return this.namespaceListing != null ? !string.IsNullOrEmpty(this.namespaceListing.Name) ? this.namespaceListing.Name : "/" : this.table.Item2;
             }
         }
 
         #endregion
 
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public Cell Find(Key key) {
-            if (this.table != null) {
+        /// <summary>
+        /// The find.
+        /// </summary>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public Cell Find(Key key)
+        {
+            if (this.table != null)
+            {
                 return DatabaseSession.Instance.Find(this.table.Item1, this.table.Item2, key);
             }
 

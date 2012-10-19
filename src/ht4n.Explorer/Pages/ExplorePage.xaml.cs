@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer.Pages
 {
     using System.Globalization;
@@ -32,23 +31,30 @@ namespace Hypertable.Explorer.Pages
     {
         #region Constructors and Destructors
 
-        public ExplorePage() {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExplorePage"/> class.
+        /// </summary>
+        public ExplorePage()
+        {
             this.InitializeComponent();
 
             this.Loaded += (s, e) => this.ExpandRoot();
 
             DatabaseSession.ConnectionStateChanged += (s, e) =>
                 {
-                    if (e.ConnectionState == ConnectionState.Connecting) {
+                    if (e.ConnectionState == ConnectionState.Connecting)
+                    {
                         this.connectionText.Text = e.ConnectionString;
                         this.header.Visibility = Visibility.Visible;
                     }
-                    else if (e.ConnectionState == ConnectionState.Connected) {
+                    else if (e.ConnectionState == ConnectionState.Connected)
+                    {
                         this.directoryView.ItemsSource = new ObservableList<DatabaseDirectoryInfo> { DatabaseSession.Instance.GetDirectoryInfo("/") };
                         this.ExpandRoot();
                         DatabaseScanner.ScannerStateChanged += this.HandleScannerStateChanged;
                     }
-                    else if (e.ConnectionState == ConnectionState.Disconnecting) {
+                    else if (e.ConnectionState == ConnectionState.Disconnecting)
+                    {
                         this.directoryView.ItemsSource = null;
                         this.header.Visibility = Visibility.Collapsed;
                         DatabaseScanner.ScannerStateChanged -= this.HandleScannerStateChanged;
@@ -66,17 +72,34 @@ namespace Hypertable.Explorer.Pages
 
         #region Methods
 
-        private void ExpandRoot() {
-            if (this.directoryView.ItemsSource != null) {
+        /// <summary>
+        /// The expand root.
+        /// </summary>
+        private void ExpandRoot()
+        {
+            if (this.directoryView.ItemsSource != null)
+            {
                 var treeItem = this.directoryView.ItemContainerGenerator.ContainerFromItem(this.directoryView.Items[0]) as TreeViewItem;
-                if (treeItem != null) {
+                if (treeItem != null)
+                {
                     treeItem.IsExpanded = true;
                 }
             }
         }
 
-        private void HandleScannerStateChanged(object sender, NotifyScannerStateChangedEventArgs e) {
-            switch (e.ScannerState) {
+        /// <summary>
+        /// The handle scanner state changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void HandleScannerStateChanged(object sender, NotifyScannerStateChangedEventArgs e)
+        {
+            switch (e.ScannerState)
+            {
                 case ScannerState.Begin:
                     this.cellsScannedText.Text = "scanning...";
                     this.bytesScannedText.Text = string.Empty;

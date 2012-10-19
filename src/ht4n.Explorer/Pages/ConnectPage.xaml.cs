@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer.Pages
 {
     using System;
@@ -36,15 +35,22 @@ namespace Hypertable.Explorer.Pages
     /// </summary>
     internal partial class ConnectPage
     {
-        #region Constants and Fields
+        #region Fields
 
+        /// <summary>
+        /// The timer.
+        /// </summary>
         private DispatcherTimer timer;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public ConnectPage() {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConnectPage"/> class.
+        /// </summary>
+        public ConnectPage()
+        {
             this.InitializeComponent();
             this.RecentConnections = new ObservableStringCollectionDecorator(Settings.Default.RecentConnections ?? (Settings.Default.RecentConnections = new StringCollection()));
             this.recentConnections.Visibility = this.RecentConnections.Count > 0 ? Visibility.Visible : Visibility.Hidden;
@@ -59,7 +65,8 @@ namespace Hypertable.Explorer.Pages
 
             DatabaseSession.ConnectionStateChanged += (s, e) =>
                 {
-                    if (e.ConnectionState == ConnectionState.Connected) {
+                    if (e.ConnectionState == ConnectionState.Connected)
+                    {
                         this.AddToRecentConnections(e.ConnectionString);
                     }
                 };
@@ -69,17 +76,28 @@ namespace Hypertable.Explorer.Pages
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets the recent connections.
+        /// </summary>
         public ObservableStringCollectionDecorator RecentConnections { get; private set; }
 
         #endregion
 
         #region Methods
 
-        private void AddToRecentConnections(string connectionString) {
+        /// <summary>
+        /// The add to recent connections.
+        /// </summary>
+        /// <param name="connectionString">
+        /// The connection string.
+        /// </param>
+        private void AddToRecentConnections(string connectionString)
+        {
             var rc = this.RecentConnections.ToList();
             rc.Insert(0, connectionString);
             rc = rc.Distinct().ToList();
-            while (rc.Count > Settings.Default.MaxRecentConnections) {
+            while (rc.Count > Settings.Default.MaxRecentConnections)
+            {
                 rc.RemoveAt(rc.Count - 1);
             }
 
@@ -88,33 +106,59 @@ namespace Hypertable.Explorer.Pages
             this.recentConnections.Visibility = this.RecentConnections.Count > 0 ? Visibility.Visible : Visibility.Hidden;
         }
 
-        private void CollapseConnectionErrorMessage() {
+        /// <summary>
+        /// The collapse connection error message.
+        /// </summary>
+        private void CollapseConnectionErrorMessage()
+        {
             this.connectionError.Visibility = Visibility.Collapsed;
-            if (this.timer != null) {
+            if (this.timer != null)
+            {
                 this.timer.Stop();
                 this.timer = null;
             }
         }
 
-        private void Connect(string connectionString) {
-            if (!string.IsNullOrEmpty(connectionString)) {
-                try {
+        /// <summary>
+        /// The connect.
+        /// </summary>
+        /// <param name="connectionString">
+        /// The connection string.
+        /// </param>
+        private void Connect(string connectionString)
+        {
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                try
+                {
                     Mouse.OverrideCursor = Cursors.Wait;
                     DatabaseSession.Connect(connectionString);
                 }
-                catch {
+                catch
+                {
                     this.connectionError.Visibility = Visibility.Visible;
                     this.timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
                     this.timer.Tick += (t, tick) => this.CollapseConnectionErrorMessage();
                     this.timer.Start();
                 }
-                finally {
+                finally
+                {
                     Mouse.OverrideCursor = null;
                 }
             }
         }
 
-        private void HandleRequestNavigate(object sender, RequestNavigateEventArgs e) {
+        /// <summary>
+        /// The handle request navigate.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void HandleRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
             this.Connect(e.Uri.ToString());
             e.Handled = true;
         }

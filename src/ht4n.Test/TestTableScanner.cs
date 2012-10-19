@@ -501,9 +501,9 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void ScanTableCellOffset() {
-            const int cellOffset = CountB;
+            const int CellOffset = CountB;
 
-            using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = cellOffset })) {
+            using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = CellOffset })) {
                 var c = 0;
                 var cell = new Cell();
                 while( scanner.Move(cell) ) {
@@ -511,10 +511,10 @@ namespace Hypertable.Test
                     ++c;
                 }
 
-                Assert.AreEqual(CountA + CountB + CountC - cellOffset, c);
+                Assert.AreEqual(CountA + CountB + CountC - CellOffset, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = cellOffset }.AddColumn("a"))) {
+            using (var scanner = table.CreateScanner(new ScanSpec { CellOffset = CellOffset }.AddColumn("a"))) {
                 var c = 0;
                 var cell = new Cell();
                 while( scanner.Move(cell) ) {
@@ -522,7 +522,7 @@ namespace Hypertable.Test
                     ++c;
                 }
 
-                Assert.AreEqual(CountA - cellOffset, c);
+                Assert.AreEqual(CountA - CellOffset, c);
             }
 
             string[] rows = { "AA", "BB", "CC", "DD" };
@@ -1103,7 +1103,7 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
-        public void ScanTableColumnQualifyer() {
+        public void ScanTableColumnQualifier() {
             string[] columnQualifiers = { null, "1", "2", "3" };
 
             var key = new Key { Row = Guid.NewGuid().ToString(), ColumnFamily = "d" };
@@ -2203,10 +2203,10 @@ namespace Hypertable.Test
                 Assert.AreEqual(CountA, rowKeys.Count);
             }
 
-            const int rowOffset = CountB;
+            const int RowOffset = CountB;
             var countB = 0;
             var countC = 0;
-            using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true }.AddColumn("b", "c").AddRowInterval(new RowInterval(rowKeys[rowOffset], null)))) {
+            using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true }.AddColumn("b", "c").AddRowInterval(new RowInterval(rowKeys[RowOffset], null)))) {
                 var cell = new Cell();
                 while( scanner.Move(cell) ) {
                     if (cell.Key.ColumnFamily == "b") {
@@ -2221,7 +2221,7 @@ namespace Hypertable.Test
                 }
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rowOffset })) {
+            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = RowOffset })) {
                 var c = 0;
                 var cell = new Cell();
                 while( scanner.Move(cell) ) {
@@ -2229,10 +2229,10 @@ namespace Hypertable.Test
                     ++c;
                 }
 
-                Assert.AreEqual(CountA - rowOffset + countB + countC, c);
+                Assert.AreEqual(CountA - RowOffset + countB + countC, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rowOffset })) {
+            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = RowOffset })) {
                 var ca = 0;
                 var cb = 0;
                 var cc = 0;
@@ -2253,12 +2253,12 @@ namespace Hypertable.Test
                     }
                 }
 
-                Assert.AreEqual(CountA - rowOffset, ca);
+                Assert.AreEqual(CountA - RowOffset, ca);
                 Assert.AreEqual(countB, cb);
                 Assert.AreEqual(countC, cc);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rowOffset }.AddColumn("a"))) {
+            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = RowOffset }.AddColumn("a"))) {
                 var c = 0;
                 var cell = new Cell();
                 while( scanner.Move(cell) ) {
@@ -2266,10 +2266,10 @@ namespace Hypertable.Test
                     ++c;
                 }
 
-                Assert.AreEqual(CountA - rowOffset, c);
+                Assert.AreEqual(CountA - RowOffset, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = rowOffset }.AddColumn("a").AddColumn("b"))) {
+            using (var scanner = table.CreateScanner(new ScanSpec { RowOffset = RowOffset }.AddColumn("a").AddColumn("b"))) {
                 var ca = 0;
                 var cb = 0;
                 var cell = new Cell();
@@ -2286,7 +2286,7 @@ namespace Hypertable.Test
                     }
                 }
 
-                Assert.AreEqual(CountA - rowOffset, ca);
+                Assert.AreEqual(CountA - RowOffset, ca);
                 Assert.AreEqual(countB, cb);
             }
 

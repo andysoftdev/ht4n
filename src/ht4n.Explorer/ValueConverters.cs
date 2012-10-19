@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer
 {
     using System;
@@ -29,54 +28,140 @@ namespace Hypertable.Explorer
     using System.Threading.Tasks;
     using System.Windows.Data;
 
+    /// <summary>
+    /// The timestamp to string converter.
+    /// </summary>
     [ValueConversion(typeof(Key), typeof(string))]
     internal sealed class TimestampToStringConverter : IValueConverter
     {
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (targetType == null) {
+        /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (targetType == null)
+            {
                 throw new ArgumentNullException("targetType");
             }
 
             var key = (Key)value;
-            if (targetType.IsAssignableFrom(typeof(string))) {
+            if (targetType.IsAssignableFrom(typeof(string)))
+            {
                 return key.DateTime.ToString("yyyy-MM-dd HH:mm:ss.sss", CultureInfo.InvariantCulture);
             }
 
             throw new NotImplementedException();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        /// <summary>
+        /// The convert back.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             throw new NotImplementedException();
         }
 
         #endregion
     }
 
+    /// <summary>
+    /// The cell info value to string converter.
+    /// </summary>
     [ValueConversion(typeof(CellInfo), typeof(string))]
     internal sealed class CellInfoValueToStringConverter : IValueConverter
     {
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public static char ToChar(byte b) {
+        /// <summary>
+        /// The to char.
+        /// </summary>
+        /// <param name="b">
+        /// The b.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static char ToChar(byte b)
+        {
             return b > 31 && !(b > 126 && b < 176) ? (char)b : '.';
         }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (targetType == null) {
+        /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (targetType == null)
+            {
                 throw new ArgumentNullException("targetType");
             }
 
             var cellInfo = (CellInfo)value;
-            if (targetType.IsAssignableFrom(typeof(string))) {
+            if (targetType.IsAssignableFrom(typeof(string)))
+            {
                 var sb = new StringBuilder(CellInfo.Limit + 4);
-                if (cellInfo.ValueInfo != null) {
-                    foreach (var b in cellInfo.ValueInfo) {
+                if (cellInfo.ValueInfo != null)
+                {
+                    foreach (var b in cellInfo.ValueInfo)
+                    {
                         sb.Append(ToChar(b));
                     }
 
-                    if (cellInfo.CellValueSize > CellInfo.Limit) {
+                    if (cellInfo.CellValueSize > CellInfo.Limit)
+                    {
                         sb.Append(" (*)");
                     }
                 }
@@ -87,40 +172,104 @@ namespace Hypertable.Explorer
             throw new NotImplementedException();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        /// <summary>
+        /// The convert back.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             throw new NotImplementedException();
         }
 
         #endregion
     }
 
+    /// <summary>
+    /// The sixteen bytes.
+    /// </summary>
     internal struct SixteenBytes
     {
-        #region Constants and Fields
+        #region Constants
 
+        /// <summary>
+        /// The size.
+        /// </summary>
         public const int Size = 16;
 
+        #endregion
+
+        #region Fields
+
+        /// <summary>
+        /// The index.
+        /// </summary>
         public int Index;
 
+        /// <summary>
+        /// The value.
+        /// </summary>
         public byte[] Value;
 
         #endregion
     }
 
+    /// <summary>
+    /// The bytes to sixteen bytes converter.
+    /// </summary>
     [ValueConversion(typeof(byte[]), typeof(IEnumerable))]
     internal sealed class BytesToSixteenBytesConverter : IValueConverter
     {
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (targetType == null) {
+        /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (targetType == null)
+            {
                 throw new ArgumentNullException("targetType");
             }
 
             var bytes = (byte[])value;
-            if (targetType.IsAssignableFrom(typeof(IEnumerable))) {
+            if (targetType.IsAssignableFrom(typeof(IEnumerable)))
+            {
                 var observable = new ObservableList<SixteenBytes>();
-                if (bytes != null && bytes.Length > 0) {
+                if (bytes != null && bytes.Length > 0)
+                {
                     Task.Factory.StartNew(
                         () =>
                             {
@@ -128,19 +277,23 @@ namespace Hypertable.Explorer
                                 var chunk = new List<SixteenBytes>(ChunkSize);
                                 int n;
                                 var len = bytes.Length;
-                                for (n = 0; n < len; n += SixteenBytes.Size) {
+                                for (n = 0; n < len; n += SixteenBytes.Size)
+                                {
                                     chunk.Add(new SixteenBytes { Value = bytes, Index = n });
-                                    if (chunk.Count == chunk.Capacity) {
+                                    if (chunk.Count == chunk.Capacity)
+                                    {
                                         observable.AddRange(chunk);
                                         chunk = new List<SixteenBytes>(ChunkSize);
                                     }
                                 }
 
-                                if (n < len) {
+                                if (n < len)
+                                {
                                     chunk.Add(new SixteenBytes { Value = bytes, Index = n });
                                 }
 
-                                if (chunk.Count > 0) {
+                                if (chunk.Count > 0)
+                                {
                                     observable.AddRange(chunk);
                                 }
                             });
@@ -152,52 +305,147 @@ namespace Hypertable.Explorer
             throw new NotImplementedException();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        /// <summary>
+        /// The convert back.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             throw new NotImplementedException();
         }
 
         #endregion
     }
 
+    /// <summary>
+    /// The sixteen bytes to address converter.
+    /// </summary>
     [ValueConversion(typeof(SixteenBytes), typeof(string))]
     internal sealed class SixteenBytesToAddrConverter : IValueConverter
     {
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (targetType == null) {
+        /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (targetType == null)
+            {
                 throw new ArgumentNullException("targetType");
             }
 
             var sixteenBytes = (SixteenBytes)value;
-            if (targetType.IsAssignableFrom(typeof(string))) {
+            if (targetType.IsAssignableFrom(typeof(string)))
+            {
                 return (sixteenBytes.Index / SixteenBytes.Size).ToString("X8", CultureInfo.InvariantCulture);
             }
 
             throw new NotImplementedException();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        /// <summary>
+        /// The convert back.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             throw new NotImplementedException();
         }
 
         #endregion
     }
 
+    /// <summary>
+    /// The sixteen bytes to hex converter.
+    /// </summary>
     [ValueConversion(typeof(SixteenBytes), typeof(string))]
     internal sealed class SixteenBytesToHexConverter : IValueConverter
     {
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (targetType == null) {
+        /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (targetType == null)
+            {
                 throw new ArgumentNullException("targetType");
             }
 
             var sixteenBytes = (SixteenBytes)value;
-            if (targetType.IsAssignableFrom(typeof(string))) {
+            if (targetType.IsAssignableFrom(typeof(string)))
+            {
                 var sb = new StringBuilder(SixteenBytes.Size * 3);
-                for (var n = sixteenBytes.Index; n < Math.Min(sixteenBytes.Value.Length, sixteenBytes.Index + SixteenBytes.Size); ++n) {
+                for (var n = sixteenBytes.Index; n < Math.Min(sixteenBytes.Value.Length, sixteenBytes.Index + SixteenBytes.Size); ++n)
+                {
                     sb.Append(sixteenBytes.Value[n].ToString("X2", CultureInfo.InvariantCulture));
                     sb.Append(" ");
                 }
@@ -209,27 +457,75 @@ namespace Hypertable.Explorer
             throw new NotImplementedException();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        /// <summary>
+        /// The convert back.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             throw new NotImplementedException();
         }
 
         #endregion
     }
 
+    /// <summary>
+    /// The sixteen bytes to string converter.
+    /// </summary>
     [ValueConversion(typeof(SixteenBytes), typeof(string))]
     internal sealed class SixteenBytesToStringConverter : IValueConverter
     {
-        #region Public Methods
+        #region Public Methods and Operators
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (targetType == null) {
+        /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (targetType == null)
+            {
                 throw new ArgumentNullException("targetType");
             }
 
             var sixteenBytes = (SixteenBytes)value;
-            if (targetType.IsAssignableFrom(typeof(string))) {
+            if (targetType.IsAssignableFrom(typeof(string)))
+            {
                 var sb = new StringBuilder(SixteenBytes.Size);
-                for (var n = sixteenBytes.Index; n < Math.Min(sixteenBytes.Value.Length, sixteenBytes.Index + SixteenBytes.Size); ++n) {
+                for (var n = sixteenBytes.Index; n < Math.Min(sixteenBytes.Value.Length, sixteenBytes.Index + SixteenBytes.Size); ++n)
+                {
                     sb.Append(CellInfoValueToStringConverter.ToChar(sixteenBytes.Value[n]));
                 }
 
@@ -239,7 +535,27 @@ namespace Hypertable.Explorer
             throw new NotImplementedException();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        /// <summary>
+        /// The convert back.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             throw new NotImplementedException();
         }
 

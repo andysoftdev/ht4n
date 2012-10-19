@@ -9,7 +9,14 @@
     {
         #region Constructors and Destructors
 
-        public ExceptionPage(Exception e) {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExceptionPage"/> class.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        public ExceptionPage(Exception e)
+        {
             this.InitializeComponent();
             this.exceptionText.Text = e != null ? e.ToString() : "Unknown exception occured.";
         }

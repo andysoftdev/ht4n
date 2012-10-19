@@ -47,7 +47,7 @@ namespace Hypertable.Explorer
 
         private static readonly Brush InactiveBorderBrush = new SolidColorBrush(Color.FromRgb(0x91, 0x91, 0x91));
 
-        private static readonly TimeSpan doubleClickDelay = TimeSpan.FromMilliseconds(500);
+        private static readonly TimeSpan DoubleClickDelay = TimeSpan.FromMilliseconds(500);
 
         private Grid chromeFrame;
 
@@ -322,7 +322,7 @@ namespace Hypertable.Explorer
         /// <param name="e">The <see cref="System.Windows.Input.MouseButtonEventArgs"/>
         /// instance containing the event data.</param>
         private void HandleChromeHeaderPreviewMouseDown(object sender, MouseButtonEventArgs e) {
-            if (DateTime.Now.Subtract(this.headerLastClicked) <= doubleClickDelay) {
+            if (DateTime.Now.Subtract(this.headerLastClicked) <= DoubleClickDelay) {
                 // Execute the code inside the event handler for the 
                 // restore button click passing null for the sender
                 // and null for the event args.
