@@ -44,7 +44,6 @@ namespace Hypertable {
 	TableMutator::!TableMutator( ) {
 		HT4N_TRY {
 			if( tableMutator ) {
-				tableMutator->flush();
 				delete tableMutator;
 				tableMutator = 0;
 			}
