@@ -533,6 +533,56 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
+        public void MultipleContext() {
+            using( var contextA = Context.Create(connectionString) )
+            using( var contextB = Context.Create(connectionString) ) {
+                using( var clientA = contextA.CreateClient() )
+                using( var clientB = contextB.CreateClient() ) {
+                    Assert.IsTrue(clientA.NamespaceExists("/"));
+                    Assert.IsTrue(clientB.NamespaceExists("/"));
+                }
+            }
+
+            using( var contextA = Context.Create(connectionString) )
+            using( var clientA = contextA.CreateClient() )
+            using( var contextB = Context.Create(connectionString) )
+            using( var clientB = contextB.CreateClient() ) {
+                Assert.IsTrue(clientA.NamespaceExists("/"));
+                Assert.IsTrue(clientB.NamespaceExists("/"));
+            }
+
+            var t1 = new Thread(
+                        () => {
+                            using( var context = Context.Create(connectionString) ) {
+                                Thread.Sleep(100);
+                                using( var client = context.CreateClient() ) {
+                                    Assert.IsTrue(client.NamespaceExists("/"));
+                                    Thread.Sleep(100);
+                                }
+                            }
+                        });
+
+            var t2 = new Thread(
+                () => {
+                    new Thread(
+                        () => {
+                            using( var context = Context.Create(connectionString) ) {
+                                Thread.Sleep(100);
+                                using( var client = context.CreateClient() ) {
+                                    Assert.IsTrue(client.NamespaceExists("/"));
+                                    Thread.Sleep(100);
+                                }
+                            }
+                        });
+                });
+
+            t1.Start();
+            t2.Start();
+            t1.Join();
+            t2.Join();
+        }
+
+        [TestMethod]
         public void Reconnect() {
             for (var i = 0; i < 5; ++i) {
                 using (var context = Context.Create(connectionString)) {
