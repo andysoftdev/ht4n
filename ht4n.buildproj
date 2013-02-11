@@ -120,7 +120,7 @@
 
 	<!-- Build, tests, make documentation, make master -->
 	<Target Name="Make"
-		DependsOnTargets="CleanMaster;Build;ExecTests;MakeDoc;MakeMaster">
+		DependsOnTargets="CleanMaster;Build;ExecTests;MakeDoc;MakeMaster;MakeNuGetPackage">
 	</Target>
 
 	<!-- Build -->
@@ -179,6 +179,18 @@
 			Files="@(MasterFiles_ApiDoc)"
 			ZipFileName="$(Master_ApiDoc)"
 			WorkingDirectory="doc\api" />
+	</Target>
+	
+	<!-- Make nuget package-->
+	<Target Name="MakeNuGetPackage">
+		<Exec
+			Command="nuget/ht4n.nuget.pack.cmd %(MakeConfiguration.Platform)" />
+	</Target>
+
+	<!-- Publish nuget package-->
+	<Target Name="PublishNuGetPackage">
+		<Exec
+			Command="nuget/ht4n.nuget.push.cmd %(MakeConfiguration.Platform) $(Version)" />
 	</Target>
 
 	<!-- Ececute tests -->
@@ -276,6 +288,9 @@
 
 		<Exec
 			Command="if exist TestResults rd /S /Q TestResults" />
+
+		<Exec
+			Command="if exist nuget\lib rd /S /Q nuget\lib" />
 	</Target>
 
 	<!-- Deletes the master files -->

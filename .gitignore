@@ -12,3 +12,4 @@ TestResults/
 *.aps
 *.shfbproj_*
 *.Cache
+*.nupkg
