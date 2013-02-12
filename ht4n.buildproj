@@ -180,15 +180,63 @@
 			ZipFileName="$(Master_ApiDoc)"
 			WorkingDirectory="doc\api" />
 	</Target>
-	
+
+	<!-- Make nuspec-->
+	<Target Name="MakeNuSpec">
+		<XmlPoke
+			XmlInputPath="nuget/ht4n.nuspec"
+			Query="/package/metadata/version"
+			Value="$(Version)" />
+
+		<XmlPoke
+			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
+			XmlInputPath="nuget/ht4n.nuspec"
+			Query="/package/metadata/id"
+			Value="ht4n.x86" />
+
+		<XmlPoke
+			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
+			XmlInputPath="nuget/ht4n.nuspec"
+			Query="/package/metadata/title"
+			Value="ht4n (x86)" />
+
+		<XmlPoke
+			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
+			XmlInputPath="nuget/ht4n.nuspec"
+			Query="/package/metadata/description"
+			Value="Hypertable .NET x86 client library" />
+
+		<XmlPoke
+			Condition="'%(MakeConfiguration.Platform)' == 'x64'"
+			XmlInputPath="nuget/ht4n.nuspec"
+			Query="/package/metadata/id"
+			Value="ht4n.x64" />
+
+		<XmlPoke
+			Condition="'%(MakeConfiguration.Platform)' == 'x64'"
+			XmlInputPath="nuget/ht4n.nuspec"
+			Query="/package/metadata/title"
+			Value="ht4n (x64)" />
+
+		<XmlPoke
+			Condition="'%(MakeConfiguration.Platform)' == 'x64'"
+			XmlInputPath="nuget/ht4n.nuspec"
+			Query="/package/metadata/description"
+			Value="Hypertable .NET x64 client library" />
+
+	</Target>
+
 	<!-- Make nuget package-->
-	<Target Name="MakeNuGetPackage">
+	<Target Name="MakeNuGetPackage"
+					DependsOnTargets="MakeNuSpec">
+
 		<Exec
 			Command="nuget/ht4n.nuget.pack.cmd %(MakeConfiguration.Platform)" />
 	</Target>
 
 	<!-- Publish nuget package-->
-	<Target Name="PublishNuGetPackage">
+	<Target Name="PublishNuGetPackage"
+					DependsOnTargets="MakeNuSpec">
 		<Exec
 			Command="nuget/ht4n.nuget.push.cmd %(MakeConfiguration.Platform) $(Version)" />
 	</Target>

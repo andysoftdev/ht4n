@@ -53,7 +53,7 @@ if /i "%platform%"=="Win32" (
 
 if exist %nupkg%.%target%.*.nupkg del /Q %nupkg%.%target%.*.nupkg
 cd %~dp0
-%nuget% pack %nupkg%.%target%.nuspec
+%nuget% pack %nupkg%.nuspec
 
 if exist %lib% rmdir /S /Q %lib%
 

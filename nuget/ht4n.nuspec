@@ -1,17 +1,21 @@
-<?xml version="1.0"?>
-<package >
+﻿<?xml version="1.0"?>
+<package>
   <metadata>
-    <id>ht4n.x86</id>
-    <version>0.9.6.5</version>
-    <authors>Andy</authors>
+    <id />
+    <title />
+    <version />
+    <authors>Andy Thalmann</authors>
     <owners>www.softdev.ch</owners>
     <licenseUrl>http://ht4n.softdev.ch/index.php/license</licenseUrl>
     <projectUrl>http://ht4n.softdev.ch</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Hypertable .NET x86 client library</description>
+    <description />
     <iconUrl>http://ht4n.softdev.ch/favicon.ico</iconUrl>
-    <releaseNotes></releaseNotes>
-    <copyright>Copyright � 2010-2013</copyright>
+    <releaseNotes />
+    <copyright>Copyright © 2010-2013</copyright>
     <tags>Hypertable NoSQL KeyValueStore Database</tags>
   </metadata>
+  <files>
+    <file src="lib\**\*.*" target="lib" />
+  </files>
 </package>
