@@ -183,44 +183,60 @@
 
 	<!-- Make nuspec-->
 	<Target Name="MakeNuSpec">
+
+    <Exec
+			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"			
+			Command="copy .\nuget\ht4n.nuspec .\nuget\ht4n.x86.nuspec > nul" />
+
 		<XmlPoke
-			XmlInputPath="nuget/ht4n.nuspec"
+			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
+			XmlInputPath="nuget/ht4n.x86.nuspec"
+			Query="/package/metadata/id"
+			Value="ht4n.x86" />
+
+    <XmlPoke
+      Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
+			XmlInputPath="nuget/ht4n.x86.nuspec"
 			Query="/package/metadata/version"
 			Value="$(Version)" />
 
 		<XmlPoke
 			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
-			XmlInputPath="nuget/ht4n.nuspec"
-			Query="/package/metadata/id"
-			Value="ht4n.x86" />
-
-		<XmlPoke
-			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
-			XmlInputPath="nuget/ht4n.nuspec"
+			XmlInputPath="nuget/ht4n.x86.nuspec"
 			Query="/package/metadata/title"
 			Value="ht4n (x86)" />
 
 		<XmlPoke
 			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
-			XmlInputPath="nuget/ht4n.nuspec"
+			XmlInputPath="nuget/ht4n.x86.nuspec"
 			Query="/package/metadata/description"
 			Value="Hypertable .NET x86 client library" />
 
-		<XmlPoke
+    <Exec
 			Condition="'%(MakeConfiguration.Platform)' == 'x64'"
-			XmlInputPath="nuget/ht4n.nuspec"
-			Query="/package/metadata/id"
-			Value="ht4n.x64" />
+			Command="copy .\nuget\ht4n.nuspec .\nuget\ht4n.x64.nuspec > nul" />
 
 		<XmlPoke
 			Condition="'%(MakeConfiguration.Platform)' == 'x64'"
-			XmlInputPath="nuget/ht4n.nuspec"
+			XmlInputPath="nuget/ht4n.x64.nuspec"
+			Query="/package/metadata/id"
+			Value="ht4n.x64" />
+
+    <XmlPoke
+      Condition="'%(MakeConfiguration.Platform)' == 'x64'"
+			XmlInputPath="nuget/ht4n.x64.nuspec"
+			Query="/package/metadata/version"
+			Value="$(Version)" />
+
+		<XmlPoke
+			Condition="'%(MakeConfiguration.Platform)' == 'x64'"
+			XmlInputPath="nuget/ht4n.x64.nuspec"
 			Query="/package/metadata/title"
 			Value="ht4n (x64)" />
 
 		<XmlPoke
 			Condition="'%(MakeConfiguration.Platform)' == 'x64'"
-			XmlInputPath="nuget/ht4n.nuspec"
+			XmlInputPath="nuget/ht4n.x64.nuspec"
 			Query="/package/metadata/description"
 			Value="Hypertable .NET x64 client library" />
 
@@ -235,8 +251,7 @@
 	</Target>
 
 	<!-- Publish nuget package-->
-	<Target Name="PublishNuGetPackage"
-					DependsOnTargets="MakeNuSpec">
+	<Target Name="PublishNuGetPackage">
 		<Exec
 			Command="nuget/ht4n.nuget.push.cmd %(MakeConfiguration.Platform) $(Version)" />
 	</Target>
@@ -339,6 +354,9 @@
 
 		<Exec
 			Command="if exist nuget\lib rd /S /Q nuget\lib" />
+
+    <Exec
+			Command="if exist nuget\*.x??.nuspec del *.x??.nuspec" />
 	</Target>
 
 	<!-- Deletes the master files -->

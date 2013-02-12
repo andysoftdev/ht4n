@@ -13,3 +13,4 @@ TestResults/
 *.shfbproj_*
 *.Cache
 *.nupkg
+*.x??.nuget

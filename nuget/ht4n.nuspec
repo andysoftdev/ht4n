@@ -13,7 +13,7 @@
     <iconUrl>http://ht4n.softdev.ch/favicon.ico</iconUrl>
     <releaseNotes />
     <copyright>Copyright © 2010-2013</copyright>
-    <tags>Hypertable NoSQL KeyValueStore Database</tags>
+    <tags>ht4n ht4w hypertable nosql database client</tags>
   </metadata>
   <files>
     <file src="lib\**\*.*" target="lib" />
