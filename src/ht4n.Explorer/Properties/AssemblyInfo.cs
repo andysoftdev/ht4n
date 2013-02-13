@@ -1,5 +1,5 @@
 ﻿/** -*- C# -*-
- * Copyright (C) 2010-2012 Thalmann Software & Consulting, http://www.softdev.ch
+ * Copyright (C) 2010-2013 Thalmann Software & Consulting, http://www.softdev.ch
  *
  * This file is part of ht4n.
  *
@@ -35,7 +35,7 @@ using System.Windows;
 [assembly: AssemblyProduct("ht4n.Explorer")]
 [assembly: AssemblyDescription("Hypertable Explorer")]
 [assembly: AssemblyCompany("ht4n.softdev.ch")]
-[assembly: AssemblyCopyright("Copyright © 2010-2012")]
+[assembly: AssemblyCopyright("Copyright © 2010-2013")]
 [assembly: AssemblyVersion("0.9.6.5")]
 [assembly: AssemblyFileVersion("0.9.6.5")]
 [assembly: ComVisible(false)]

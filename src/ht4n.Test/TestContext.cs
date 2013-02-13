@@ -1,5 +1,5 @@
 ﻿/** -*- C# -*-
- * Copyright (C) 2010-2012 Thalmann Software & Consulting, http://www.softdev.ch
+ * Copyright (C) 2010-2013 Thalmann Software & Consulting, http://www.softdev.ch
  *
  * This file is part of ht4n.
  *
