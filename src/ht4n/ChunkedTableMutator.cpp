@@ -35,12 +35,13 @@ namespace Hypertable {
 	using namespace System;
 
 	ChunkedTableMutator::~ChunkedTableMutator( ) {
-		this->!ChunkedTableMutator();
 		GC::SuppressFinalize(this);
+		this->!ChunkedTableMutator();
 	}
 
 	ChunkedTableMutator::!ChunkedTableMutator( ) {
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			if( cellChunk ) {
 				SetChunk( true );
 				delete cellChunk;

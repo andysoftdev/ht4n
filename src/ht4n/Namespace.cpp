@@ -39,12 +39,13 @@ namespace Hypertable {
 
 	Namespace::~Namespace( ) {
 		disposed = true;
-		this->!Namespace();
 		GC::SuppressFinalize(this);
+		this->!Namespace();
 	}
 
 	Namespace::!Namespace( ) {
 		HT4N_TRY {
+			msclr::lock sync( this );
 			if( ns ) {
 				delete ns;
 				ns = 0;

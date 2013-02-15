@@ -208,13 +208,20 @@ namespace Hypertable {
 	}
 
 	Context::~Context( ) {
-		disposed = true;
-		this->!Context();
+		{
+			msclr::lock sync( syncRoot );
+			if( disposed ) {
+				return;
+			}
+			disposed = true;
+		}
 		GC::SuppressFinalize(this);
+		this->!Context();
 	}
 
 	Context::!Context( ) {
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			if( ctx ) {
 				delete ctx;
 				ctx = 0;

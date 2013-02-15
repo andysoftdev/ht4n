@@ -37,12 +37,13 @@ namespace Hypertable {
 
 	TableMutator::~TableMutator( ) {
 		disposed = true;
-		this->!TableMutator();
 		GC::SuppressFinalize(this);
+		this->!TableMutator();
 	}
 
 	TableMutator::!TableMutator( ) {
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			if( tableMutator ) {
 				delete tableMutator;
 				tableMutator = 0;

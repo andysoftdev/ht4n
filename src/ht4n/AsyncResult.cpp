@@ -443,12 +443,13 @@ namespace Hypertable {
 
 	AsyncResult::~AsyncResult( ) {
 		disposed = true;
-		this->!AsyncResult();
 		GC::SuppressFinalize(this);
+		this->!AsyncResult();
 	}
 
 	AsyncResult::!AsyncResult( ) {
 		HT4N_TRY {
+			msclr::lock sync( this );
 			for( int n = 0; n < size; ++n ) {
 				if( asyncResult[n] ) {
 					delete asyncResult[n];

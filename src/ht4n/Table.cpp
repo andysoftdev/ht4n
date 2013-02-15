@@ -49,12 +49,13 @@ namespace Hypertable {
 
 	Table::~Table( ) {
 		disposed = true;
-		this->!Table();
 		GC::SuppressFinalize(this);
+		this->!Table();
 	}
 
 	Table::!Table( ) {
 		HT4N_TRY {
+			msclr::lock sync( this );
 			if( table ) {
 				delete table;
 				table = 0;

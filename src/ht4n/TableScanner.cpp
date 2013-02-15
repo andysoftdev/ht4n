@@ -71,15 +71,22 @@ namespace Hypertable {
 			TableScanner^ tableScanner;
 			Cell^ cell;
 	};
-	
+
 	TableScanner::~TableScanner( ) {
-		disposed = true;
-		this->!TableScanner();
+		{
+			msclr::lock sync( syncRoot );
+			if( disposed ) {
+				return;
+			}
+			disposed = true;
+		}
 		GC::SuppressFinalize(this);
+		this->!TableScanner();
 	}
 
 	TableScanner::!TableScanner( ) {
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			if( tableScanner ) {
 				delete tableScanner;
 				tableScanner = 0;

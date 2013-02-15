@@ -36,12 +36,13 @@ namespace Hypertable {
 
 	Client::~Client( ) {
 		disposed = true;
-		this->!Client();
 		GC::SuppressFinalize(this);
+		this->!Client();
 	}
 
 	Client::!Client( ) {
 		HT4N_TRY {
+			msclr::lock sync( this );
 			if( client ) {
 				delete client;
 				client = 0;

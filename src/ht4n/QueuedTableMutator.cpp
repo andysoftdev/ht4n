@@ -35,8 +35,8 @@ namespace Hypertable {
 
 	QueuedTableMutator::~QueuedTableMutator( ) {
 		disposed = true;
-		this->!QueuedTableMutator();
 		GC::SuppressFinalize(this);
+		this->!QueuedTableMutator();
 	}
 
 	QueuedTableMutator::!QueuedTableMutator( ) {
