@@ -164,6 +164,9 @@
     <ClInclude Include="CM2U8.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="RowComparer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -248,6 +251,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScanSpecBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RowComparer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

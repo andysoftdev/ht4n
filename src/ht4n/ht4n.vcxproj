@@ -326,6 +326,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="NamespaceListing.h" />
     <ClInclude Include="OpenDispositions.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RowComparer.h" />
     <ClInclude Include="RowInterval.h" />
     <ClInclude Include="ScanSpec.h" />
     <ClInclude Include="ScanSpecBuilder.h" />
@@ -380,6 +381,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClCompile Include="MutatorSpec.cpp" />
     <ClCompile Include="Namespace.cpp" />
     <ClCompile Include="NamespaceListing.cpp" />
+    <ClCompile Include="RowComparer.cpp" />
     <ClCompile Include="RowInterval.cpp" />
     <ClCompile Include="ScanSpec.cpp" />
     <ClCompile Include="ScanSpecBuilder.cpp" />

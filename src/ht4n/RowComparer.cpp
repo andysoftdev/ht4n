@@ -21,59 +21,37 @@
 
 #include "stdafx.h"
 
-#include "KeyComparer.h"
+#include "RowComparer.h"
 #include "Key.h"
-
-#define EMPTY_IF_NULL( s ) \
-	(s != nullptr ? s : String::Empty)
 
 namespace Hypertable {
 	using namespace System;
 
-	KeyComparer::KeyComparer( )
-	: includeTimestamp( false )
+	RowComparer::RowComparer( )
 	{
 	}
 
-	KeyComparer::KeyComparer( bool _includeTimestamp )
-	: includeTimestamp( _includeTimestamp )
-	{
-	}
-
-	bool KeyComparer::Equals( Key^ x, Key^ y ) {
+	bool RowComparer::Equals( Key^ x, Key^ y ) {
 		if( Object::ReferenceEquals(x, y) ) {
 			return true;
 		}
 		else if( Object::ReferenceEquals(x, nullptr) || Object::ReferenceEquals(y, nullptr) ) {
 			return false;
 		}
-		return String::Equals(x->Row, y->Row)
-				&& String::Equals(x->ColumnFamily, y->ColumnFamily)
-				&& String::Equals(EMPTY_IF_NULL(x->ColumnQualifier), EMPTY_IF_NULL(y->ColumnQualifier))
-				&& (!includeTimestamp || x->Timestamp == y->Timestamp);
+		return String::Equals(x->Row, y->Row);
 	}
 
-	int KeyComparer::GetHashCode( Key^ obj ) {
+	int RowComparer::GetHashCode( Key^ obj ) {
 		if( obj == nullptr ) throw gcnew ArgumentNullException( L"obj" );
 
-		int result = 0;
-
-		if( obj->Row != nullptr ) result ^= obj->Row->GetHashCode();
-		if( obj->ColumnFamily != nullptr ) result ^= obj->ColumnFamily->GetHashCode();
-		result ^= EMPTY_IF_NULL(obj->ColumnQualifier)->GetHashCode();
-
-		if( includeTimestamp ) {
-			result ^= obj->Timestamp.GetHashCode();
-		}
-
-		return result;
+		return obj->Row != nullptr ? obj->Row->GetHashCode() : 0;
 	}
 
-	bool KeyComparer::Equals( Object^ x, Object^ y ) {
+	bool RowComparer::Equals( Object^ x, Object^ y ) {
 		return Equals( dynamic_cast<Key^>(x), dynamic_cast<Key^>(y) );
 	}
 
-	int KeyComparer::GetHashCode( Object^ obj ) {
+	int RowComparer::GetHashCode( Object^ obj ) {
 		return GetHashCode( dynamic_cast<Key^>(obj) );
 	}
 }
