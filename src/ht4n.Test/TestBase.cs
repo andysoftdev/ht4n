@@ -195,6 +195,13 @@ namespace Hypertable.Test
         #region Methods
 
         /// <summary>
+        /// Preventing the system from entering sleep.
+        /// </summary>
+        protected static void ContinueExecution() {
+            NativeMethods.SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
+        }
+
+        /// <summary>
         /// Deletes all cells in the table specified.
         /// </summary>
         /// <param name = "table">Table.</param>

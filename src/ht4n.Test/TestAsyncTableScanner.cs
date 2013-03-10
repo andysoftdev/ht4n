@@ -928,6 +928,7 @@ namespace Hypertable.Test
 
         [TestInitialize]
         public void TestInitialize() {
+            TestBase.ContinueExecution();
             DeleteColumnFamily(table, "d");
             DeleteColumnFamily(table, "e");
             DeleteColumnFamily(table, "f");

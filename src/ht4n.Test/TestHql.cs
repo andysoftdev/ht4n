@@ -238,6 +238,7 @@ namespace Hypertable.Test
 
         [TestInitialize]
         public void TestInitialize() {
+            TestBase.ContinueExecution();
             Ns.DropTables();
             Ns.DropNamespaces(DropDispositions.Complete);
         }

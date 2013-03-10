@@ -1666,6 +1666,7 @@ namespace Hypertable.Test
 
         [TestInitialize]
         public void TestInitialize() {
+            TestBase.ContinueExecution();
             Delete(table);
         }
 

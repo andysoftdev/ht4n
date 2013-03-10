@@ -96,6 +96,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestNativeMethods.cs" />
     <Compile Include="TestScanSpec.cs" />
     <Compile Include="TestScanSpecBuilder.cs" />
     <Compile Include="TestAsyncTableMutator.cs" />
