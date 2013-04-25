@@ -26,7 +26,6 @@
 #pragma comment( lib, "advapi32.lib" )
 #pragma comment( lib, "version.lib" )
 
-#pragma comment( lib, "log4cpp.lib" )				// LGPL v2.1
 #pragma comment( lib, "zlib.lib" )					// free of charge
 #pragma comment( lib, "expat.lib" )					// free of charge
 #pragma comment( lib, "thrift.lib" )				// Apache License 2.0

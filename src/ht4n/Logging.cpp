@@ -73,23 +73,23 @@ namespace Hypertable {
 			virtual void invoke( Action<TraceEventType, String^>^ action, const std::pair<int, const char*>* logEvent ) {
 
 				enum {
-					Critical    = 200,
-					Error       = 300,
-					Warning     = 400,
-					Notice      = 500,
+					Critical    = 2,
+					Error       = 3,
+					Warning     = 4,
+					Notice      = 5,
 				};
 
 				TraceEventType traceEventType = TraceEventType::Verbose;
 				if( logEvent-> first <= Critical ) {
 					traceEventType = TraceEventType::Critical;
 				}
-				else if( logEvent-> first <= Error ) {
+				else if( logEvent->first <= Error ) {
 					traceEventType = TraceEventType::Error;
 				}
-				else if( logEvent-> first <= Warning ) {
+				else if( logEvent->first <= Warning ) {
 					traceEventType = TraceEventType::Warning;
 				}
-				else if( logEvent-> first <= Notice ) {
+				else if( logEvent->first <= Notice ) {
 					traceEventType = TraceEventType::Information;
 				}
 
