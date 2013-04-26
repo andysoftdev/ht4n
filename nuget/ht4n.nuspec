@@ -10,7 +10,7 @@
     <projectUrl>http://ht4n.softdev.ch</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description />
-    <iconUrl>http://ht4n.softdev.ch/favicon.ico</iconUrl>
+    <iconUrl>http://ht4n.softdev.ch/images/nuget-logo.png</iconUrl>
     <releaseNotes />
     <copyright>Copyright © 2010-2013</copyright>
     <tags>ht4n ht4w hypertable nosql database db client</tags>
