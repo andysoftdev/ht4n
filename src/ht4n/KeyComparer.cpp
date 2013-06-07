@@ -56,14 +56,14 @@ namespace Hypertable {
 	int KeyComparer::GetHashCode( Key^ obj ) {
 		if( obj == nullptr ) throw gcnew ArgumentNullException( L"obj" );
 
-		int result = 0;
+		int result = 17;
 
-		if( obj->Row != nullptr ) result ^= obj->Row->GetHashCode();
-		if( obj->ColumnFamily != nullptr ) result ^= obj->ColumnFamily->GetHashCode();
-		result ^= EMPTY_IF_NULL(obj->ColumnQualifier)->GetHashCode();
+		if( obj->Row != nullptr ) result = ::Hash( result, obj->Row->GetHashCode() );
+		if( obj->ColumnFamily != nullptr ) result = ::Hash( result, obj->ColumnFamily->GetHashCode() );
+		result = ::Hash( result, EMPTY_IF_NULL(obj->ColumnQualifier)->GetHashCode() );
 
 		if( includeTimestamp ) {
-			result ^= obj->Timestamp.GetHashCode();
+			result = ::Hash( result, obj->Timestamp.GetHashCode() );
 		}
 
 		return result;

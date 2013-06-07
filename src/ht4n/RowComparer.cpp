@@ -44,7 +44,7 @@ namespace Hypertable {
 	int RowComparer::GetHashCode( Key^ obj ) {
 		if( obj == nullptr ) throw gcnew ArgumentNullException( L"obj" );
 
-		return obj->Row != nullptr ? obj->Row->GetHashCode() : 0;
+		return obj->Row != nullptr ? obj->Row->GetHashCode() : 17;
 	}
 
 	bool RowComparer::Equals( Object^ x, Object^ y ) {

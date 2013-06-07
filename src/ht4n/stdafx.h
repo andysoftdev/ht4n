@@ -27,3 +27,14 @@
 #include <msclr/marshal.h>
 #include <msclr/appdomain.h>
 #include <stdint.h>
+
+
+/// <summary>
+/// Calculates a new hash code, from the hash code specified and a new hash value.
+/// </summary>
+/// <param name="hash">The existing hash code.</param>
+/// <param name="newHashValue">The new hash value.</param>
+/// <returns>The newly calculated hash code.</returns>
+inline int Hash( int hash, int newHashValue ) {
+	return hash * 29 + newHashValue;
+}

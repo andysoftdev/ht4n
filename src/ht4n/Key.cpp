@@ -141,12 +141,12 @@ namespace Hypertable {
 	}
 
 	int Key::GetHashCode() {
-		int result = 0;
+		int result = 17;
 
-		if( Row != nullptr ) result ^= Row->GetHashCode();
-		if( ColumnFamily != nullptr ) result ^= ColumnFamily->GetHashCode();
-		if( ColumnQualifier != nullptr ) result ^= ColumnQualifier->GetHashCode();
-		return result ^ Timestamp.GetHashCode();
+		if( Row != nullptr ) result = ::Hash( result, Row->GetHashCode() );
+		if( ColumnFamily != nullptr ) result = ::Hash( result, ColumnFamily->GetHashCode() );
+		if( ColumnQualifier != nullptr ) result = ::Hash( result, ColumnQualifier->GetHashCode() );
+		return ::Hash( result, Timestamp.GetHashCode() );
 	}
 
 	String^ Key::ToString() {

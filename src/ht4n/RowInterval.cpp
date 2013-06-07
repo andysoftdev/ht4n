@@ -75,12 +75,12 @@ namespace Hypertable {
 	}
 
 	int RowInterval::GetHashCode() {
-		int result = 0;
+		int result = 17;
 
-		if( StartRow != nullptr ) result ^= StartRow->GetHashCode();
-		result ^= IncludeStartRow.GetHashCode();
-		if( EndRow != nullptr ) result ^= EndRow->GetHashCode();
-		return result ^ IncludeEndRow.GetHashCode();
+		if( StartRow != nullptr ) result = ::Hash( result, StartRow->GetHashCode() );
+		result = ::Hash( result, IncludeStartRow.GetHashCode() );
+		if( EndRow != nullptr ) result = ::Hash( result, EndRow->GetHashCode() );
+		return ::Hash( result, IncludeEndRow.GetHashCode() );
 	}
 
 	String^ RowInterval::ToString() {

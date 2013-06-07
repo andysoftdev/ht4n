@@ -100,11 +100,11 @@ namespace Hypertable {
 	}
 
 	int ColumnPredicate::GetHashCode() {
-		int result = 0;
+		int result = 17;
 
-		if( ColumnFamily != nullptr ) result ^= ColumnFamily->GetHashCode();
-		result ^= Match.GetHashCode();
-		if( SearchValue != nullptr ) result ^= ArrayHashCode( SearchValue );
+		if( ColumnFamily != nullptr ) result = ::Hash( result, ColumnFamily->GetHashCode());
+		result = ::Hash( result, Match.GetHashCode());
+		if( SearchValue != nullptr ) result = ::Hash( result, ArrayHashCode(SearchValue) );
 		return result;
 	}
 
