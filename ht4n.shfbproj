@@ -31,6 +31,7 @@
       <NamespaceSummaryItem name="Hypertable" isDocumented="True">This namespace contain classes for accessing and managing data from Hypertable database instances.</NamespaceSummaryItem>
       <NamespaceSummaryItem name="Hypertable.Composition" isDocumented="True">This namespace provides classes and interfaces supporting the Managed Extensibility Framework, or MEF.</NamespaceSummaryItem>
       <NamespaceSummaryItem name="Hypertable.Fluent" isDocumented="True">This namespace provides interfaces supporting the Hypertable Fluent API.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Hypertable.Xml" isDocumented="True">This namespace provides support for the Hypertable xml table schema.</NamespaceSummaryItem>
     </NamespaceSummaries>
     <VisibleItems>Attributes, InheritedMembers, InheritedFrameworkMembers, Protected</VisibleItems>
     <MissingTags>Summary, Parameter, Returns, Namespace, TypeParameter, AutoDocumentDispose</MissingTags>

@@ -336,6 +336,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="MutatorFlags.h" />
     <ClInclude Include="TableScanner.h" />
     <ClInclude Include="ScannerFlags.h" />
+    <ClInclude Include="Xml\TableSchema.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
@@ -394,6 +395,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClCompile Include="Table.cpp" />
     <ClCompile Include="TableMutator.cpp" />
     <ClCompile Include="TableScanner.cpp" />
+    <ClCompile Include="Xml\TableSchema.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ht4n.rc">
@@ -404,6 +406,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
   <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ht4n.sed" />

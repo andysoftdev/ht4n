@@ -94,8 +94,10 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestTableSchema.cs" />
     <Compile Include="TestNativeMethods.cs" />
     <Compile Include="TestScanSpec.cs" />
     <Compile Include="TestScanSpecBuilder.cs" />

@@ -8,6 +8,9 @@
     <Filter Include="Source Files\Composition">
       <UniqueIdentifier>{875a41ee-2c45-40bd-8b0c-1191cc54af19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Xml">
+      <UniqueIdentifier>{46a89b00-7ad9-47a2-8bca-dba4e538a7d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -158,13 +161,16 @@
     <ClInclude Include="MatchKind.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScanSpecBuilder.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="CM2U8.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="RowComparer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Xml\TableSchema.h">
+      <Filter>Source Files\Xml</Filter>
+    </ClInclude>
+    <ClInclude Include="ScanSpecBuilder.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -250,10 +256,13 @@
     <ClCompile Include="ColumnPredicate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScanSpecBuilder.cpp">
+    <ClCompile Include="RowComparer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RowComparer.cpp">
+    <ClCompile Include="Xml\TableSchema.cpp">
+      <Filter>Source Files\Xml</Filter>
+    </ClCompile>
+    <ClCompile Include="ScanSpecBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

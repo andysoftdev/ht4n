@@ -47,7 +47,6 @@ namespace Hypertable {
 	/// +     "&lt;AccessGroup name=\"default\"&gt;"
 	/// +     "&lt;ColumnFamily&gt;"
 	/// +         "&lt;Name&gt;cf&lt;/Name&gt;"
-	/// +         "&lt;deleted&gt;false&lt;/deleted&gt;"
 	/// +     "&lt;/ColumnFamily&gt;"
 	/// +     "&lt;/AccessGroup&gt;"
 	/// + "&lt;/Schema&gt;";

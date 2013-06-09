@@ -18,3 +18,7 @@ CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA2210:AssembliesShouldHaveValid
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Scope="member", Target="Hypertable.Composition.IContextProvider.#Provider");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId="ProviderName", Scope="member", Target="Hypertable.Context.#.cctor()");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1", Scope="member", Target="Hypertable.ScanSpec.#DistictColumn(System.Collections.Generic.IEnumerable`1<System.String>,System.Collections.Generic.ISet`1<System.String>&)");
+CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Scope="member", Target="Hypertable.Xml.AccessGroup.#ColumnFamilies");
+CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope="member", Target="Hypertable.Xml.AccessGroup.#ColumnFamilies");
+CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Scope="member", Target="Hypertable.Xml.TableSchema.#AccessGroups");
+CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope="member", Target="Hypertable.Xml.TableSchema.#AccessGroups");
