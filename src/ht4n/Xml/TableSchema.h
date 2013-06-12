@@ -134,7 +134,9 @@ namespace Hypertable { namespace Xml {
 			/// <summary>
 			/// Initializes a new instance of the TableSchema class.
 			/// </summary>
-			TableSchema( ) { }
+			TableSchema( ) {
+				AccessGroups = gcnew List<AccessGroup^>();
+			}
 
 			/// <summary>
 			/// Converts the xml table schema representation to a TableSchema object.
@@ -255,7 +257,9 @@ namespace Hypertable { namespace Xml {
 			/// <summary>
 			/// Initializes a new instance of the AccessGroup class.
 			/// </summary>
-			AccessGroup( ) { }
+			AccessGroup( ) {
+				ColumnFamilies = gcnew List<ColumnFamily^>();
+			}
 	};
 
 	/// <summary>
