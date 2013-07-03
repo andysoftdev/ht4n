@@ -33,8 +33,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Hypertable .NET client library tests")]
 [assembly: AssemblyCompany("ht4n.softdev.ch")]
 [assembly: AssemblyCopyright("Copyright © 2010-2013")]
-[assembly: AssemblyVersion("0.9.7.7")]
-[assembly: AssemblyFileVersion("0.9.7.7")]
+[assembly: AssemblyVersion("0.9.7.8")]
+[assembly: AssemblyFileVersion("0.9.7.8")]
 [assembly: ComVisible(false)]
 [assembly: Guid("3bfd2fed-0f46-4874-a318-b47e1f456893")]
 
