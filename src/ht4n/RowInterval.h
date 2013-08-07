@@ -42,10 +42,13 @@ namespace Hypertable {
 			RowInterval( );
 
 			/// <summary>
-			/// Initializes a new instance of the RowInterval class using start/end row.
+			/// Initializes a new instance of the RowInterval class using start/end row, which should be included.
 			/// </summary>
 			/// <param name="startRow">Start row, might be null if unspecified.</param>
 			/// <param name="endRow">End row, might be null if unspecified.</param>
+			/// <remarks>
+			/// Start/end row should be included in the row interval.
+			/// </remarks>
 			RowInterval( String^ startRow, String^ endRow );
 
 			/// <summary>
