@@ -200,8 +200,7 @@ namespace Hypertable.Test
                     Assert.AreEqual(50, c);
                 }
 
-                using (var scanner = _table.CreateScanner(new ScanSpec().AddCellInterval(new CellInterval("10", "d", "20", "d"), new CellInterval("40", "d", "50", "d")))
-                    ) {
+                using (var scanner = _table.CreateScanner(new ScanSpec().AddCellInterval(new CellInterval("10", "d", "20", "d"), new CellInterval("40", "d", "50", "d")))) {
                     var c = 10;
                     Cell cell;
                     while (scanner.Next(out cell)) {
@@ -493,6 +492,29 @@ namespace Hypertable.Test
                     Assert.AreEqual(11, BitConverter.ToInt32(cell.Value, 0));
                     Assert.AreEqual("c", cell.Key.ColumnFamily);
                     Assert.AreEqual("1", cell.Key.ColumnQualifier);
+
+                    Assert.IsFalse(scanner.Next(out cell));
+                }
+
+                using( var scanner = _table.CreateScanner(new ScanSpec(new CellInterval("10", "c", "1", "11", "d", "1")).AddColumn("a", "b", "e")) ) {
+                    Cell cell;
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("10", cell.Key.Row);
+                    Assert.AreEqual("e", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("10e", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("a", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("11a", Encoding.GetString(cell.Value));
+
+                    Assert.IsTrue(scanner.Next(out cell));
+                    Assert.AreEqual("11", cell.Key.Row);
+                    Assert.AreEqual("b", cell.Key.ColumnFamily);
+                    Assert.AreEqual(string.Empty, cell.Key.ColumnQualifier);
+                    Assert.AreEqual("11b", Encoding.GetString(cell.Value));
 
                     Assert.IsFalse(scanner.Next(out cell));
                 }
