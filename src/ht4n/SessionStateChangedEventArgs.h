@@ -25,46 +25,47 @@
 #error "requires /clr"
 #endif
 
-#include "ht4c.Common/ContextFeature.h"
+#include "SessionState.h"
 
 namespace Hypertable {
 	using namespace System;
+	using namespace ht4c;
 
 	/// <summary>
-	/// Declares extended context features, apart from the regular features.
+	/// Represents the session state changed event arguments.
 	/// </summary>
-	[Serializable]
-	public enum class ContextFeature {
+	public ref class SessionStateChangedEventArgs sealed : public EventArgs {
 
-		/// <summary>
-		/// Unknown provider feature.
-		/// </summary>
-		Unknown = ht4c::Common::CF_Unknown,
+		public:
 
-		/// <summary>
-		/// Hypertable query language (HQL).
-		/// </summary>
-		HQL = ht4c::Common::CF_HQL,
+			/// <summary>
+			/// Gets the old session state.
+			/// </summary>
+			/// <seealso cref="SessionState"/>
+			property SessionState^ OldSessionState {
+				SessionState^ get( ) {
+					return oldSessionState;
+				}
+			}
 
-		/// <summary>
-		/// Asynchronous table mutator.
-		/// </summary>
-		AsyncTableMutator = ht4c::Common::CF_AsyncTableMutator,
+			/// <summary>
+			/// Gets the new session state.
+			/// </summary>
+			/// <seealso cref="SessionState"/>
+			property SessionState^ NewSessionState {
+				SessionState^ get( ) {
+					return newSessionState;
+				}
+			}
 
-		/// <summary>
-		/// Periodic flush mutator.
-		/// </summary>
-		PeriodicFlushTableMutator = ht4c::Common::CF_PeriodicFlushTableMutator,
+		internal:
 
-		/// <summary>
-		/// Asynchronous table scanner.
-		/// </summary>
-		AsyncTableScanner = ht4c::Common::CF_AsyncTableScanner,
+			SessionStateChangedEventArgs( Common::SessionState oldSessionState, Common::SessionState newSessionState );
 
-		/// <summary>
-		/// Notify session state changed.
-		/// </summary>
-		NotifySessionStateChanged = ht4c::Common::CF_NotifySessionStateChanged
+		private:
+
+			SessionState oldSessionState;
+			SessionState newSessionState;
 	};
 
 }

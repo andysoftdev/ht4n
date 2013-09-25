@@ -27,12 +27,14 @@
 #include "Exception.h"
 #include "Logging.h"
 #include "AppDomainHandler.h"
+#include "CrossAppDomainAction.h"
 #include "Composition/IContextProvider.h"
 #include "Composition/IContextProviderMetadata.h"
 #include "CM2U8.h"
 
 #include "ht4c.Common/Config.h"
 #include "ht4c.Common/Properties.h"
+#include "ht4c.Common/SessionStateSink.h"
 #include "ht4c.Context/Context.h"
 
 namespace Hypertable { 
@@ -61,6 +63,40 @@ namespace Hypertable {
 	};
 
 	ShutdownHandler::map_t* ShutdownHandler::appDomains = 0;
+
+	class SessionStateSink : public ht4c::Common::SessionStateSink
+																, public CrossAppDomainAction<Action<SessionStateChangedEventArgs^>^, const std::pair<ht4c::Common::SessionState, ht4c::Common::SessionState>*>::Invoker
+	{
+		public:
+
+			explicit SessionStateSink( ht4c::Context* _ctx, Action<SessionStateChangedEventArgs^>^ _stateChangedAction )
+				: ctx( _ctx )
+				, stateChangedAction( this, _stateChangedAction )
+			{
+				ctx->addSessionStateSink( this );
+			}
+
+			virtual ~SessionStateSink( ) {
+				ctx->removeSessionStateSink( this );
+			}
+
+		private:
+
+			SessionStateSink( const SessionStateSink& );
+			SessionStateSink& operator= ( const SessionStateSink& );
+
+			virtual void stateTransition( ht4c::Common::SessionState oldSessionState, ht4c::Common::SessionState newSessionState ) {
+				std::pair<ht4c::Common::SessionState, ht4c::Common::SessionState> stateChangedEvent = std::make_pair( oldSessionState, newSessionState );
+				stateChangedAction.invoke( &stateChangedEvent );
+			}
+
+			virtual void invoke( Action<SessionStateChangedEventArgs^>^ action, const std::pair<ht4c::Common::SessionState, ht4c::Common::SessionState>* stateChangedEvent ) {
+				action->Invoke( gcnew SessionStateChangedEventArgs(stateChangedEvent->first, stateChangedEvent->second) );
+			}
+
+			CrossAppDomainAction<Action<SessionStateChangedEventArgs^>^, const std::pair<ht4c::Common::SessionState, ht4c::Common::SessionState>*> stateChangedAction;
+			ht4c::Context* ctx;
+	};
 
 	namespace {
 
@@ -178,6 +214,31 @@ namespace Hypertable {
 
 	}
 
+	void Context::SessionStateChanged::add( EventHandler<SessionStateChangedEventArgs^>^ eventHandler ) {
+		if( eventHandler != nullptr ) {
+			{
+				msclr::lock sync( syncRoot );
+				if( !sessionStateChangedSink ) {
+					sessionStateChangedSink = new SessionStateSink( ctx, gcnew Action<SessionStateChangedEventArgs^>( this, &Hypertable::Context::FireSessionStateChanged) );
+				}
+			}
+
+			sessionStateChanged = static_cast<EventHandler<SessionStateChangedEventArgs^>^>( Delegate::Combine(sessionStateChanged, eventHandler) );
+		}
+	}
+
+	void Context::SessionStateChanged::remove( EventHandler<SessionStateChangedEventArgs^>^ eventHandler ) {
+		if( eventHandler != nullptr ) {
+			sessionStateChanged = static_cast<EventHandler<SessionStateChangedEventArgs^>^>( Delegate::Remove(sessionStateChanged, eventHandler) );
+		}
+	}
+
+	void Context::SessionStateChanged::raise( System::Object^ sender ,Hypertable::SessionStateChangedEventArgs^ eventArgs ) {
+		if( sessionStateChanged != nullptr ) {
+			sessionStateChanged->Invoke( sender, eventArgs );
+		}
+	}
+
 	IContext^ Context::Create( String^ connectionString ) {
 		if( connectionString == nullptr ) throw gcnew ArgumentNullException( L"connectionString" );
 		return CreateProvider( MergeProperties(connectionString, nullptr) );
@@ -222,6 +283,10 @@ namespace Hypertable {
 	Context::!Context( ) {
 		HT4N_TRY {
 			msclr::lock sync( syncRoot );
+			if( sessionStateChangedSink ) {
+				delete sessionStateChangedSink;
+				sessionStateChangedSink = 0;
+			}
 			if( ctx ) {
 				delete ctx;
 				ctx = 0;
@@ -276,6 +341,7 @@ namespace Hypertable {
 	Context::Context( IDictionary<String^, Object^>^ _properties )
 	: ctx( 0 )
 	, properties( _properties )
+	, sessionStateChangedSink( 0 )
 	, disposed( false )
 	{
 		if( properties == nullptr ) throw gcnew ArgumentNullException( L"properties" );
@@ -294,6 +360,12 @@ namespace Hypertable {
 			if( prop ) {
 				delete prop;
 			}
+		}
+	}
+
+	void Context::FireSessionStateChanged( SessionStateChangedEventArgs^ eventArgs ) {
+		if( eventArgs != nullptr ) {
+			SessionStateChanged::raise( this, eventArgs );
 		}
 	}
 

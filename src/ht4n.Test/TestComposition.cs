@@ -54,6 +54,16 @@ namespace Hypertable.Test
 
         private class Context : IContext
         {
+            #region Public Events
+
+#pragma warning disable 0067 // The event 'Hypertable.Test.CustomContextProvider.Context.SessionStateChanged' is never used
+
+            public event EventHandler<SessionStateChangedEventArgs> SessionStateChanged;
+
+#pragma warning restore 0067
+
+            #endregion
+
             #region Public Properties
 
             public bool IsDisposed {

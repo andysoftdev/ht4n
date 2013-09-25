@@ -26,12 +26,14 @@
 #endif
 
 #include "ContextFeature.h"
+#include "SessionStateChangedEventArgs.h"
 
 namespace Hypertable {
 	using namespace System;
 	using namespace System::Collections::Generic;
 
 	interface class IClient;
+	ref class SessionStateChangedEventArgs;
 
 	/// <summary>
 	/// Represents a Hypertable context, handles the connection to the storage provider instance.
@@ -103,6 +105,13 @@ namespace Hypertable {
 			property bool IsDisposed {
 				bool get( );
 			}
+
+			/// <summary>
+			/// Occurs when the Hypertable session state changed.
+			/// </summary>
+			/// <seealso cref="SessionStateChangedEventArgs"/>
+			/// <remarks>Only for context's which supports ContextFeature.NotifySessionStateChanged.</remarks>
+			event EventHandler<SessionStateChangedEventArgs^>^ SessionStateChanged;
 
 			/// <summary>
 			/// Creates a new Client instance.

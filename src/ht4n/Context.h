@@ -43,6 +43,8 @@ namespace Hypertable {
 
 	interface class IClient;
 
+	class SessionStateSink;
+
 	/// <summary>
 	/// Represents a Hypertable context factory.
 	/// </summary>
@@ -119,6 +121,21 @@ namespace Hypertable {
 				virtual bool get( ) {
 					return disposed;
 				}
+			}
+
+			#pragma endregion
+
+			#pragma region IContext events
+
+			/// <summary>
+			/// Occurs when the Hypertable session state changed.
+			/// </summary>
+			/// <seealso cref="SessionStateChangedEventArgs"/>
+			/// <remarks>Only for context's which supports ContextFeature.NotifySessionStateChanged.</remarks>
+			event EventHandler<SessionStateChangedEventArgs^>^ SessionStateChanged {
+				virtual void add( EventHandler<SessionStateChangedEventArgs^>^ eventHandler );
+				virtual void remove( EventHandler<SessionStateChangedEventArgs^>^ eventHandler );
+				virtual void raise( System::Object^ sender ,Hypertable::SessionStateChangedEventArgs^ eventArgs );
 			}
 
 			#pragma endregion
@@ -219,6 +236,8 @@ namespace Hypertable {
 			static Context( );
 			Context( IDictionary<String^, Object^>^ properties );
 
+			void FireSessionStateChanged( SessionStateChangedEventArgs^ eventArgs );
+
 			static IContext^ CreateProvider( IDictionary<String^, Object^>^ properties );
 			static bool GetProvider( IDictionary<String^, Object^>^ properties, [Out] String^% providerName, [Out] Func<IDictionary<String^, Object^>^, IContext^>^%  provider );
 			static String^ GetProviderName( IDictionary<String^, Object^>^ properties );
@@ -230,9 +249,10 @@ namespace Hypertable {
 			static const char* LoggingLevel( );
 			static void Unload( Object^, EventArgs^ );
 
-
 			ht4c::Context* ctx;
 			IDictionary<String^, Object^>^ properties;
+			SessionStateSink* sessionStateChangedSink;
+			EventHandler<SessionStateChangedEventArgs^>^ sessionStateChanged;
 			bool disposed;
 
 			static Dictionary<String^, Func<IDictionary<String^, Object^>^, IContext^>^>^ providers = gcnew Dictionary<String^, Func<IDictionary<String^, Object^>^, IContext^>^>();

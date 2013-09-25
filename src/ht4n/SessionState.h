@@ -25,46 +25,36 @@
 #error "requires /clr"
 #endif
 
-#include "ht4c.Common/ContextFeature.h"
+#include "ht4c.Common/SessionState.h"
 
 namespace Hypertable {
 	using namespace System;
 
 	/// <summary>
-	/// Declares extended context features, apart from the regular features.
+	/// Specifies possible Hypertable session states.
 	/// </summary>
 	[Serializable]
-	public enum class ContextFeature {
+	public enum class SessionState {
 
 		/// <summary>
-		/// Unknown provider feature.
+		/// Session has expired.
 		/// </summary>
-		Unknown = ht4c::Common::CF_Unknown,
+		Expired = ht4c::Common::SS_Expired,
 
 		/// <summary>
-		/// Hypertable query language (HQL).
+		/// Session is in jeopardy.
 		/// </summary>
-		HQL = ht4c::Common::CF_HQL,
+		Jeopardy = ht4c::Common::SS_Jeopardy,
 
 		/// <summary>
-		/// Asynchronous table mutator.
+		/// Session is connected and okay.
 		/// </summary>
-		AsyncTableMutator = ht4c::Common::CF_AsyncTableMutator,
+		Safe = ht4c::Common::SS_Safe,
 
 		/// <summary>
-		/// Periodic flush mutator.
+		/// Attempting to reconnect session.
 		/// </summary>
-		PeriodicFlushTableMutator = ht4c::Common::CF_PeriodicFlushTableMutator,
-
-		/// <summary>
-		/// Asynchronous table scanner.
-		/// </summary>
-		AsyncTableScanner = ht4c::Common::CF_AsyncTableScanner,
-
-		/// <summary>
-		/// Notify session state changed.
-		/// </summary>
-		NotifySessionStateChanged = ht4c::Common::CF_NotifySessionStateChanged
+		Disconnected = ht4c::Common::SS_Disconnected
 	};
 
 }

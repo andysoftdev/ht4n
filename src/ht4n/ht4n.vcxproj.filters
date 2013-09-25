@@ -173,6 +173,12 @@
     <ClInclude Include="ScanSpecBuilder.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="SessionState.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionStateChangedEventArgs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -263,6 +269,9 @@
       <Filter>Source Files\Xml</Filter>
     </ClCompile>
     <ClCompile Include="ScanSpecBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionStateChangedEventArgs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

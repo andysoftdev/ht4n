@@ -22,3 +22,4 @@ CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Usage", "CA2227:CollectionPropertiesShould
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope="member", Target="Hypertable.Xml.AccessGroup.#ColumnFamilies");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Scope="member", Target="Hypertable.Xml.TableSchema.#AccessGroups");
 CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope="member", Target="Hypertable.Xml.TableSchema.#AccessGroups");
+CA_GLOBAL_SUPPRESS_MESSAGE("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces", Scope="type", Target="Hypertable.SessionState");
