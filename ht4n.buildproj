@@ -9,7 +9,7 @@
 
 	<!-- Master files to make -->
 	<PropertyGroup>
-		<Version>0.9.7.10</Version>
+		<Version>0.9.7.11</Version>
 		<FxVersion Condition="'$(FxVersion)' == ''">4.0</FxVersion>
 		<VcVersion Condition="'$(VcVersion)' == ''">10.0</VcVersion>
 
