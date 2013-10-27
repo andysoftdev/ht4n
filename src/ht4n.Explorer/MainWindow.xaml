@@ -7,10 +7,10 @@
                        x:ClassModifier="internal"
                        Template="{DynamicResource ChromeWindow}"
                        Icon="Resources/hypertable.ico"
-                       Width="852"
-                       Height="480"
-                       MinWidth="400"
-                       MinHeight="280">
+                       Width="980"
+                       Height="580"
+                       MinWidth="480"
+                       MinHeight="320">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

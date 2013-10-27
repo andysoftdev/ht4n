@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-
 namespace Hypertable.Explorer
 {
     using System;
@@ -39,15 +38,45 @@ namespace Hypertable.Explorer
     /// </summary>
     internal class ChromeWindow : Window
     {
-        #region Constants and Fields
+        #region Constants
 
+        /// <summary>
+        /// The edge size.
+        /// </summary>
         private const int EdgeSize = 23;
 
+        /// <summary>
+        /// The WM_GETMINMAXINFO message id.
+        /// </summary>
+        private const int WM_GETMINMAXINFO = 0x0024;
+
+        /// <summary>
+        /// The WM_SIZING message id.
+        /// </summary>
+        private const int WM_SIZING = 0x0214;
+
+        /// <summary>
+        /// The WM_SYSCOMMAND message id.
+        /// </summary>
         private const int WM_SYSCOMMAND = 0x112;
 
+        #endregion
+
+        #region Static Fields
+
+        /// <summary>
+        /// The double click delay.
+        /// </summary>
+        private static readonly TimeSpan DoubleClickDelay = TimeSpan.FromMilliseconds(500);
+
+        /// <summary>
+        /// The inactive border brush.
+        /// </summary>
         private static readonly Brush InactiveBorderBrush = new SolidColorBrush(Color.FromRgb(0x91, 0x91, 0x91));
 
-        private static readonly TimeSpan DoubleClickDelay = TimeSpan.FromMilliseconds(500);
+        #endregion
+
+        #region Fields
 
         private Grid chromeFrame;
 
@@ -74,12 +103,14 @@ namespace Hypertable.Explorer
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// Initializes a new instance of the <see cref="ChromeWindow"/> class.
         /// </summary>
-        public ChromeWindow() {
+        public ChromeWindow()
+        {
             this.Loaded += (s, e) =>
                 {
-                    if (InactiveBorderBrush.CanFreeze) {
+                    if (InactiveBorderBrush.CanFreeze)
+                    {
                         InactiveBorderBrush.Freeze();
                     }
 
@@ -102,7 +133,8 @@ namespace Hypertable.Explorer
                     chromeButton = (Button)this.Template.FindName("ChromeCloseButton", this);
                     chromeButton.Click += this.HandleChromeCloseClick;
 
-                    foreach (var chromeBorder in this.chromeFrame.Children.OfType<Rectangle>()) {
+                    foreach (var chromeBorder in this.chromeFrame.Children.OfType<Rectangle>())
+                    {
                         chromeBorder.PreviewMouseDown += this.HandleChromeFramePreviewMouseDown;
                         chromeBorder.MouseMove += this.HandleChromeFrameMouseMove;
                     }
@@ -121,22 +153,46 @@ namespace Hypertable.Explorer
 
         #region Enums
 
-        public enum ResizeDirection
+        private enum ResizeDirection
         {
+            /// <summary>
+            /// The left.
+            /// </summary>
             Left = 1, 
 
+            /// <summary>
+            /// The right.
+            /// </summary>
             Right = 2, 
 
+            /// <summary>
+            /// The top.
+            /// </summary>
             Top = 3, 
 
+            /// <summary>
+            /// The top left.
+            /// </summary>
             TopLeft = 4, 
 
+            /// <summary>
+            /// The top right.
+            /// </summary>
             TopRight = 5, 
 
+            /// <summary>
+            /// The bottom.
+            /// </summary>
             Bottom = 6, 
 
+            /// <summary>
+            /// The bottom left.
+            /// </summary>
             BottomLeft = 7, 
 
+            /// <summary>
+            /// The bottom right.
+            /// </summary>
             BottomRight = 8, 
         }
 
@@ -148,7 +204,8 @@ namespace Hypertable.Explorer
         /// Raises the <see cref="E:System.Windows.Window.Closed"/> event.
         /// </summary>
         /// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.</param>
-        protected override void OnClosed(EventArgs e) {
+        protected override void OnClosed(EventArgs e)
+        {
             this.CloseSurrounds();
             base.OnClosed(e);
         }
@@ -160,7 +217,8 @@ namespace Hypertable.Explorer
         /// </summary>
         /// <param name="e">The <see cref="T:System.Windows.RoutedEventArgs"/> 
         /// that contains the event data.</param>
-        protected override void OnInitialized(EventArgs e) {
+        protected override void OnInitialized(EventArgs e)
+        {
             this.AllowsTransparency = false;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             this.WindowStyle = WindowStyle.None;
@@ -175,31 +233,54 @@ namespace Hypertable.Explorer
         /// </summary>
         /// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.
         /// </param>
-        protected override void OnSourceInitialized(EventArgs e) {
+        protected override void OnSourceInitialized(EventArgs e)
+        {
             base.OnSourceInitialized(e);
 
             this.hwndSource = (HwndSource)PresentationSource.FromVisual(this);
 
             // Returns the HwndSource object for the window
             // which presents WPF content in a Win32 window.
-            HwndSource.FromHwnd(this.hwndSource.Handle).AddHook(NativeMethods.WindowProc);
+            HwndSource.FromHwnd(this.hwndSource.Handle).AddHook(this.WindowProc);
         }
 
-        /// <summary>
-        /// Creates an empty window.
-        /// </summary>
-        /// <returns>Window created</returns>
-        private static Window CreateTransparentWindow() {
+        private static Window CreateTransparentWindow()
+        {
             return new Window
                 {
                    AllowsTransparency = true, Visibility = Visibility.Hidden, ShowInTaskbar = false, WindowStyle = WindowStyle.None, Background = null, Width = 0, Height = 0 
                 };
         }
 
-        /// <summary>
-        /// Closes the surrounding windows.
-        /// </summary>
-        private void CloseSurrounds() {
+        private static void HandleGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
+        {
+            var mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
+
+            // Adjust the maximized size and position to fit the work area 
+            // of the correct monitor.
+            const int MONITOR_DEFAULTTONEAREST = 0x00000002;
+
+            var monitor = NativeMethods.MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+            if (monitor != IntPtr.Zero)
+            {
+                var monitorInfo = new MONITORINFO();
+                NativeMethods.GetMonitorInfo(monitor, monitorInfo);
+
+                var rcWorkArea = monitorInfo.rcWork;
+                var rcMonitorArea = monitorInfo.rcMonitor;
+
+                mmi.ptMaxPosition.x = Math.Abs(rcWorkArea.left - rcMonitorArea.left);
+                mmi.ptMaxPosition.y = Math.Abs(rcWorkArea.top - rcMonitorArea.top);
+
+                mmi.ptMaxSize.x = Math.Abs(rcWorkArea.right - rcWorkArea.left);
+                mmi.ptMaxSize.y = Math.Abs(rcWorkArea.bottom - rcWorkArea.top);
+            }
+
+            Marshal.StructureToPtr(mmi, lParam, true);
+        }
+
+        private void CloseSurrounds()
+        {
             this.wndTop.Close();
             this.wndLeft.Close();
             this.wndBottom.Close();
@@ -207,42 +288,29 @@ namespace Hypertable.Explorer
         }
 
         [DebuggerStepThrough]
-        private Decorator GetDecorator(string imageUri, double radius = 0) {
+        private Decorator GetDecorator(string imageUri, double radius = 0)
+        {
             return new Border { CornerRadius = new CornerRadius(radius), Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), imageUri))) };
         }
 
-        /// <summary>
-        /// Handles the activated event.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/>
-        /// instance containing the event data.</param>
-        private void HandleActivated(object sender, EventArgs e) {
+        private void HandleActivated(object sender, EventArgs e)
+        {
             this.SetSurroundShadows();
             this.roundBorder.BorderBrush = Brushes.Black;
             this.resize.Fill = Brushes.Black;
         }
 
-        /// <summary>
-        /// Handles the close click.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> 
-        /// instance containing the event data.</param>
-        private void HandleChromeCloseClick(object sender, RoutedEventArgs e) {
+        private void HandleChromeCloseClick(object sender, RoutedEventArgs e)
+        {
             this.Close();
         }
 
-        /// <summary>
-        /// Handles the rectangle mouse move.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> 
-        /// instance containing the event data.</param>
-        private void HandleChromeFrameMouseMove(object sender, MouseEventArgs e) {
+        private void HandleChromeFrameMouseMove(object sender, MouseEventArgs e)
+        {
             var clickedRectangle = (Rectangle)sender;
 
-            switch (clickedRectangle.Name) {
+            switch (clickedRectangle.Name)
+            {
                 case "Top":
                     this.Cursor = Cursors.SizeNS;
                     break;
@@ -270,16 +338,12 @@ namespace Hypertable.Explorer
             }
         }
 
-        /// <summary>
-        /// Handles the rectangle preview mouse down.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.Input.MouseButtonEventArgs"/> 
-        /// instance containing the event data.</param>
-        private void HandleChromeFramePreviewMouseDown(object sender, MouseButtonEventArgs e) {
+        private void HandleChromeFramePreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
             var clickedRectangle = (Rectangle)sender;
 
-            switch (clickedRectangle.Name) {
+            switch (clickedRectangle.Name)
+            {
                 case "Top":
                     this.Cursor = Cursors.SizeNS;
                     this.ResizeWindow(ResizeDirection.Top);
@@ -315,14 +379,10 @@ namespace Hypertable.Explorer
             }
         }
 
-        /// <summary>
-        /// Handles the header preview mouse down.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.Input.MouseButtonEventArgs"/>
-        /// instance containing the event data.</param>
-        private void HandleChromeHeaderPreviewMouseDown(object sender, MouseButtonEventArgs e) {
-            if (DateTime.Now.Subtract(this.headerLastClicked) <= DoubleClickDelay) {
+        private void HandleChromeHeaderPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (DateTime.Now.Subtract(this.headerLastClicked) <= DoubleClickDelay)
+            {
                 // Execute the code inside the event handler for the 
                 // restore button click passing null for the sender
                 // and null for the event args.
@@ -330,98 +390,139 @@ namespace Hypertable.Explorer
             }
 
             this.headerLastClicked = DateTime.Now;
-            if (Mouse.LeftButton == MouseButtonState.Pressed) {
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
                 this.DragMove();
             }
         }
 
-        /// <summary>
-        /// Handles the minimize click.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> 
-        /// instance containing the event data.</param>
-        private void HandleChromeMinimizeClick(object sender, RoutedEventArgs e) {
+        private void HandleChromeMinimizeClick(object sender, RoutedEventArgs e)
+        {
             this.WindowState = WindowState.Minimized;
         }
 
-        /// <summary>
-        /// Handles the restore click.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> 
-        /// instance containing the event data.</param>
-        private void HandleChromeRestoreClick(object sender, RoutedEventArgs e) {
+        private void HandleChromeRestoreClick(object sender, RoutedEventArgs e)
+        {
             this.WindowState = (this.WindowState == WindowState.Normal) ? WindowState.Maximized : WindowState.Normal;
             this.chromeFrame.IsHitTestVisible = this.WindowState != WindowState.Maximized;
             this.resize.Visibility = (this.WindowState == WindowState.Maximized) ? Visibility.Hidden : Visibility.Visible;
             this.roundBorder.Visibility = (this.WindowState == WindowState.Maximized) ? Visibility.Hidden : Visibility.Visible;
         }
 
-        /// <summary>
-        /// Handles the deactivated event.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/>
-        /// instance containing the event data.</param>
-        private void HandleDeactivated(object sender, EventArgs e) {
+        private void HandleDeactivated(object sender, EventArgs e)
+        {
             this.SetSurroundShadows(false);
             this.roundBorder.BorderBrush = InactiveBorderBrush;
             this.resize.Fill = InactiveBorderBrush;
         }
 
-        /// <summary>
-        /// Handles the location changed.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> 
-        /// instance containing the event data.</param>
-        private void HandleLocationChanged(object sender, EventArgs e) {
+        private void HandleLocationChanged(object sender, EventArgs e)
+        {
             this.ResizeSurrounds();
         }
 
-        /// <summary>
-        /// Handles the preview mouse move.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> 
-        /// instance containing the event data.</param>
         [DebuggerStepThrough]
-        private void HandlePreviewMouseMove(object sender, MouseEventArgs e) {
-            if (Mouse.LeftButton != MouseButtonState.Pressed) {
+        private void HandlePreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (Mouse.LeftButton != MouseButtonState.Pressed)
+            {
                 this.Cursor = Cursors.Arrow;
             }
         }
 
-        /// <summary>
-        /// Handles the windows state changed.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/>
-        /// instance containing the event data.</param>
-        private void HandleWndStateChanged(object sender, EventArgs e) {
-            if (this.WindowState == WindowState.Normal) {
+        private void HandleSizing(IntPtr wParam, IntPtr lParam)
+        {
+            const int WMSZ_LEFT = 1;
+            const int WMSZ_RIGHT = 2;
+            const int WMSZ_TOP = 3;
+            const int WMSZ_TOPLEFT = 4;
+            const int WMSZ_TOPRIGHT = 5;
+            const int WMSZ_BOTTOM = 6;
+            const int WMSZ_BOTTOMLEFT = 7;
+            const int WMSZ_BOTTOMRIGHT = 8;
+
+            var rect = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
+            var wd = rect.right - rect.left - (int)this.MinWidth;
+            var hd = rect.bottom - rect.top - (int)this.MinHeight;
+
+            if (wd < 0 || hd < 0)
+            {
+                if (wd < 0)
+                {
+                    switch (wParam.ToInt32())
+                    {
+                        case WMSZ_LEFT:
+                        case WMSZ_TOPLEFT:
+                        case WMSZ_BOTTOMLEFT:
+                            if (wd < 0)
+                            {
+                                rect.left += wd;
+                            }
+
+                            break;
+                        case WMSZ_RIGHT:
+                        case WMSZ_TOPRIGHT:
+                        case WMSZ_BOTTOMRIGHT:
+                            if (wd < 0)
+                            {
+                                rect.right -= wd;
+                            }
+
+                            break;
+                    }
+                }
+
+                if (hd < 0)
+                {
+                    switch (wParam.ToInt32())
+                    {
+                        case WMSZ_TOP:
+                        case WMSZ_TOPLEFT:
+                        case WMSZ_TOPRIGHT:
+                            if (hd < 0)
+                            {
+                                rect.top += hd;
+                            }
+
+                            break;
+                        case WMSZ_BOTTOM:
+                        case WMSZ_BOTTOMLEFT:
+                        case WMSZ_BOTTOMRIGHT:
+                            if (hd < 0)
+                            {
+                                rect.bottom -= hd;
+                            }
+
+                            break;
+                    }
+                }
+
+                Marshal.StructureToPtr(rect, lParam, false);
+            }
+        }
+
+        private void HandleWndStateChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState == WindowState.Normal)
+            {
                 this.ShowSurrounds();
             }
-            else {
+            else
+            {
                 this.HideSurrounds();
             }
         }
 
-        /// <summary>
-        /// Hides the surrounding windows.
-        /// </summary>
-        private void HideSurrounds() {
+        private void HideSurrounds()
+        {
             this.wndTop.Hide();
             this.wndLeft.Hide();
             this.wndBottom.Hide();
             this.wndRight.Hide();
         }
 
-        /// <summary>
-        /// Initializes the surrounding windows.
-        /// </summary>
-        private void InitializeSurrounds() {
+        private void InitializeSurrounds()
+        {
             this.wndTop = CreateTransparentWindow();
             this.wndLeft = CreateTransparentWindow();
             this.wndBottom = CreateTransparentWindow();
@@ -430,12 +531,12 @@ namespace Hypertable.Explorer
             this.SetSurroundShadows();
         }
 
-        /// <summary>
-        /// Resize the surrounding windows.
-        /// </summary>
-        private void ResizeSurrounds() {
-            if (PresentationSource.FromVisual(this.wndTop) != null) {
-                if (this.hwndSourceSurrounds == null) {
+        private void ResizeSurrounds()
+        {
+            if (PresentationSource.FromVisual(this.wndTop) != null)
+            {
+                if (this.hwndSourceSurrounds == null)
+                {
                     this.hwndSourceSurrounds = new[]
                         {
                             (HwndSource)PresentationSource.FromVisual(this.wndTop), (HwndSource)PresentationSource.FromVisual(this.wndLeft), 
@@ -464,7 +565,8 @@ namespace Hypertable.Explorer
 
                 NativeMethods.EndDeferWindowPos(dwp);
             }
-            else {
+            else
+            {
                 this.wndTop.Left = this.Left - EdgeSize;
                 this.wndTop.Top = this.Top - EdgeSize;
                 this.wndTop.Width = this.Width + EdgeSize * 2;
@@ -487,20 +589,15 @@ namespace Hypertable.Explorer
             }
         }
 
-        /// <summary>
-        /// Resizes the window.
-        /// </summary>
-        /// <param name="direction">The direction.</param>
-        private void ResizeWindow(ResizeDirection direction) {
+        private void ResizeWindow(ResizeDirection direction)
+        {
             NativeMethods.SendMessage(this.hwndSource.Handle, WM_SYSCOMMAND, (IntPtr)(61440 + direction), IntPtr.Zero);
         }
 
-        /// <summary>
-        /// Sets the artificial drop shadow.
-        /// </summary>
-        /// <param name="active">if set to <c>true</c> [active].</param>
-        private void SetSurroundShadows(bool active = true) {
-            if (active) {
+        private void SetSurroundShadows(bool active = true)
+        {
+            if (active)
+            {
                 const double CornerRadius = 1.75;
 
                 this.wndTop.Content = this.GetDecorator("Resources/ActiveShadowTop.png");
@@ -508,7 +605,8 @@ namespace Hypertable.Explorer
                 this.wndBottom.Content = this.GetDecorator("Resources/ActiveShadowBottom.png");
                 this.wndRight.Content = this.GetDecorator("Resources/ActiveShadowRight.png", CornerRadius);
             }
-            else {
+            else
+            {
                 this.wndTop.Content = this.GetDecorator("Resources/InactiveShadowTop.png");
                 this.wndLeft.Content = this.GetDecorator("Resources/InactiveShadowLeft.png");
                 this.wndBottom.Content = this.GetDecorator("Resources/InactiveShadowBottom.png");
@@ -518,129 +616,242 @@ namespace Hypertable.Explorer
             this.ResizeSurrounds();
         }
 
-        /// <summary>
-        /// Shows the surrounding windows.
-        /// </summary>
-        private void ShowSurrounds() {
+        private void ShowSurrounds()
+        {
             this.wndTop.Show();
             this.wndLeft.Show();
             this.wndBottom.Show();
             this.wndRight.Show();
         }
 
+        [DebuggerStepThrough]
+        private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            switch (msg)
+            {
+                case WM_GETMINMAXINFO:
+                    HandleGetMinMaxInfo(hwnd, lParam);
+                    handled = true;
+                    break;
+
+                case WM_SIZING:
+                    this.HandleSizing(wParam, lParam);
+                    handled = true;
+                    break;
+            }
+
+            return (IntPtr)0;
+        }
+
         #endregion
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MINMAXINFO
+        {
+            /// <summary>
+            /// The pt reserved.
+            /// </summary>
+            public readonly POINT ptReserved;
+
+            /// <summary>
+            /// The pt max size.
+            /// </summary>
+            public POINT ptMaxSize;
+
+            /// <summary>
+            /// The pt max position.
+            /// </summary>
+            public POINT ptMaxPosition;
+
+            /// <summary>
+            /// The pt min track size.
+            /// </summary>
+            public readonly POINT ptMinTrackSize;
+
+            /// <summary>
+            /// The pt max track size.
+            /// </summary>
+            public readonly POINT ptMaxTrackSize;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            /// <summary>
+            /// The x.
+            /// </summary>
+            public int x;
+
+            /// <summary>
+            /// The y.
+            /// </summary>
+            public int y;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 0)]
+        private struct RECT
+        {
+            /// <summary>
+            /// The left.
+            /// </summary>
+            public int left;
+
+            /// <summary>
+            /// The top.
+            /// </summary>
+            public int top;
+
+            /// <summary>
+            /// The right.
+            /// </summary>
+            public int right;
+
+            /// <summary>
+            /// The bottom.
+            /// </summary>
+            public int bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private sealed class MONITORINFO
+        {
+            /// <summary>
+            /// The cb size.
+            /// </summary>
+            public readonly int cbSize;
+
+            /// <summary>
+            /// The rc monitor.
+            /// </summary>
+            public readonly RECT rcMonitor;
+
+            /// <summary>
+            /// The rc work.
+            /// </summary>
+            public readonly RECT rcWork;
+
+            /// <summary>
+            /// The dw flags.
+            /// </summary>
+            public readonly int dwFlags;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MONITORINFO"/> class.
+            /// </summary>
+            public MONITORINFO()
+            {
+                this.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+                this.rcMonitor = new RECT();
+                this.rcWork = new RECT();
+                this.dwFlags = 0;
+            }
+        }
 
         private static class NativeMethods
         {
+            /// <summary>
+            /// The send message.
+            /// </summary>
+            /// <param name="hWnd">
+            /// The h wnd.
+            /// </param>
+            /// <param name="msg">
+            /// The msg.
+            /// </param>
+            /// <param name="wParam">
+            /// The w param.
+            /// </param>
+            /// <param name="lParam">
+            /// The l param.
+            /// </param>
+            /// <returns>
+            /// </returns>
             [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            internal static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+            public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
+            /// <summary>
+            /// The begin defer window pos.
+            /// </summary>
+            /// <param name="nNumWindows">
+            /// The n num windows.
+            /// </param>
+            /// <returns>
+            /// </returns>
             [DllImport("user32.dll")]
             public static extern IntPtr BeginDeferWindowPos(int nNumWindows);
 
+            /// <summary>
+            /// The defer window pos.
+            /// </summary>
+            /// <param name="hWinPosInfo">
+            /// The h win pos info.
+            /// </param>
+            /// <param name="hWnd">
+            /// The h wnd.
+            /// </param>
+            /// <param name="hWndInsertAfter">
+            /// The h wnd insert after.
+            /// </param>
+            /// <param name="x">
+            /// The x.
+            /// </param>
+            /// <param name="y">
+            /// The y.
+            /// </param>
+            /// <param name="cx">
+            /// The cx.
+            /// </param>
+            /// <param name="cy">
+            /// The cy.
+            /// </param>
+            /// <param name="uFlags">
+            /// The u flags.
+            /// </param>
+            /// <returns>
+            /// </returns>
             [DllImport("user32.dll", SetLastError = true)]
             public static extern IntPtr DeferWindowPos(IntPtr hWinPosInfo, IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
 
+            /// <summary>
+            /// The end defer window pos.
+            /// </summary>
+            /// <param name="hWinPosInfo">
+            /// The h win pos info.
+            /// </param>
+            /// <returns>
+            /// </returns>
             [DllImport("user32.dll")]
             [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool EndDeferWindowPos(IntPtr hWinPosInfo);
 
-            [DebuggerStepThrough]
-            internal static IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
-                switch (msg) {
-                    case 0x0024:
-                        WmGetMinMaxInfo(hwnd, lParam);
-                        handled = true;
-                        break;
-                }
-
-                return (IntPtr)0;
-            }
-
+            /// <summary>
+            /// The get monitor info.
+            /// </summary>
+            /// <param name="hMonitor">
+            /// The h monitor.
+            /// </param>
+            /// <param name="lpmi">
+            /// The lpmi.
+            /// </param>
+            /// <returns>
+            /// </returns>
             [DllImport("user32")]
             [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
+            public static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
 
+            /// <summary>
+            /// The monitor from window.
+            /// </summary>
+            /// <param name="handle">
+            /// The handle.
+            /// </param>
+            /// <param name="flags">
+            /// The flags.
+            /// </param>
+            /// <returns>
+            /// </returns>
             [DllImport("User32")]
-            private static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
-
-            private static void WmGetMinMaxInfo(IntPtr hwnd, IntPtr lParam) {
-                var mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
-
-                // Adjust the maximized size and position to fit the work area 
-                // of the correct monitor.
-                const int MONITOR_DEFAULTTONEAREST = 0x00000002;
-
-                var monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-                if (monitor != IntPtr.Zero) {
-                    var monitorInfo = new MONITORINFO();
-                    GetMonitorInfo(monitor, monitorInfo);
-
-                    var rcWorkArea = monitorInfo.rcWork;
-                    var rcMonitorArea = monitorInfo.rcMonitor;
-
-                    mmi.ptMaxPosition.x = Math.Abs(rcWorkArea.left - rcMonitorArea.left);
-                    mmi.ptMaxPosition.y = Math.Abs(rcWorkArea.top - rcMonitorArea.top);
-
-                    mmi.ptMaxSize.x = Math.Abs(rcWorkArea.right - rcWorkArea.left);
-                    mmi.ptMaxSize.y = Math.Abs(rcWorkArea.bottom - rcWorkArea.top);
-                }
-
-                Marshal.StructureToPtr(mmi, lParam, true);
-            }
-
-            [StructLayout(LayoutKind.Sequential, Pack = 0)]
-            private struct RECT
-            {
-                public readonly int left;
-
-                public readonly int top;
-
-                public readonly int right;
-
-                public readonly int bottom;
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            private struct POINT
-            {
-                public int x;
-
-                public int y;
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            private struct MINMAXINFO
-            {
-                public readonly POINT ptReserved;
-
-                public POINT ptMaxSize;
-
-                public POINT ptMaxPosition;
-
-                public readonly POINT ptMinTrackSize;
-
-                public readonly POINT ptMaxTrackSize;
-            }
-
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-            private sealed class MONITORINFO
-            {
-                public readonly int cbSize;
-
-                public readonly RECT rcMonitor;
-
-                public readonly RECT rcWork;
-
-                public readonly int dwFlags;
-
-                public MONITORINFO() {
-                    this.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
-                    this.rcMonitor = new RECT();
-                    this.rcWork = new RECT();
-                    this.dwFlags = 0;
-                }
-            }
+            public static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
         }
     }
 }
