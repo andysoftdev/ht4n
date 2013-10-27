@@ -290,6 +290,9 @@ namespace Hypertable {
 				/// <param name="key">Cell key.</param>
 				/// <param name="moreKeys">More cell keys.</param>
 				/// <returns>The scan specification cell predicate builder, including common options and limits.</returns>
+				/// <remarks>
+				/// The scan spec builder ignores any valid key's timestamp.
+				/// </remarks>
 				IScanSpecBuilderWithCellOp^ WithCells( Key^ key, ... cli::array<Key^>^ moreKeys );
 
 				/// <summary>
@@ -297,6 +300,9 @@ namespace Hypertable {
 				/// </summary>
 				/// <param name="keys">Cell keys.</param>
 				/// <returns>The scan specification cell predicate builder, including common options and limits.</returns>
+				/// <remarks>
+				/// The scan spec builder ignores any valid key's timestamp.
+				/// </remarks>
 				IScanSpecBuilderWithCellOp^ WithCells( IEnumerable<Key^>^ keys );
 
 				/// <summary>

@@ -124,6 +124,10 @@ namespace Hypertable {
 			/// Initializes a new instance of the ScanSpec class using the key specified.
 			/// </summary>
 			/// <param name="key">Cell to add to the scan specification.</param>
+			/// <remarks>
+			/// If the key contains a valid timestamp, the constructor adds 
+			/// StartTimestamp = EndTimestamp = key.Timestamp predicate and MaxCell = 1.
+			/// </remarks>
 			explicit ScanSpec( Key^ key );
 
 			/// <summary>
@@ -213,13 +217,31 @@ namespace Hypertable {
 			/// Gets or sets the start time of the scan.
 			/// </summary>
 			/// <remarks>If set only cells with timestamp newer or equal will be returned.</remarks>
-			property DateTime StartDateTime;
+			property DateTime StartDateTime {
+				DateTime get( );
+				void set( DateTime value);
+			}
+
+			/// <summary>
+			/// Gets or sets the start timestamp of the scan, in nanoseconds since 1970-01-01 00:00:00.0 UTC.
+			/// </summary>
+			/// <remarks>If set only cells with timestamp newer or equal will be returned.</remarks>
+			property UInt64 StartTimestamp;
 
 			/// <summary>
 			/// Gets or sets the end time of the scan.
 			/// </summary>
 			/// <remarks>If set only cells with timestamp older or equal will be returned.</remarks>
-			property DateTime EndDateTime;
+			property DateTime EndDateTime {
+				DateTime get( );
+				void set( DateTime value);
+			}
+
+			/// <summary>
+			/// Gets or sets the end time of the scan, in nanoseconds since 1970-01-01 00:00:00.0 UTC.
+			/// </summary>
+			/// <remarks>If set only cells with timestamp older or equal will be returned.</remarks>
+			property UInt64 EndTimestamp;
 
 			/// <summary>
 			/// Gets or sets a regular expression to filter rows by.
@@ -245,7 +267,7 @@ namespace Hypertable {
 			/// Gets the number of rows.
 			/// </summary>
 			property int RowCount {
-				int get() {
+				int get( ) {
 					return rows != nullptr ? rows->Count : 0;
 				}
 			}
@@ -254,7 +276,7 @@ namespace Hypertable {
 			/// Gets the number of columns.
 			/// </summary>
 			property int ColumnCount {
-				int get() {
+				int get( ) {
 					return columns != nullptr ? columns->Count : 0;
 				}
 			}
@@ -263,7 +285,7 @@ namespace Hypertable {
 			/// Gets the number of column predicates.
 			/// </summary>
 			property int ColumnPredicateCount {
-				int get() {
+				int get( ) {
 					return columnPredicates != nullptr ? columnPredicates->Count : 0;
 				}
 			}
@@ -272,7 +294,7 @@ namespace Hypertable {
 			/// Gets the number of cells.
 			/// </summary>
 			property int CellCount {
-				int get() {
+				int get( ) {
 					return keys != nullptr ? keys->Count : 0;
 				}
 			}
@@ -281,7 +303,7 @@ namespace Hypertable {
 			/// Gets the number of row intervals.
 			/// </summary>
 			property int RowIntervalCount {
-				int get() {
+				int get( ) {
 					return rowIntervals != nullptr ? rowIntervals->Count : 0;
 				}
 			}
@@ -290,7 +312,7 @@ namespace Hypertable {
 			/// Gets the number of cell intervals.
 			/// </summary>
 			property int CellIntervalCount {
-				int get() {
+				int get( ) {
 					return cellIntervals != nullptr ? cellIntervals->Count : 0;
 				}
 			}
@@ -299,42 +321,42 @@ namespace Hypertable {
 			/// Gets the rows.
 			/// </summary>
 			property ReadOnlyCollection<String^>^ Rows {
-				ReadOnlyCollection<String^>^ get();
+				ReadOnlyCollection<String^>^ get( );
 			}
 
 			/// <summary>
 			/// Gets the columns.
 			/// </summary>
 			property ReadOnlyCollection<String^>^ Columns {
-				ReadOnlyCollection<String^>^ get();
+				ReadOnlyCollection<String^>^ get( );
 			}
 
 			/// <summary>
 			/// Gets the column predicates.
 			/// </summary>
 			property ReadOnlyCollection<ColumnPredicate^>^ ColumnPredicates {
-				ReadOnlyCollection<ColumnPredicate^>^ get();
+				ReadOnlyCollection<ColumnPredicate^>^ get( );
 			}
 
 			/// <summary>
 			/// Gets the cells.
 			/// </summary>
 			property ReadOnlyCollection<Key^>^ Cells {
-				ReadOnlyCollection<Key^>^ get();
+				ReadOnlyCollection<Key^>^ get( );
 			}
 
 			/// <summary>
 			/// Gets the row intervals.
 			/// </summary>
 			property ReadOnlyCollection<RowInterval^>^ RowIntervals {
-				ReadOnlyCollection<RowInterval^>^ get();
+				ReadOnlyCollection<RowInterval^>^ get( );
 			}
 
 			/// <summary>
 			/// Gets the cell intervals.
 			/// </summary>
 			property ReadOnlyCollection<CellInterval^>^ CellIntervals {
-				ReadOnlyCollection<CellInterval^>^ get();
+				ReadOnlyCollection<CellInterval^>^ get( );
 			}
 
 			/// <summary>
@@ -434,6 +456,9 @@ namespace Hypertable {
 			/// <param name="key">Cell key.</param>
 			/// <param name="moreKeys">More cell keys.</param>
 			/// <returns>This ScanSpec instance.</returns>
+			/// <remarks>
+			/// The scan specification ignores any valid key's timestamp.
+			/// </remarks>
 			ScanSpec^ AddCell( Key^ key, ... cli::array<Key^>^ moreKeys );
 
 			/// <summary>
@@ -441,6 +466,9 @@ namespace Hypertable {
 			/// </summary>
 			/// <param name="keys">Cell keys.</param>
 			/// <returns>This ScanSpec instance.</returns>
+			/// <remarks>
+			/// The scan specification ignores any valid key's timestamp.
+			/// </remarks>
 			ScanSpec^ AddCell( IEnumerable<Key^>^ keys );
 
 			/// <summary>

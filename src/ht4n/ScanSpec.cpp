@@ -37,31 +37,66 @@ namespace Hypertable {
 	using namespace System::Text;
 	using namespace ht4c;
 
-	ScanSpec::ScanSpec( ) {
+	ScanSpec::ScanSpec( )
+	{
 	}
 
-	ScanSpec::ScanSpec( bool sorted ) {
+	ScanSpec::ScanSpec( bool sorted )
+	{
 		isSorted = sorted;
 	}
 
-	ScanSpec::ScanSpec( String^ row ) {
+	ScanSpec::ScanSpec( String^ row )
+	{
 		AddRow( row );
 	}
 	
-	ScanSpec::ScanSpec( Key^ key ) {
+	ScanSpec::ScanSpec( Key^ key )
+	{
+		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
+
 		AddCell( key );
+
+		if( key->Timestamp > 0 ) {
+			MaxCells = 1;
+			StartTimestamp = key->Timestamp;
+			EndTimestamp = key->Timestamp;
+		}
 	}
 
-	ScanSpec::ScanSpec( ColumnPredicate^ columnPredicate ) {
+	ScanSpec::ScanSpec( ColumnPredicate^ columnPredicate )
+	{
 		AddColumnPredicate( columnPredicate );
 	}
 
-	ScanSpec::ScanSpec( RowInterval^ rowInterval ) {
+	ScanSpec::ScanSpec( RowInterval^ rowInterval )
+	{
 		AddRowInterval( rowInterval );
 	}
 
-	ScanSpec::ScanSpec( CellInterval^ cellInterval ) {
+	ScanSpec::ScanSpec( CellInterval^ cellInterval )
+	{
 		AddCellInterval( cellInterval );
+	}
+
+	DateTime ScanSpec::StartDateTime::get( ) {
+		return timestampOrigin + TimeSpan::FromTicks(StartTimestamp / 100);
+	}
+	
+	void ScanSpec::StartDateTime::set( DateTime value) {
+		if( value < timestampOrigin ) throw gcnew ArgumentException( L"Invalid DateTime" );
+		if( value.Kind == DateTimeKind::Unspecified ) throw gcnew ArgumentException( L"Unspecified DateTime Kind" );
+		StartTimestamp = (value.ToUniversalTime() - timestampOrigin).Ticks * 100;
+	}
+
+	DateTime ScanSpec::EndDateTime::get( ) {
+		return timestampOrigin + TimeSpan::FromTicks(EndTimestamp / 100);
+	}
+
+	void ScanSpec::EndDateTime::set( DateTime value ) {
+		if( value < timestampOrigin ) throw gcnew ArgumentException( L"Invalid DateTime" );
+		if( value.Kind == DateTimeKind::Unspecified ) throw gcnew ArgumentException( L"Unspecified DateTime Kind" );
+		EndTimestamp = (value.ToUniversalTime() - timestampOrigin).Ticks * 100;
 	}
 
 	ReadOnlyCollection<String^>^ ScanSpec::Rows::get( ) {
@@ -466,13 +501,11 @@ namespace Hypertable {
 		scanSpec.keysOnly( KeysOnly );
 		scanSpec.scanAndFilter( ScanAndFilter );
 
-		if( StartDateTime.Ticks ) {
-			if( StartDateTime.Kind == DateTimeKind::Unspecified ) throw gcnew BadScanSpecException( L"Unspecified StartDateTime Kind" );
-			scanSpec.startTimestamp( (StartDateTime.ToUniversalTime() - timestampOrigin).Ticks * 100 );
+		if( StartTimestamp > 0 ) {
+			scanSpec.startTimestamp( StartTimestamp );
 		}
-		if( EndDateTime.Ticks ) {
-			if( EndDateTime.Kind == DateTimeKind::Unspecified ) throw gcnew BadScanSpecException( L"Unspecified EndDateTime Kind" );
-			scanSpec.endTimestamp( (EndDateTime.ToUniversalTime() - timestampOrigin).Ticks * 100 );
+		if( EndTimestamp > 0 ) {
+			scanSpec.endTimestamp( EndTimestamp );
 		}
 		if( !String::IsNullOrEmpty(RowRegex) ) {
 			scanSpec.rowRegex( CM2U8(RowRegex) );
