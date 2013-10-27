@@ -222,13 +222,13 @@ namespace Hypertable.Test
                 .Create()
                     .WithColumns()
                     .WithRows("a")
-                    .StartDateTime(new DateTime(2011, 3, 10))
-                    .EndDateTime(new DateTime(2012, 4, 11))
+                    .StartDateTime(new DateTime(2011, 3, 10, 13, 45, 12, DateTimeKind.Local))
+                    .EndDateTime(new DateTime(2012, 4, 11, 17, 5, 52, DateTimeKind.Utc))
                 .Build();
 
             Assert.IsNotNull(scanSpec);
-            Assert.AreEqual(new DateTime(2011, 3, 10), scanSpec.StartDateTime);
-            Assert.AreEqual(new DateTime(2012, 4, 11), scanSpec.EndDateTime);
+            Assert.AreEqual(new DateTime(2011, 3, 10, 13, 45, 12, DateTimeKind.Local).ToUniversalTime(), scanSpec.StartDateTime);
+            Assert.AreEqual(new DateTime(2012, 4, 11, 17, 5, 52, DateTimeKind.Utc), scanSpec.EndDateTime);
             Assert.IsFalse(scanSpec.ScanAndFilter);
             Assert.IsFalse(scanSpec.KeysOnly);
 

@@ -1518,7 +1518,7 @@ namespace Hypertable.Test
                         .WithColumns("asc", "desc")
                         .WithRows()
                         .StartDateTime(dateTimeSet[1])
-                        .EndDateTime(dateTimeSet[dateTimeSet.Length - 2])
+                        .EndDateTime(dateTimeSet[dateTimeSet.Length - 3])
                     .Build();
 
                 using( var scanner = _table.CreateScanner(scanSpec) ) {
@@ -1526,7 +1526,7 @@ namespace Hypertable.Test
                     Cell cell;
                     while( scanner.Next(out cell) ) {
                         Assert.IsTrue(cell.Key.DateTime >= scanSpec.StartDateTime);
-                        Assert.IsTrue(cell.Key.DateTime < scanSpec.EndDateTime);
+                        Assert.IsTrue(cell.Key.DateTime <= scanSpec.EndDateTime);
                         var value = Encoding.GetString(cell.Value);
                         Assert.IsTrue(value != items[0] && value != items[items.Length - 1]);
                         ++c;
