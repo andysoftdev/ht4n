@@ -18,7 +18,7 @@
         public ExceptionPage(Exception e)
         {
             this.InitializeComponent();
-            this.exceptionText.Text = e != null ? e.ToString() : "Unknown exception occured.";
+            this.exceptionText.Text = e != null ? e.ToString() : "Unknown exception occurred.";
         }
 
         #endregion
