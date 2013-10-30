@@ -6,6 +6,12 @@
     <SupportHamsterDbDefine Condition="$(SupportHamsterDb) == true">SUPPORT_HAMSTERDB</SupportHamsterDbDefine>
     <SupportSQLiteDbDefine Condition="$(SupportSQLiteDb) == true">SUPPORT_SQLITEDB</SupportSQLiteDbDefine>
   </PropertyGroup>
+  <PropertyGroup>
+    <BoostVersion>1_54</BoostVersion>
+    <BoostThread Condition="'$(VisualStudioVersion)' == '10.0'">libboost_thread-vc100-mt</BoostThread>
+    <BoostThread Condition="'$(VisualStudioVersion)' == '11.0'">libboost_thread-vc110-mt</BoostThread>
+    <BoostThread Condition="'$(VisualStudioVersion)' == '12.0'">libboost_thread-vc120-mt</BoostThread>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -73,8 +79,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\dist\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(VisualStudioVersion)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\..\ht4n.ruleset</CodeAnalysisRuleSet>
@@ -84,8 +90,8 @@
     </LinkDelaySign>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\dist\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(VisualStudioVersion)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\..\ht4n.ruleset</CodeAnalysisRuleSet>
@@ -95,8 +101,8 @@
     </LinkDelaySign>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\dist\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(VisualStudioVersion)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <LinkKeyFile>
     </LinkKeyFile>
@@ -104,8 +110,8 @@
     </LinkDelaySign>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\dist\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(VisualStudioVersion)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <LinkKeyFile>
     </LinkKeyFile>
@@ -133,8 +139,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-gd-1_54.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(VisualStudioVersion)\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>$(BoostThread)-gd-$(BoostVersion).lib</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/IGNORE:4248 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Xdcmake>
@@ -172,8 +178,8 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-gd-1_54.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(VisualStudioVersion)\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>$(BoostThread)-gd-$(BoostVersion).lib</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/IGNORE:4248 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Xdcmake>
@@ -215,8 +221,8 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-1_54.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(VisualStudioVersion)\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>$(BoostThread)-$(BoostVersion).lib</IgnoreSpecificDefaultLibraries>
       <ForceSymbolReferences>
       </ForceSymbolReferences>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -261,8 +267,8 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libboost_thread-vc100-mt-1_54.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(VisualStudioVersion)\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>$(BoostThread)-$(BoostVersion).lib</IgnoreSpecificDefaultLibraries>
       <ForceSymbolReferences>
       </ForceSymbolReferences>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>

@@ -33,14 +33,18 @@ for %%p in (%*) do (
 	)
 )
 
-set bin=%~dp0..\dist\%platform%\%configuration%
-if not exist %bin%\ht4n.dll goto :missing_ht4n
-
 if exist %lib% rmdir /S /Q %lib%
 mkdir %lib%
-mkdir %lib%\net40
 
+mkdir %lib%\net40
+set bin=%~dp0..\dist\10.0%\%platform%\%configuration%
+if not exist %bin%\ht4n.dll goto :missing_ht4n
 xcopy /Q %bin%\ht4n.dll %lib%\net40\ > nul
+
+mkdir %lib%\net45
+set bin=%~dp0..\dist\11.0%\%platform%\%configuration%
+if not exist %bin%\ht4n.dll goto :missing_ht4n
+xcopy /Q %bin%\ht4n.dll %lib%\net45\ > nul
 
 %nuget% update -self
 

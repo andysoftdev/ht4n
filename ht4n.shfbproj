@@ -20,8 +20,8 @@
     <Language>en-US</Language>
     <HelpFileFormat>Website</HelpFileFormat>
     <DocumentationSources>
-      <DocumentationSource sourceFile="dist\Win32\Release\ht4n.dll" xmlns="" />
-      <DocumentationSource sourceFile="dist\Win32\Release\ht4n.xml" xmlns="" />
+      <DocumentationSource sourceFile="dist\$(VisualStudioVersion)\Win32\Release\ht4n.dll" xmlns="" />
+      <DocumentationSource sourceFile="dist\$(VisualStudioVersion)\Win32\Release\ht4n.xml" xmlns="" />
     </DocumentationSources>
     <ProjectSummary>
     </ProjectSummary>

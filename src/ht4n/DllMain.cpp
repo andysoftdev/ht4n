@@ -33,7 +33,7 @@
 
 //
 // workaround for the boost thread /clr issue
-// add ignore library libboost_thread-vc100-mt-[gd]-1_44.lib
+// add ignore library libboost_thread-$(PlatformToolset)-mt-[gd]-1_44.lib
 //
 #include "libs/thread/src/win32/thread.cpp"
 

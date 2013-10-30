@@ -10,16 +10,18 @@
 	<!-- Master files to make -->
 	<PropertyGroup>
 		<Version>0.9.7.12</Version>
-		<FxVersion Condition="'$(FxVersion)' == ''">4.0</FxVersion>
-		<VcVersion Condition="'$(VcVersion)' == ''">10.0</VcVersion>
 
-		<Master_x86>dist\ht4n-$(Version)-x86-fx$(FxVersion)-vc$(VcVersion).zip</Master_x86>
-		<Master_x64>dist\ht4n-$(Version)-x64-fx$(FxVersion)-vc$(VcVersion).zip</Master_x64>
+		<FxVersion Condition="'$(VisualStudioVersion)' == '10.0'">4.0</FxVersion>
+		<FxVersion Condition="'$(VisualStudioVersion)' == '11.0'">4.5</FxVersion>
+		<FxVersion Condition="'$(VisualStudioVersion)' == '12.0'">4.5</FxVersion>
 
-		<Master_x86 Condition="$(SupportHamsterDb) != true">dist\ht4n-$(Version)-x86-fx$(FxVersion)-vc$(VcVersion)-no-hamsterdb.zip</Master_x86>
-		<Master_x64 Condition="$(SupportHamsterDb) != true">dist\ht4n-$(Version)-x64-fx$(FxVersion)-vc$(VcVersion)-no-hamsterdb.zip</Master_x64>
+		<Master_x86>dist\$(VisualStudioVersion)\ht4n-$(Version)-x86-fx$(FxVersion)-vc$(VisualStudioVersion).zip</Master_x86>
+		<Master_x64>dist\$(VisualStudioVersion)\ht4n-$(Version)-x64-fx$(FxVersion)-vc$(VisualStudioVersion).zip</Master_x64>
 
-		<Master_ApiDoc>dist\ht4n-$(Version)-api-doc.zip</Master_ApiDoc>
+		<Master_x86 Condition="$(SupportHamsterDb) != true">dist\$(VisualStudioVersion)\ht4n-$(Version)-x86-fx$(FxVersion)-vc$(VisualStudioVersion)-no-hamsterdb.zip</Master_x86>
+		<Master_x64 Condition="$(SupportHamsterDb) != true">dist\$(VisualStudioVersion)\ht4n-$(Version)-x64-fx$(FxVersion)-vc$(VisualStudioVersion)-no-hamsterdb.zip</Master_x64>
+
+		<Master_ApiDoc>dist\$(VisualStudioVersion)\ht4n-$(Version)-api-doc.zip</Master_ApiDoc>
 	</PropertyGroup>
 
 	<!-- Check for MSBuildCommunityTasks -->
@@ -47,6 +49,20 @@
 		<Is64Bit>False</Is64Bit>
 		<Is64Bit
 			Condition="'$(MachineProcessorArchitecture)' == 'AMD64'">true</Is64Bit>
+	</PropertyGroup>
+
+	<!-- Platform toolset -->
+	<PropertyGroup>
+		<PlatformToolset Condition="'$(VisualStudioVersion)' == '10.0'">v100</PlatformToolset>
+		<PlatformToolset Condition="'$(VisualStudioVersion)' == '11.0'">v110</PlatformToolset>
+		<PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
+	</PropertyGroup>
+
+	<!-- Platform toolset -->
+	<PropertyGroup>
+		<TargetFrameworkVersion Condition="'$(VisualStudioVersion)' == '10.0'">v4.0</TargetFrameworkVersion>
+		<TargetFrameworkVersion Condition="'$(VisualStudioVersion)' == '11.0'">v4.5</TargetFrameworkVersion>
+		<TargetFrameworkVersion Condition="'$(VisualStudioVersion)' == '12.0'">v4.5</TargetFrameworkVersion>
 	</PropertyGroup>
 
 	<!-- Check for mstest64 -->
@@ -94,7 +110,10 @@
 		<StartServers>
 			<![CDATA[
 			public static void ScriptMain() {
-				ProcessStartInfo psi = new ProcessStartInfo(@"..\ht4w\dist\Win32\release\hypertable.service.exe", @"--stop-all-services --kill-servers --start-servers");
+				string filename = @"..\ht4w\dist\$(VisualStudioVersion)\Win32\release\hypertable.service.exe";
+				if( !File.Exists(filename) )
+					filename = @"..\ht4w\dist\10.0\Win32\release\hypertable.service.exe";
+				ProcessStartInfo psi = new ProcessStartInfo(filename, @"--stop-all-services --kill-servers --start-servers");
 				psi.WindowStyle = ProcessWindowStyle.Hidden;
 				Process p = Process.Start(psi);
 				p.WaitForExit();
@@ -105,7 +124,10 @@
 		<StopServers>
 			<![CDATA[
 			public static void ScriptMain() {
-				ProcessStartInfo psi = new ProcessStartInfo(@"..\ht4w\dist\Win32\release\hypertable.service.exe", @"--stop-all-services --kill-servers");
+				string filename = @"..\ht4w\dist\$(VisualStudioVersion)\Win32\release\hypertable.service.exe";
+				if( !File.Exists(filename) )
+					filename = @"..\ht4w\dist\10.0\Win32\release\hypertable.service.exe";
+				ProcessStartInfo psi = new ProcessStartInfo(filename, @"--stop-all-services --kill-servers");
 				psi.WindowStyle = ProcessWindowStyle.Hidden;
 				Process p = Process.Start(psi);
 				p.WaitForExit();
@@ -120,7 +142,7 @@
 
 	<!-- Build, tests, make documentation, make master -->
 	<Target Name="Make"
-		DependsOnTargets="CleanMaster;Build;ExecTests;MakeDoc;MakeMaster;MakeNuGetPackage">
+		DependsOnTargets="CleanMaster;Build;ExecTests;MakeDoc;MakeMaster">
 	</Target>
 
 	<!-- Build -->
@@ -128,7 +150,7 @@
 		<MSBuild
 			Projects="ht4n.sln"
 			Targets="Build"
-			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform);SupportHamsterDb=$(SupportHamsterDb);SupportSQLiteDb=$(SupportSQLiteDb)"
+			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform);PlatformToolset=$(PlatformToolset);TargetFrameworkVersion=$(TargetFrameworkVersion);SupportHamsterDb=$(SupportHamsterDb);SupportSQLiteDb=$(SupportSQLiteDb)"
 			ContinueOnError="false" />
 	</Target>
 
@@ -137,7 +159,7 @@
 			Condition="$(HasSandcastle) == true">
 		<Error
 			Text="ht4n.xml does not exist."
-			Condition="!Exists('dist\Win32\Debug\ht4n.xml')" />
+			Condition="!Exists('dist\$(VisualStudioVersion)\Win32\Debug\ht4n.xml')" />
 		<MSBuild
 			Projects="ht4n.shfbproj"
 			Targets="Build"
@@ -153,11 +175,11 @@
 			Condition="$(HasMSBuildCommunityTasks) == true" >
 
 		<ItemGroup>
-			<MasterFiles_x86 Include="dist\Win32\Release\ht4n.dll;dist\Win32\Release\ht4n.xml;dist\Win32\Release\ht4n.pdb" />
+			<MasterFiles_x86 Include="dist\$(VisualStudioVersion)\Win32\Release\ht4n.dll;dist\$(VisualStudioVersion)\Win32\Release\ht4n.xml;dist\$(VisualStudioVersion)\Win32\Release\ht4n.pdb" />
 		</ItemGroup>
 
 		<ItemGroup>
-			<MasterFiles_x64 Include="dist\x64\Release\ht4n.dll;dist\x64\Release\ht4n.xml;dist\x64\Release\ht4n.pdb" />
+			<MasterFiles_x64 Include="dist\$(VisualStudioVersion)\x64\Release\ht4n.dll;dist\$(VisualStudioVersion)\x64\Release\ht4n.xml;dist\$(VisualStudioVersion)\x64\Release\ht4n.pdb" />
 		</ItemGroup>
 		
 		<ItemGroup>
@@ -184,8 +206,8 @@
 	<!-- Make nuspec-->
 	<Target Name="MakeNuSpec">
 
-    <Exec
-			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"			
+		<Exec
+			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
 			Command="copy .\nuget\ht4n.nuspec .\nuget\ht4n.x86.nuspec > nul" />
 
 		<XmlPoke
@@ -194,8 +216,8 @@
 			Query="/package/metadata/id"
 			Value="ht4n.x86" />
 
-    <XmlPoke
-      Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
+		<XmlPoke
+			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
 			XmlInputPath="nuget/ht4n.x86.nuspec"
 			Query="/package/metadata/version"
 			Value="$(Version)" />
@@ -212,7 +234,7 @@
 			Query="/package/metadata/description"
 			Value="Hypertable .NET x86 client library" />
 
-    <Exec
+		<Exec
 			Condition="'%(MakeConfiguration.Platform)' == 'x64'"
 			Command="copy .\nuget\ht4n.nuspec .\nuget\ht4n.x64.nuspec > nul" />
 
@@ -222,8 +244,8 @@
 			Query="/package/metadata/id"
 			Value="ht4n.x64" />
 
-    <XmlPoke
-      Condition="'%(MakeConfiguration.Platform)' == 'x64'"
+		<XmlPoke
+			Condition="'%(MakeConfiguration.Platform)' == 'x64'"
 			XmlInputPath="nuget/ht4n.x64.nuspec"
 			Query="/package/metadata/version"
 			Value="$(Version)" />
@@ -244,7 +266,7 @@
 
 	<!-- Make nuget package-->
 	<Target Name="MakeNuGetPackage"
-					DependsOnTargets="MakeNuSpec">
+			DependsOnTargets="MakeNuSpec">
 
 		<Exec
 			Command="nuget/ht4n.nuget.pack.cmd %(MakeConfiguration.Platform)" />
@@ -276,61 +298,61 @@
 
 		<!-- Hyper tests -->
 		<XmlPoke
-			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
+			XmlInputPath="dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
 			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
 			Value="--Provider=Hyper --Uri=$(ProviderUri)" />
 
 		<Exec
 			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
-			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<Exec
 			Condition="'%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
-			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<!-- Thrift tests -->
 		<XmlPoke
-			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
+			XmlInputPath="dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
 			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
 			Value="--Provider=Thrift --Uri=$(ProviderUri)" />
 
 		<Exec
 			Condition="'%(MakeConfiguration.Platform)' == 'Win32'"
-			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<Exec
 			Condition="'%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
-			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<!-- Hamster tests -->
 		<XmlPoke
 			Condition="$(SupportHamsterDb) == true"
-			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
+			XmlInputPath="dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
 			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
 			Value="--Provider=Hamster --Ht4n.Hamster.Filename=test.Hamster.db" />
 
 		<Exec
 			Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
-			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<Exec
 			Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
-			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<!-- SQLite tests -->
 		<XmlPoke
 			Condition="$(SupportSQLiteDb) == true"
-			XmlInputPath="dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
+			XmlInputPath="dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
 			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
 			Value="--Provider=SQLite --Ht4n.SQLite.Filename=test.SQLite.db" />
 
 		<Exec
 			Condition="$(SupportSQLiteDb) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
-			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<Exec
 			Condition="$(SupportSQLiteDb) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
-			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
 		<Exec
 			Command="if exist TestResults rd /S /Q TestResults" />
@@ -343,7 +365,7 @@
 		<MSBuild
 			Projects="ht4n.sln"
 			Targets="Clean"
-			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform)"
+			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform);PlatformToolset=$(PlatformToolset);TargetFrameworkVersion=$(TargetFrameworkVersion)"
 			ContinueOnError="false" />
 
 		<Exec
