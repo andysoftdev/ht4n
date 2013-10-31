@@ -21,6 +21,9 @@
 		<Master_x86 Condition="$(SupportHamsterDb) != true">dist\$(VisualStudioVersion)\ht4n-$(Version)-x86-fx$(FxVersion)-vc$(VisualStudioVersion)-no-hamsterdb.zip</Master_x86>
 		<Master_x64 Condition="$(SupportHamsterDb) != true">dist\$(VisualStudioVersion)\ht4n-$(Version)-x64-fx$(FxVersion)-vc$(VisualStudioVersion)-no-hamsterdb.zip</Master_x64>
 
+		<MasterExplorer_x86>dist\$(VisualStudioVersion)\ht4n-explorer-$(Version)-x86-fx$(FxVersion)-vc$(VisualStudioVersion).zip</MasterExplorer_x86>
+		<MasterExplorer_x64>dist\$(VisualStudioVersion)\ht4n-explorer-$(Version)-x64-fx$(FxVersion)-vc$(VisualStudioVersion).zip</MasterExplorer_x64>
+
 		<Master_ApiDoc>dist\$(VisualStudioVersion)\ht4n-$(Version)-api-doc.zip</Master_ApiDoc>
 	</PropertyGroup>
 
@@ -181,7 +184,15 @@
 		<ItemGroup>
 			<MasterFiles_x64 Include="dist\$(VisualStudioVersion)\x64\Release\ht4n.dll;dist\$(VisualStudioVersion)\x64\Release\ht4n.xml;dist\$(VisualStudioVersion)\x64\Release\ht4n.pdb" />
 		</ItemGroup>
-		
+
+		<ItemGroup>
+			<MasterExplorerFiles_x86 Include="dist\$(VisualStudioVersion)\Win32\Release\ht4n.Explorer.exe;dist\$(VisualStudioVersion)\Win32\Release\ht4n.Explorer.exe.config;dist\$(VisualStudioVersion)\Win32\Release\ht4n.dll" />
+		</ItemGroup>
+
+		<ItemGroup>
+			<MasterExplorerFiles_x64 Include="dist\$(VisualStudioVersion)\x64\Release\ht4n.Explorer.exe;dist\$(VisualStudioVersion)\x64\Release\ht4n.Explorer.exe.config;dist\$(VisualStudioVersion)\x64\Release\ht4n.dll" />
+		</ItemGroup>
+
 		<ItemGroup>
 			<MasterFiles_ApiDoc Include="doc\api\**\*.html;doc\api\**\*.htm;doc\api\**\*.css;doc\api\**\*.js;doc\api\**\*.gif;doc\api\**\*.png;doc\api\**\*.jpg;doc\api\**\*.bmp;doc\api\**\*.ico" />
 		</ItemGroup>
@@ -194,6 +205,17 @@
 		<Zip
 			Files="@(MasterFiles_x64)"
 			ZipFileName="$(Master_x64)"
+			Flatten="true"
+			Condition="$(Is64Bit) == true" />
+
+		<Zip
+			Files="@(MasterExplorerFiles_x86)"
+			ZipFileName="$(MasterExplorer_x86)"
+			Flatten="true" />
+
+		<Zip
+			Files="@(MasterExplorerFiles_x64)"
+			ZipFileName="$(MasterExplorer_x64)"
 			Flatten="true"
 			Condition="$(Is64Bit) == true" />
 
@@ -387,6 +409,10 @@
 			Files="$(Master_x86)" />
 		<Delete
 			Files="$(Master_x64)" />
+		<Delete
+			Files="$(MasterExplorer_x86)" />
+		<Delete
+			Files="$(MasterExplorer_x64)" />
 		<Delete
 			Files="$(Master_ApiDoc)" />
 	</Target>
