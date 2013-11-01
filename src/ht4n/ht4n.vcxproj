@@ -128,7 +128,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm300 </AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnablePREfast>false</EnablePREfast>
       <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -167,7 +167,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm300 </AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnablePREfast>false</EnablePREfast>
       <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -209,7 +209,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm300 </AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -255,7 +255,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\src\cc;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm300 </AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
