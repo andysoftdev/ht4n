@@ -116,7 +116,7 @@
 				string filename = @"..\ht4w\dist\$(VisualStudioVersion)\Win32\release\hypertable.service.exe";
 				if( !File.Exists(filename) )
 					filename = @"..\ht4w\dist\10.0\Win32\release\hypertable.service.exe";
-				ProcessStartInfo psi = new ProcessStartInfo(filename, @"--stop-all-services --kill-servers --start-servers");
+				ProcessStartInfo psi = new ProcessStartInfo(filename, @"--stop-all-services --kill-servers --start-servers --Hypertable.Master.DiskThreshold.Percentage=99");
 				psi.WindowStyle = ProcessWindowStyle.Hidden;
 				Process p = Process.Start(psi);
 				p.WaitForExit();
