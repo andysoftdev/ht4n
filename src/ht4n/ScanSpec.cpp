@@ -402,6 +402,7 @@ namespace Hypertable {
 		APPEND_INT( RowOffset )
 		APPEND_INT( CellOffset )
 		APPEND_BOOL( KeysOnly )
+		APPEND_BOOL( NotUseQueryCache )
 		APPEND_BOOL( ScanAndFilter )
 		APPEND_DATETIME( StartDateTime )
 		APPEND_DATETIME( EndDateTime )
@@ -499,6 +500,7 @@ namespace Hypertable {
 			scanSpec.cellOffset( CellOffset );
 		}
 		scanSpec.keysOnly( KeysOnly );
+		scanSpec.notUseQueryCache( NotUseQueryCache );
 		scanSpec.scanAndFilter( ScanAndFilter );
 
 		if( StartTimestamp > 0 ) {

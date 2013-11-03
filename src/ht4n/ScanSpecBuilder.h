@@ -162,6 +162,12 @@ namespace Hypertable {
 				IScanSpecBuilderOp^ KeysOnly( );
 
 				/// <summary>
+				/// Do not use the query cache.
+				/// </summary>
+				/// <returns>The scan specification common options and limits builder.</returns>
+				IScanSpecBuilderOp^ NotUseQueryCache( );
+
+				/// <summary>
 				/// Sets the maximum time to allow scanner methods to execute before time out, if zero timeout is disabled.
 				/// </summary>
 				/// <param name="value">Maximum time to allow scanner methods to execute before time out, if zero timeout is disabled.</param>

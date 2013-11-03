@@ -100,6 +100,10 @@ namespace Hypertable {
 					scanSpec->KeysOnly = true;
 					return this;
 				}
+				virtual IScanSpecBuilderOp^ NotUseQueryCache( ) {
+					scanSpec->NotUseQueryCache = true;
+					return this;
+				}
 
 				virtual IScanSpecBuilderOp^ Timeout( TimeSpan value ) {
 					scanSpec->Timeout = value;

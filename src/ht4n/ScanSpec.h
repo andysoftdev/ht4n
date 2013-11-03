@@ -200,6 +200,11 @@ namespace Hypertable {
 			property bool KeysOnly;
 
 			/// <summary>
+			/// Gets or sets a value that indicates whether to add the query result to the query cache if possible or not.
+			/// </summary>
+			property bool NotUseQueryCache;
+
+			/// <summary>
 			/// Gets or sets a value that indicates whether to use scan and filter rows or not.
 			/// </summary>
 			/// <remarks>
