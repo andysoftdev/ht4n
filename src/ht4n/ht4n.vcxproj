@@ -7,7 +7,7 @@
     <SupportSQLiteDbDefine Condition="$(SupportSQLiteDb) == true">SUPPORT_SQLITEDB</SupportSQLiteDbDefine>
   </PropertyGroup>
   <PropertyGroup>
-    <BoostVersion>1_54</BoostVersion>
+    <BoostVersion>1_55</BoostVersion>
     <BoostThread Condition="'$(VisualStudioVersion)' == '10.0'">libboost_thread-vc100-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '11.0'">libboost_thread-vc110-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '12.0'">libboost_thread-vc120-mt</BoostThread>
