@@ -17,7 +17,7 @@ using namespace System::Security::Permissions;
 [assembly: AssemblyProduct("ht4n.GettingStarted.CLR")]
 [assembly: AssemblyDescription("Hypertable GettingStarted C++ /CLR")]
 [assembly: AssemblyCompany("ht4n.softdev.ch")]
-[assembly: AssemblyCopyright("Copyright © 2010-2013")]
+[assembly: AssemblyCopyright("Copyright © 2010-2014")]
 [assembly: AssemblyVersion("0.9.7.14")]
 [assembly: AssemblyFileVersion("0.9.7.14")]
 [assembly: ComVisible(false)]

@@ -36,6 +36,6 @@
         <Image Source="..\Resources\ht4n.logo.png" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Cursor="Hand" MouseDown="HandleMouseDown"/>
         <TextBlock x:Name="description" x:FieldModifier="private" Text="Hypertable Explorer" FontSize="30" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1"/>
         <TextBlock x:Name="version" x:FieldModifier="private" Text="v1.0.0.0" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="6" Grid.Column="1"/>
-        <TextBlock x:Name="copyright" x:FieldModifier="private" Text="Copyright © 2010-2013" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="7" Grid.Column="1"/>
+        <TextBlock x:Name="copyright" x:FieldModifier="private" Text="Copyright © 2010-2014" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="7" Grid.Column="1"/>
     </Grid>
 </UserControl>

@@ -1,5 +1,5 @@
 ﻿/** -*- C# -*-
- * Copyright (C) 2010-2013 Thalmann Software & Consulting, http://www.softdev.ch
+ * Copyright (C) 2010-2014 Thalmann Software & Consulting, http://www.softdev.ch
  *
  * This file is part of ht4n.
  *
@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("ht4n.Test")]
 [assembly: AssemblyDescription("Hypertable .NET client library tests")]
 [assembly: AssemblyCompany("ht4n.softdev.ch")]
-[assembly: AssemblyCopyright("Copyright © 2010-2013")]
+[assembly: AssemblyCopyright("Copyright © 2010-2014")]
 [assembly: AssemblyVersion("0.9.7.14")]
 [assembly: AssemblyFileVersion("0.9.7.14")]
 [assembly: ComVisible(false)]
