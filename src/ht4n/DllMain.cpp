@@ -40,11 +40,16 @@
 #pragma pop_macro("WINVER")
 #pragma pop_macro("_WIN32_WINNT")
 
+#pragma warning( push, 3 )
+#pragma warning( disable : 4101 ) // unreferenced local variable
+
 //
 // free spirit parser
 //
 #include "Common/SpiritParser.h"
 #include "Hypertable/Lib/HqlParser.h"
+
+#pragma warning( pop )
 
 //
 // free logging
