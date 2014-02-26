@@ -112,6 +112,15 @@ namespace Hypertable.Test
         }
 
         /// <summary>
+        /// Returns true if the current provider is the hamsterdb provider.
+        /// </summary>
+        protected static bool IsHamster {
+            get {
+                return Equals("Hamster", ProviderName);
+            }
+        }
+
+        /// <summary>
         /// Returns true if the current provider is the hypertable native provider.
         /// </summary>
         protected static bool IsHyper {
@@ -126,6 +135,15 @@ namespace Hypertable.Test
         protected static bool IsThrift {
             get {
                 return Equals("Thrift", ProviderName);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the current provider is the sqlite provider.
+        /// </summary>
+        protected static bool IsSQlite {
+            get {
+                return Equals("SQlite", ProviderName);
             }
         }
 
