@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
     <SupportSQLiteDb Condition="'$(SupportSQLiteDb)' == ''">true</SupportSQLiteDb>
@@ -41,12 +41,14 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -54,6 +56,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -61,6 +64,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -142,6 +146,7 @@
       <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(VisualStudioVersion)\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>$(BoostThread)-gd-$(BoostVersion).lib</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/IGNORE:4248 %(AdditionalOptions)</AdditionalOptions>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
@@ -181,6 +186,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(VisualStudioVersion)\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>$(BoostThread)-gd-$(BoostVersion).lib</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/IGNORE:4248 %(AdditionalOptions)</AdditionalOptions>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
@@ -215,6 +221,9 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <ExceptionHandling>Async</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -261,6 +270,9 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <ExceptionHandling>Async</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

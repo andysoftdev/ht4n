@@ -42,6 +42,6 @@ using namespace System::Security::Permissions;
 [assembly: CLSCompliant(true)];
 [assembly: ComVisible(false)];
 [assembly: Guid("51dadf8f-3aba-4959-949e-b943ba1b50a0")]
-[assembly: SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];
+//obsolete [assembly: SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];
 [assembly: AssemblyKeyFile("../ht4n.snk")];
 [assembly: AssemblyDelaySign(true)];
