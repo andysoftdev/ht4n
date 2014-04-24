@@ -20,6 +20,7 @@
  */
 
 #include "stdafx.h"
+#include <unordered_map>
 
 #include "AsyncResult.h"
 #include "ITable.h"
@@ -358,11 +359,11 @@ namespace Hypertable {
 			Common::HypertableException* exception;
 			bool resetException;
 
-			typedef std::map<int64_t, AsyncScannerCtx*> async_scanner_map_t;
+			typedef std::unordered_map<int64_t, AsyncScannerCtx*> async_scanner_map_t;
 			async_scanner_map_t async_scanner_map;
 			CRITICAL_SECTION async_scanner_crit;
 
-			typedef std::map<int64_t, AsyncMutatorCtx*> async_mutator_map_t;
+			typedef std::unordered_map<int64_t, AsyncMutatorCtx*> async_mutator_map_t;
 			async_mutator_map_t async_mutator_map;
 			CRITICAL_SECTION async_mutator_crit;
 	};

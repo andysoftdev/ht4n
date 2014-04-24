@@ -25,7 +25,7 @@
 #error "requires /clr"
 #endif
 
-#include <map>
+#include <unordered_map>
 
 namespace Hypertable {
 	using namespace System;
@@ -41,7 +41,7 @@ namespace Hypertable {
 			/// <summary>
 			/// Associative container type.
 			/// </summary>
-			typedef std::map<int, T*> map_t;
+			typedef std::unordered_map<int, T*> map_t;
 
 			/// <summary>
 			/// Adds a instance of type T into the associative container using the current application domain id.
