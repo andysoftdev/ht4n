@@ -113,6 +113,30 @@ namespace Hypertable.Test
             Assert.AreEqual(0, this.GetCellCount());
 
             key = new Key { ColumnFamily = "a" };
+            using (var mutator = table.CreateMutator(mutatorSpec))
+            {
+                key.Row = "Row does not exist";
+                mutator.Set(key, Encoding.GetBytes(key.Row));
+                for (var n = 0; n < Count; ++n)
+                {
+                    key.Row = Guid.NewGuid().ToString();
+                    mutator.Set(key, Encoding.GetBytes(key.Row));
+                }
+            }
+
+            using (var scanner = table.CreateScanner(new ScanSpec { KeysOnly = true }))
+            using (var mutator = table.CreateMutator())
+            {
+                var cell = new Cell();
+                while (scanner.Move(cell))
+                {
+                    mutator.Delete(cell.Key);
+                }
+            }
+
+            Assert.AreEqual(0, this.GetCellCount());
+
+            key = new Key { ColumnFamily = "a" };
             using (var mutator = table.CreateMutator(mutatorSpec)) {
                 for (var n = 0; n < Count; ++n) {
                     key.Row = Guid.NewGuid().ToString();
@@ -671,7 +695,8 @@ namespace Hypertable.Test
             this.Revisions(null);
         }
 
-        public void Revisions(MutatorSpec mutatorSpec) {
+        public void Revisions(MutatorSpec mutatorSpec)
+        {
             Assert.AreEqual(0, this.GetCellCount());
 
             var key = new Key(Guid.NewGuid().ToString()) { ColumnFamily = "a", ColumnQualifier = "tag" };

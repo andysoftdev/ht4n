@@ -2804,6 +2804,7 @@ namespace Hypertable.Test
 
             var rows = new List<string>();
             var key = new Key { ColumnFamily = "d" };
+
             using( var mutator = table.CreateMutator() ) {
                 foreach( var c in specialCharacters ) {
                     key.Row = c.ToString();
@@ -2826,10 +2827,9 @@ namespace Hypertable.Test
                 var c = 0;
                 Cell cell;
                 while( scanner.Next(out cell) ) {
+                    Assert.IsTrue(rows.Contains(cell.Key.Row), "row {0}", cell.Key.Row);
                     Assert.AreEqual(cell.Key.Row, Encoding.GetString(cell.Value));
                     ++c;
-
-                    Assert.IsTrue(rows.Contains(cell.Key.Row));
                 }
 
                 Assert.AreEqual(rows.Count, c);
