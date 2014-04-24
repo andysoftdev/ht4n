@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Make" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-
-	<!-- Embedded db support -->
+	<!-- In order to use these special characters as literals this project file, they must be specified by using the syntax %xx, where xx represents the ASCII hexadecimal value of the character. -->
+	
+	<!-- Provider support -->
 	<PropertyGroup>
 		<SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
 		<SupportSQLiteDb Condition="'$(SupportSQLiteDb)' == ''">true</SupportSQLiteDb>
+		<SupportOdbc Condition="'$(SupportOdbc)' == ''">true</SupportOdbc>
 	</PropertyGroup>
 
 	<!-- Master files to make -->
@@ -153,7 +155,7 @@
 		<MSBuild
 			Projects="ht4n.sln"
 			Targets="Build"
-			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform);PlatformToolset=$(PlatformToolset);TargetFrameworkVersion=$(TargetFrameworkVersion);SupportHamsterDb=$(SupportHamsterDb);SupportSQLiteDb=$(SupportSQLiteDb)"
+			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform);PlatformToolset=$(PlatformToolset);TargetFrameworkVersion=$(TargetFrameworkVersion);SupportHamsterDb=$(SupportHamsterDb);SupportSQLiteDb=$(SupportSQLiteDb);SupportOdbc=$(SupportOdbc)"
 			ContinueOnError="false" />
 	</Target>
 
@@ -376,8 +378,23 @@
 			Condition="$(SupportSQLiteDb) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
 			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
+		<!-- Odbc tests -->
+		<XmlPoke
+			Condition="$(SupportOdbc) == true"
+			XmlInputPath="dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll.config"
+			Query="/configuration/appSettings/add[@key='ConnectionString']/@value"
+			Value="--Provider=Odbc --Ht4n.Odbc.ConnectionString=&quot;Driver={SQL Server Native Client 11.0}%3BServer=.\SQLEXPRESS%3BDatabase=testdb%3BTrusted_Connection=yes&quot;" />
+
 		<Exec
-			Command="if exist TestResults rd /S /Q TestResults" />
+			Condition="$(SupportOdbc) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
+			Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<Exec
+			Condition="$(SupportOdbc) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
+			Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(VisualStudioVersion)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+
+		<Exec
+			Command="if exist TestResults rd /S /Q TestResults" /> 
 
 	</Target>
 
@@ -399,7 +416,7 @@
 		<Exec
 			Command="if exist nuget\lib rd /S /Q nuget\lib" />
 
-    <Exec
+		<Exec
 			Command="if exist nuget\*.x??.nuspec del *.x??.nuspec" />
 	</Target>
 

@@ -393,6 +393,12 @@ namespace Hypertable {
 
 #endif
 
+#ifdef SUPPORT_ODBC
+
+			|| String::Equals(providerName, gcnew String(Common::Config::ProviderOdbc))
+
+#endif
+
 			) {
 
 			return gcnew Context( properties );
@@ -491,6 +497,17 @@ namespace Hypertable {
 						&& !properties->ContainsKey(gcnew String(Common::Config::SQLiteFilename)) ) {
 
 					throw gcnew ArgumentException( L"Invalid uri scheme, file:///[drive][/path/]filename required", L"properties" );
+				}
+			}
+
+#endif
+
+#ifdef SUPPORT_ODBC
+
+			else if( String::Equals(providerName, gcnew String(Common::Config::ProviderOdbc)) ) {
+				if( !properties->ContainsKey(gcnew String(Common::Config::OdbcConnectionString)) ) {
+
+					throw gcnew ArgumentException( L"TODO", L"properties" );
 				}
 			}
 

@@ -148,6 +148,17 @@ namespace Hypertable.Test
         }
 
         /// <summary>
+        /// Returns true if the current provider is the odbc provider.
+        /// </summary>
+        protected static bool IsOdbc
+        {
+            get
+            {
+                return Equals("Odbc", ProviderName);
+            }
+        }
+
+        /// <summary>
         /// Gets the Hypertable namepace.
         /// </summary>
         protected static INamespace Ns {

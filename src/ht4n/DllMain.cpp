@@ -56,6 +56,15 @@
 //
 #include "ht4c.Context/Logging.h"
 
+//
+// free odbc connections
+//
+namespace ht4c { namespace Odbc {
+
+	extern void on_thread_exit();
+
+} }
+
 
 extern "C" BOOL WINAPI DllMain(HANDLE /*hInstance*/, DWORD dwReason, LPVOID /*lpReserved*/) {
 	switch( dwReason )
@@ -73,6 +82,9 @@ extern "C" BOOL WINAPI DllMain(HANDLE /*hInstance*/, DWORD dwReason, LPVOID /*lp
 
 		case DLL_THREAD_DETACH: {
 			boost::on_thread_exit();
+#ifdef SUPPORT_ODBC
+			ht4c::Odbc::on_thread_exit();
+#endif
 			break;
 		}
 

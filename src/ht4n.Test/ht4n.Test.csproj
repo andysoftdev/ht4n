@@ -3,9 +3,11 @@
   <PropertyGroup>
     <SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
     <SupportSQLiteDb Condition="'$(SupportSQLiteDb)' == ''">true</SupportSQLiteDb>
+    <SupportOdbc Condition="'$(SupportOdbc)' == ''">true</SupportOdbc>
+
     <SupportHamsterDbDefine Condition="$(SupportHamsterDb) == true">SUPPORT_HAMSTERDB</SupportHamsterDbDefine>
     <SupportSQLiteDbDefine Condition="$(SupportSQLiteDb) == true">SUPPORT_SQLITEDB</SupportSQLiteDbDefine>
-    <TargetFrameworkProfile />
+    <SupportOdbcDefine Condition="$(SupportOdbc) == true">SUPPORT_ODBC</SupportOdbcDefine>
   </PropertyGroup>
   <PropertyGroup>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -42,7 +44,7 @@
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\dist\$(VisualStudioVersion)\Win32\$(Configuration)\tests</OutputPath>
     <IntermediateOutputPath>..\..\build\$(VisualStudioVersion)\$(AssemblyName)\$(Platform)\$(Configuration)</IntermediateOutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine)</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine)</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -54,7 +56,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\..\dist\$(VisualStudioVersion)\Win32\$(Configuration)\tests</OutputPath>
     <IntermediateOutputPath>..\..\build\$(VisualStudioVersion)\$(AssemblyName)\$(Platform)\$(Configuration)</IntermediateOutputPath>
-    <DefineConstants>TRACE;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine)</DefineConstants>
+    <DefineConstants>TRACE;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine)</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -67,7 +69,7 @@
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\tests</OutputPath>
     <IntermediateOutputPath>..\..\build\$(VisualStudioVersion)\$(AssemblyName)\$(Platform)\$(Configuration)</IntermediateOutputPath>
-    <DefineConstants>TRACE;DEBUG;X64;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine)</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;X64;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine)</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -78,7 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\tests</OutputPath>
     <IntermediateOutputPath>..\..\build\$(VisualStudioVersion)\$(AssemblyName)\$(Platform)\$(Configuration)</IntermediateOutputPath>
-    <DefineConstants>TRACE;X64;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine)</DefineConstants>
+    <DefineConstants>TRACE;X64;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine)</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>

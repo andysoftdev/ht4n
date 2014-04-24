@@ -66,3 +66,10 @@
 #pragma comment( lib, "ht4c.SQLite.lib" )
 
 #endif
+
+#ifdef SUPPORT_ODBC
+
+#pragma comment( lib, "re2.lib" )						// New BSD
+#pragma comment( lib, "ht4c.Odbc.lib" )
+
+#endif
