@@ -282,6 +282,11 @@ namespace Hypertable {
 	HT4N_DECLARE_EXCEPTION(NamespaceExists)
 
 	/// <summary>
+	/// The exception that is thrown as the result of an existing table.
+	/// </summary>
+	HT4N_DECLARE_EXCEPTION(TableExists)
+
+	/// <summary>
 	/// The exception that is thrown as the result of a missing response.
 	/// </summary>
 	HT4N_DECLARE_EXCEPTION(NoResponse)
