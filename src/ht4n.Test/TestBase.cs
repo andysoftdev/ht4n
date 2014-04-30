@@ -273,6 +273,15 @@ namespace Hypertable.Test
         }
 
         /// <summary>
+        /// Drop namespaces from 'test' namespace.
+        /// </summary>
+        /// <param name = "regex">Namespace name regular expression.</param>
+        protected static void DropNamespaces(Regex regex)
+        {
+            Ns.DropNamespaces(regex, DropDispositions.IfExists);
+        }
+
+        /// <summary>
         /// Drop tables from 'test' namespace.
         /// </summary>
         /// <param name = "regex">Table name regular expression.</param>
