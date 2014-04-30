@@ -119,6 +119,33 @@ namespace Hypertable.Test
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");
                 Assert.AreEqual(table.Schema, _schemaB);
             }
+
+            try
+            {
+                Ns.AlterTable("test-11", SchemaB);
+                Assert.Fail();
+            }
+            catch (TableNotFoundException)
+            {
+            }
+            catch
+            {
+                Assert.Fail();
+            }
+
+            try
+            {
+                Ns.CreateNamespace("test-22");
+                Ns.AlterTable("test-22", SchemaB);
+                Assert.Fail();
+            }
+            catch (TableNotFoundException)
+            {
+            }
+            catch
+            {
+                Assert.Fail();
+            }
         }
 
         [TestMethod]
@@ -168,6 +195,32 @@ namespace Hypertable.Test
             Assert.IsTrue(tables.Contains("test-1"));
             Assert.IsTrue(tables.Contains("Test-2"));
             Assert.IsTrue(tables.Contains("test-3"));
+
+            try
+            {
+                Ns.CreateTableLike("Test-2", "test-1");
+                Assert.Fail();
+            }
+            catch (TableExistsException)
+            {
+            }
+            catch
+            {
+                Assert.Fail();
+            }
+
+            try
+            {
+                Ns.CreateNamespace("test-1");
+                Assert.Fail();
+            }
+            catch (NameAlreadyInUseException)
+            {
+            }
+            catch
+            {
+                Assert.Fail();
+            }
         }
 
         [TestMethod]
@@ -252,6 +305,7 @@ namespace Hypertable.Test
         [TestMethod]
         public void RenameTable() {
             DropTables(this.regex);
+            DropNamespaces(this.regex);
 
             Assert.IsFalse(Ns.TableExists("test-1"));
             Assert.IsFalse(Ns.TableExists("test-2"));
@@ -279,6 +333,46 @@ namespace Hypertable.Test
             }
 
             Assert.IsTrue(Ns.TableExists("Test-2"));
+
+            try
+            {
+                Ns.RenameTable("test-11", "test-111");
+                Assert.Fail();
+            }
+            catch (TableNotFoundException)
+            {
+            }
+            catch
+            {
+                Assert.Fail();
+            }
+            
+            try
+            {
+                Ns.CreateNamespace("test-22");
+                Ns.RenameTable("test-22", "test-222");
+                Assert.Fail();
+            }
+            catch (TableNotFoundException)
+            {
+            }
+            /*catch
+            {
+                Assert.Fail();
+            }*/
+
+            try
+            {
+                Ns.RenameTable("Test-2", "test-22");
+                Assert.Fail();
+            }
+            catch (NameAlreadyInUseException)
+            {
+            }
+            catch
+            {
+                Assert.Fail();
+            }
         }
 
         #endregion

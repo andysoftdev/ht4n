@@ -120,6 +120,67 @@ namespace Hypertable.Test
                 }
 
                 client.DropNamespace("test/xyz");
+
+                Assert.IsFalse(client.NamespaceExists("test/xyz"));
+                client.CreateNamespace("test/xyz", CreateDispositions.CreateIntermediate);
+                client.CreateNamespace("test/xyz-2", CreateDispositions.CreateIntermediate);
+                client.DropNamespace("test/xy", DropDispositions.IfExists);
+                Assert.IsTrue(client.NamespaceExists("test/xyz"));
+
+                using (var ns = client.OpenNamespace("test"))
+                {
+                    const string Schema =
+                        "<Schema><AccessGroup name=\"default\">" +
+                        "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+                        "</AccessGroup>" + "</Schema>";
+
+                    ns.CreateTable("xyz-1", Schema);
+                    Assert.IsTrue(ns.TableExists("xyz-1"));
+
+                    ns.DropNamespace("xyz");
+                    Assert.IsFalse(ns.NamespaceExists("xyz"));
+
+                    try
+                    {
+                        ns.CreateNamespace("xyz-1");
+                        Assert.Fail();
+                    }
+                    catch (NameAlreadyInUseException)
+                    {
+                    }
+                    catch
+                    {
+                        Assert.Fail();
+                    }
+
+                    try
+                    {
+                        ns.CreateNamespace("xyz-1/1/2/3", CreateDispositions.CreateIntermediate);
+                        Assert.Fail();
+                    }
+                    catch (NameAlreadyInUseException)
+                    {
+                    }
+                    catch
+                    {
+                        Assert.Fail();
+                    }
+
+                    try
+                    {
+                        ns.CreateTable("xyz-2", Schema);
+                        Assert.Fail();
+                    }
+                    catch (NameAlreadyInUseException)
+                    {
+                    }
+                    catch
+                    {
+                        Assert.Fail();
+                    }
+                }
+
+                Assert.IsFalse(client.NamespaceExists("test/xyz"));
             }
         }
 
