@@ -11,7 +11,7 @@
 
 	<!-- Master files to make -->
 	<PropertyGroup>
-		<Version>0.9.7.18</Version>
+		<Version>0.9.7.19</Version>
 
 		<FxVersion Condition="'$(VisualStudioVersion)' == '10.0'">4.0</FxVersion>
 		<FxVersion Condition="'$(VisualStudioVersion)' == '11.0'">4.5</FxVersion>
