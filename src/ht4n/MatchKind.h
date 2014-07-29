@@ -42,24 +42,39 @@ namespace Hypertable {
 	public enum class MatchKind {
 
 		/// <summary>
-		/// Undefinde
+		/// Undefined
 		/// </summary>
 		Undefined,
 
 		/// <summary>
-		/// Exact match for the search.
+		/// Exact value match for the search.
 		/// </summary>
-		Exact,
+		ValueExact = 0x0001,
 
 		/// <summary>
-		/// Prefix match for the search.
+		/// Value prefix match for the search.
 		/// </summary>
-		Prefix,
+		ValuePrefix = 0x0002,
 
 		/// <summary>
-		/// Contains.
+		/// Value regular expression match for the search.
 		/// </summary>
-		Contains
+		ValueRegex  = 0x0004,
+
+		/// <summary>
+		/// Exact qualifier match for the search.
+		/// </summary>
+		QualifierExact = 0x0100,
+
+		/// <summary>
+		/// Qualifier prefix match for the search.
+		/// </summary>
+		QualifierPrefix = 0x0200,
+
+		/// <summary>
+		/// Qualifier regular expression match for the search.
+		/// </summary>
+		QualifierRegex  = 0x0400,
 	};
 
 }

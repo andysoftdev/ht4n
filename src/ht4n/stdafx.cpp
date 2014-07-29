@@ -40,7 +40,7 @@
 #pragma comment( lib, "SystemInfoWin.lib" )
 #endif
 #pragma comment( lib, "AsyncComm.lib" )
-#pragma comment( lib, "DfsBroker.lib" )
+#pragma comment( lib, "FsBroker.lib" )
 #pragma comment( lib, "Hypertools.lib" )
 #pragma comment( lib, "Hyperspace.lib" )
 #pragma comment( lib, "Hypertable.lib" )

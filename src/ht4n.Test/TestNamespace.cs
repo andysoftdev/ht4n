@@ -342,7 +342,9 @@ namespace Hypertable.Test
                     Assert.Fail();
                 }
 
-                client.OpenNamespace("/");
+                using (var ns = client.OpenNamespace("/"))
+                {
+                }
 
                 try {
                     client.DropNamespace("/");

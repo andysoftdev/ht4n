@@ -39,6 +39,10 @@ namespace Hypertable.Test
     {
         #region Constants and Fields
 
+        private const ushort DefaultHyperspacePort = 15861;
+
+        private const ushort DefaultThriftPort = 15867;
+
         private static string connectionString;
 
         #endregion
@@ -91,9 +95,9 @@ namespace Hypertable.Test
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("localhost", ((IList<string>)context.Properties["hs-host"])[0]);
-                Assert.AreEqual((ushort)38040, context.Properties["hs-port"]);
+                Assert.AreEqual(DefaultHyperspacePort, context.Properties["hs-port"]);
                 Assert.AreEqual("localhost", context.Properties["thrift-host"]);
-                Assert.AreEqual((ushort)38080, context.Properties["thrift-port"]);
+                Assert.AreEqual(DefaultThriftPort, context.Properties["thrift-port"]);
                 Assert.AreEqual(30000, context.Properties["ConnectionTimeout"]);
             }
 
@@ -103,14 +107,14 @@ namespace Hypertable.Test
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("localhost", ((IList<string>)context.Properties["hs-host"])[0]);
-                Assert.AreEqual((ushort)38040, context.Properties["hs-port"]);
+                Assert.AreEqual(DefaultHyperspacePort, context.Properties["hs-port"]);
             }
 
             using (var context = Context.Create(" ;; ; ; ; ;;;Provider=Thrift ; ; ; ;;; ;")) {
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
                 Assert.AreEqual("Thrift", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("localhost", context.Properties["thrift-host"]);
-                Assert.AreEqual((ushort)38080, context.Properties["thrift-port"]);
+                Assert.AreEqual(DefaultThriftPort, context.Properties["thrift-port"]);
             }
 
             using (var context = Context.Create("Provider=Hyper; Uri=net.tcp://google.com:1000; ConnectionTimeout=1000")) {
@@ -138,7 +142,7 @@ namespace Hypertable.Test
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("127.0.0.1", ((IList<string>)context.Properties["hs-host"])[0]);
-                Assert.AreEqual((ushort)38040, context.Properties["hs-port"]);
+                Assert.AreEqual(DefaultHyperspacePort, context.Properties["hs-port"]);
             }
 
             using (var context = Context.Create("Ht4n.Provider=Thrift; Uri=net.tcp://google.com:1000")) {
@@ -153,7 +157,7 @@ namespace Hypertable.Test
             using (var context = Context.Create("Provider=Thrift; Uri=net.tcp://127.0.0.1")) {
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
                 Assert.AreEqual("127.0.0.1", context.Properties["thrift-host"]);
-                Assert.AreEqual((ushort)38080, context.Properties["thrift-port"]);
+                Assert.AreEqual(DefaultThriftPort, context.Properties["thrift-port"]);
             }
 
             using (var context = Context.Create("Ht4n.Provider Hyper; hyperspace=qwerty:12345")) {
@@ -313,9 +317,9 @@ namespace Hypertable.Test
                 Assert.IsInstanceOfType(context.Properties["hs-host"], typeof(IList<string>));
                 Assert.AreEqual(1, ((IList<string>)context.Properties["hs-host"]).Count);
                 Assert.AreEqual("localhost", ((IList<string>)context.Properties["hs-host"])[0]);
-                Assert.AreEqual((ushort)38040, context.Properties["hs-port"]);
+                Assert.AreEqual(DefaultHyperspacePort, context.Properties["hs-port"]);
                 Assert.AreEqual("localhost", context.Properties["thrift-host"]);
-                Assert.AreEqual((ushort)38080, context.Properties["thrift-port"]);
+                Assert.AreEqual(DefaultThriftPort, context.Properties["thrift-port"]);
             }
 
             var properties = new Dictionary<string, object> { { "Ht4n.Provider", "Hyper" }, { "Ht4n.Uri", "net.tcp://google.com:1000" } };

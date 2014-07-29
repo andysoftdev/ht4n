@@ -72,10 +72,21 @@ namespace Hypertable {
 		SearchValue = searchValue;
 	}
 
+	ColumnPredicate::ColumnPredicate( String^ columnFamily, String^ columnQualifier,  MatchKind match, cli::array<byte>^ searchValue ) {
+		if( String::IsNullOrEmpty(columnFamily) ) throw gcnew ArgumentNullException(L"columnFamily");
+		if( match == MatchKind::Undefined ) throw gcnew ArgumentException(L"Invalid match", L"match");
+
+		ColumnFamily = columnFamily;
+		ColumnQualifier = columnQualifier;
+		Match = match;
+		SearchValue = searchValue;
+	}
+
 	ColumnPredicate::ColumnPredicate( ColumnPredicate^ columnPredicate ) {
 		if( columnPredicate == nullptr ) throw gcnew ArgumentNullException(L"columnPredicate");
 
 		ColumnFamily = columnPredicate->ColumnFamily;
+		ColumnQualifier = columnPredicate->ColumnQualifier;
 		Match = columnPredicate->Match;
 		SearchValue = columnPredicate->SearchValue;
 	}
@@ -85,6 +96,8 @@ namespace Hypertable {
 		if( Object::ReferenceEquals(other, this) ) return 0;
 
 		int result = String::Compare( ColumnFamily, other->ColumnFamily, StringComparison::Ordinal );
+		if( result != 0 ) return result;
+		result = String::Compare( ColumnQualifier, other->ColumnQualifier, StringComparison::Ordinal );
 		if( result != 0 ) return result;
 		result = Match.CompareTo( other->Match );
 		if( result != 0 ) return result;
@@ -103,6 +116,7 @@ namespace Hypertable {
 		int result = 17;
 
 		if( ColumnFamily != nullptr ) result = ::Hash( result, ColumnFamily->GetHashCode());
+		if( ColumnQualifier != nullptr ) result = ::Hash( result, ColumnQualifier->GetHashCode());
 		result = ::Hash( result, Match.GetHashCode());
 		if( SearchValue != nullptr ) result = ::Hash( result, ArrayHashCode(SearchValue) );
 		return result;
@@ -110,9 +124,10 @@ namespace Hypertable {
 
 	String^ ColumnPredicate::ToString() {
 		return String::Format( CultureInfo::InvariantCulture
-												 , L"{0}(ColumnFamily={1}, Match={2})"
+												 , L"{0}(ColumnFamily={1}, ColumnQualifier={2}, Match={3})"
 												 , GetType()
 												 , ColumnFamily != nullptr ? ColumnFamily : L"null"
+												 , ColumnQualifier != nullptr ? ColumnQualifier : L"null"
 												 , Match );
 	}
 

@@ -147,8 +147,8 @@ namespace Hypertable.Test
 
         [TestMethod]
         public void TestWithColumnPredicates() {
-            var cp1 = new ColumnPredicate("x", MatchKind.Exact, Encoding.UTF8.GetBytes("xyz"));
-            var cp2 = new ColumnPredicate("a", MatchKind.Exact, Encoding.UTF8.GetBytes("xyz"));
+            var cp1 = new ColumnPredicate("x", MatchKind.ValueExact, Encoding.UTF8.GetBytes("xyz"));
+            var cp2 = new ColumnPredicate("a", MatchKind.ValueExact, Encoding.UTF8.GetBytes("xyz"));
 
             Assert.IsTrue(cp2 < cp1);
 
@@ -176,7 +176,7 @@ namespace Hypertable.Test
                 .CreateOrdered()
                     .WithColumns()
                     .WithColumnPredicates(cp1, cp2)
-                    .WithColumnPredicates(new ColumnPredicate("a", MatchKind.Exact, Encoding.UTF8.GetBytes("xyz")), cp1)
+                    .WithColumnPredicates(new ColumnPredicate("a", MatchKind.ValueExact, Encoding.UTF8.GetBytes("xyz")), cp1)
                .Build();
 
             Assert.IsNotNull(scanSpec);

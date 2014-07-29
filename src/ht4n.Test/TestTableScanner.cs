@@ -672,7 +672,7 @@ namespace Hypertable.Test
                 mutator.Set(key, Encoding.GetBytes("What a wonderful world"));
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes("XYY"))))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValueExact, Encoding.GetBytes("XYY"))))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -683,7 +683,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(1, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes(string.Empty))))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValueExact, Encoding.GetBytes(string.Empty))))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -694,7 +694,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(2, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Exact, null)))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValueExact, null)))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -705,7 +705,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(2, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes(string.Empty))))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValuePrefix, Encoding.GetBytes(string.Empty))))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -715,7 +715,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(7, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, null)))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValuePrefix, null)))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -725,7 +725,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(7, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("X"))))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValuePrefix, Encoding.GetBytes("X"))))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -736,7 +736,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(3, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("XX"))))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValuePrefix, Encoding.GetBytes("XX"))))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -747,7 +747,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(2, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("Y"))))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValuePrefix, Encoding.GetBytes("Y"))))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -758,7 +758,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(1, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("ZYX"))))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValuePrefix, Encoding.GetBytes("ZYX"))))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -769,7 +769,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(0, c);
             }
 
-            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.Contains, Encoding.GetBytes("wonder"))))) {
+            using (var scanner = table.CreateScanner(new ScanSpec(new ColumnPredicate("d", MatchKind.ValueRegex, Encoding.GetBytes("wonder"))))) {
                 var c = 0;
                 Cell cell;
                 while (scanner.Next(out cell)) {
@@ -798,8 +798,8 @@ namespace Hypertable.Test
             }
 
             var scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes("XYY")))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes("XYY")));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValueExact, Encoding.GetBytes("XYY")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValueExact, Encoding.GetBytes("XYY")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -813,8 +813,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("X")))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes("X")));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValuePrefix, Encoding.GetBytes("X")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValuePrefix, Encoding.GetBytes("X")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -828,8 +828,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("XX")))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes("XX")));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValuePrefix, Encoding.GetBytes("XX")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValuePrefix, Encoding.GetBytes("XX")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -843,8 +843,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes("Y")))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes("Y")));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValuePrefix, Encoding.GetBytes("Y")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValuePrefix, Encoding.GetBytes("Y")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -858,8 +858,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes("ZYX")))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes("ZYX")));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValueExact, Encoding.GetBytes("ZYX")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValueExact, Encoding.GetBytes("ZYX")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -873,8 +873,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, Encoding.GetBytes(string.Empty)))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, Encoding.GetBytes(string.Empty)));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValueExact, Encoding.GetBytes(string.Empty)))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValueExact, Encoding.GetBytes(string.Empty)));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -889,8 +889,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Exact, null))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Exact, null));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValueExact, null))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValueExact, null));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -905,8 +905,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, Encoding.GetBytes(string.Empty)))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, Encoding.GetBytes(string.Empty)));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValuePrefix, Encoding.GetBytes(string.Empty)))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValuePrefix, Encoding.GetBytes(string.Empty)));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -919,8 +919,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Prefix, null))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Prefix, null));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValuePrefix, null))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValuePrefix, null));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -933,8 +933,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Contains, Encoding.GetBytes("wonder")))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Contains, Encoding.GetBytes("What's")));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValueRegex, Encoding.GetBytes("wonder")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValueRegex, Encoding.GetBytes("What's")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -948,8 +948,8 @@ namespace Hypertable.Test
             }
 
             scanSpec = new ScanSpec()
-                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.Contains, Encoding.GetBytes("on")))
-                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.Contains, Encoding.GetBytes("on")));
+                .AddColumnPredicate(new ColumnPredicate("d", MatchKind.ValueRegex, Encoding.GetBytes("on")))
+                .AddColumnPredicate(new ColumnPredicate("e", MatchKind.ValueRegex, Encoding.GetBytes("on")));
 
             using (var scanner = table.CreateScanner(scanSpec)) {
                 var c = 0;
@@ -2563,7 +2563,7 @@ namespace Hypertable.Test
                 var rng = new Random();
                 for (var i = 0; i < Count / 100; ++i) {
                     var search = rng.Next(Count).ToString();
-                    var scanSpec = new ScanSpec(new ColumnPredicate(columnFamilies[rng.Next(columnFamilies.Length)], MatchKind.Exact, Encoding.GetBytes(search)));
+                    var scanSpec = new ScanSpec(new ColumnPredicate(columnFamilies[rng.Next(columnFamilies.Length)], MatchKind.ValueExact, Encoding.GetBytes(search)));
                     using (var scanner = _table.CreateScanner(scanSpec)) {
                         Cell cell;
                         Assert.IsTrue(scanner.Next(out cell));
@@ -2577,7 +2577,7 @@ namespace Hypertable.Test
                 Assert.AreEqual(ranges.Length, occurrence.Length);
                 for (var i = 0; i < ranges.Length; ++i) {
                     var search = ranges[i].ToString();
-                    var scanSpec = new ScanSpec(new ColumnPredicate(columnFamilies[rng.Next(columnFamilies.Length)], MatchKind.Prefix, Encoding.GetBytes(search)));
+                    var scanSpec = new ScanSpec(new ColumnPredicate(columnFamilies[rng.Next(columnFamilies.Length)], MatchKind.ValuePrefix, Encoding.GetBytes(search)));
                     using (var scanner = _table.CreateScanner(scanSpec)) {
                         var c = 0;
                         var cell = new Cell();

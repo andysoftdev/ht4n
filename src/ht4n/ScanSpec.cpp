@@ -535,14 +535,29 @@ namespace Hypertable {
 				if( columnPredicate->SearchValue != nullptr ) {
 					if( columnPredicate->SearchValue->Length > 0 ) {
 						pin_ptr<byte> searchValue = &columnPredicate->SearchValue[0];
-						scanSpec.addColumnPredicate( CM2U8(columnPredicate->ColumnFamily), (uint32_t)columnPredicate->Match, reinterpret_cast<const char*>(searchValue), columnPredicate->SearchValue->Length );
+						scanSpec.addColumnPredicate( 
+								CM2U8(columnPredicate->ColumnFamily)
+							, CM2U8(columnPredicate->ColumnQualifier)
+							, static_cast<uint32_t>(columnPredicate->Match)
+							, reinterpret_cast<const char*>(searchValue)
+							, columnPredicate->SearchValue->Length );
 					}
 					else {
-						scanSpec.addColumnPredicate( CM2U8(columnPredicate->ColumnFamily), (uint32_t)columnPredicate->Match, "", 0 );
+						scanSpec.addColumnPredicate( 
+							  CM2U8(columnPredicate->ColumnFamily)
+							, CM2U8(columnPredicate->ColumnQualifier)
+							, static_cast<uint32_t>(columnPredicate->Match)
+							, ""
+							, 0 );
 					}
 				}
 				else {
-					scanSpec.addColumnPredicate( CM2U8(columnPredicate->ColumnFamily), (uint32_t)columnPredicate->Match, 0, 0 );
+					scanSpec.addColumnPredicate( 
+						  CM2U8(columnPredicate->ColumnFamily)
+						, 0
+						, static_cast<uint32_t>(columnPredicate->Match)
+						, 0
+						, 0 );
 				}
 			}
 		}
@@ -575,7 +590,11 @@ namespace Hypertable {
 		}
 		if( rowIntervals != nullptr ) {
 			for each( RowInterval^ rowInterval in rowIntervals ) {
-				scanSpec.addRowInterval( CM2U8(rowInterval->StartRow), rowInterval->IncludeStartRow, CM2U8(rowInterval->EndRow), rowInterval->IncludeEndRow );
+				scanSpec.addRowInterval( 
+						CM2U8(rowInterval->StartRow)
+					, rowInterval->IncludeStartRow
+					, CM2U8(rowInterval->EndRow)
+					, rowInterval->IncludeEndRow );
 			}
 		}
 		if( cellIntervals != nullptr ) {
@@ -602,7 +621,13 @@ namespace Hypertable {
 					sb->Append( cellInterval->EndColumnQualifier );
 					endColumn = sb->ToString();
 				}
-				scanSpec.addCellInterval( CM2U8(cellInterval->StartRow), CM2U8(startColumn), cellInterval->IncludeStartRow, CM2U8(cellInterval->EndRow), CM2U8(endColumn), cellInterval->IncludeEndRow );
+				scanSpec.addCellInterval( 
+						CM2U8(cellInterval->StartRow)
+					, CM2U8(startColumn)
+					, cellInterval->IncludeStartRow
+					, CM2U8(cellInterval->EndRow)
+					, CM2U8(endColumn)
+					, cellInterval->IncludeEndRow );
 			}
 		}
 	}

@@ -75,8 +75,8 @@ namespace Hypertable.Test
             Ns.AlterTable("test-1", SchemaB);
 
             if (IsHyper || IsThrift) {
-                Assert.IsTrue(Ns.TableExists("^test-1"));
-                Assert.IsTrue(Ns.TableExists("^^test-1"));
+                Assert.IsFalse(Ns.TableExists("^test-1"));
+                Assert.IsFalse(Ns.TableExists("^^test-1"));
             }
 
             var _schemaB = Ns.GetTableSchema("test-1");
@@ -84,6 +84,34 @@ namespace Hypertable.Test
             using (var table = Ns.OpenTable("test-1")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");
                 Assert.AreEqual(table.Schema, _schemaB);
+            }
+
+            const string SchemaC =
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>a</Name></ColumnFamily>" +
+                "<ColumnFamily><Name>b</Name><Index>true</Index></ColumnFamily>" +
+                "</AccessGroup>" + "</Schema>";
+
+            Ns.AlterTable("test-1", SchemaC);
+
+            if (IsHyper || IsThrift)
+            {
+                Assert.IsTrue(Ns.TableExists("^test-1"));
+                Assert.IsFalse(Ns.TableExists("^^test-1"));
+            }
+
+            const string SchemaD =
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>a</Name><Index>true</Index><QualifierIndex>true</QualifierIndex></ColumnFamily>" +
+                "<ColumnFamily><Name>b</Name><Index>true</Index></ColumnFamily>" +
+                "</AccessGroup>" + "</Schema>";
+
+            Ns.AlterTable("test-1", SchemaD);
+
+            if (IsHyper || IsThrift)
+            {
+                Assert.IsTrue(Ns.TableExists("^test-1"));
+                Assert.IsTrue(Ns.TableExists("^^test-1"));
             }
         }
 

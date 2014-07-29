@@ -132,7 +132,7 @@ namespace Hypertable.Test
             Assert.AreEqual(cells[2].Key.Row, "cantelope");
             Assert.AreEqual(cells[2].Key.ColumnFamily, "description");
             Assert.AreEqual(cells[2].Key.ColumnQualifier, string.Empty);
-            Assert.AreEqual(cells[2].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Utc));
+            Assert.AreEqual(cells[2].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Local).ToUniversalTime());
             Assert.AreEqual(Encoding.Default.GetString(cells[2].Value), "A cultivated variety of muskmelon with orange flesh");
 
             cells = Ns.Query("SELECT tag FROM fruit");
@@ -157,7 +157,7 @@ namespace Hypertable.Test
             Assert.AreEqual(cells[1].Key.Row, "cantelope");
             Assert.AreEqual(cells[1].Key.ColumnFamily, "description");
             Assert.AreEqual(cells[1].Key.ColumnQualifier, string.Empty);
-            Assert.AreEqual(cells[1].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Utc));
+            Assert.AreEqual(cells[1].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Local).ToUniversalTime());
             Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "A cultivated variety of muskmelon with orange flesh");
 
             Ns.Exec("DELETE description FROM fruit WHERE ROW=\"cantelope\"");
@@ -197,7 +197,7 @@ namespace Hypertable.Test
             Assert.AreEqual(cells[0].Key.ColumnFamily, "tag");
             Assert.AreEqual(cells[0].Key.ColumnQualifier, "great");
             Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with lunch");
-            Assert.AreEqual(cells[0].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Utc));
+            Assert.AreEqual(cells[0].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Local).ToUniversalTime());
 
             Ns.Exec("INSERT INTO fruit VALUES" + "(\"2009-08-02 08:30:01\", \"banana\", \"tag:great\", \"Had with dinner\")");
 
@@ -208,13 +208,13 @@ namespace Hypertable.Test
             Assert.AreEqual(cells[0].Key.ColumnFamily, "tag");
             Assert.AreEqual(cells[0].Key.ColumnQualifier, "great");
             Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with dinner");
-            Assert.AreEqual(cells[0].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 1, DateTimeKind.Utc));
+            Assert.AreEqual(cells[0].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 1, DateTimeKind.Local).ToUniversalTime());
 
             Assert.AreEqual(cells[1].Key.Row, "banana");
             Assert.AreEqual(cells[1].Key.ColumnFamily, "tag");
             Assert.AreEqual(cells[1].Key.ColumnQualifier, "great");
             Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "Had with lunch");
-            Assert.AreEqual(cells[1].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Utc));
+            Assert.AreEqual(cells[1].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Local).ToUniversalTime());
 
             Ns.Exec("INSERT INTO fruit VALUES" + "(\"2009-08-02 08:30:01\", \"banana\", \"tag:great\", \"Had with breakfast\")");
 
@@ -225,13 +225,13 @@ namespace Hypertable.Test
             Assert.AreEqual(cells[0].Key.ColumnFamily, "tag");
             Assert.AreEqual(cells[0].Key.ColumnQualifier, "great");
             Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with breakfast");
-            Assert.AreEqual(cells[0].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 1, DateTimeKind.Utc));
+            Assert.AreEqual(cells[0].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 1, DateTimeKind.Local).ToUniversalTime());
 
             Assert.AreEqual(cells[1].Key.Row, "banana");
             Assert.AreEqual(cells[1].Key.ColumnFamily, "tag");
             Assert.AreEqual(cells[1].Key.ColumnQualifier, "great");
             Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "Had with lunch");
-            Assert.AreEqual(cells[1].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Utc));
+            Assert.AreEqual(cells[1].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Local).ToUniversalTime());
 
             Ns.Exec("DROP TABLE fruit");
         }
