@@ -126,6 +126,11 @@ namespace Hypertable.Test
                 "<ColumnFamily><Name>a</Name></ColumnFamily>" +
                 "</AccessGroup></Schema>";
 
+            const string SchemaB =
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily><Name>b</Name></ColumnFamily>" +
+                "</AccessGroup></Schema>";
+
             Ns.CreateTable("test-1", SchemaA);
             Assert.IsTrue(Ns.TableExists("test-1"));
             Ns.CreateTable("test-1", SchemaA, CreateDispositions.CreateIfNotExist);
@@ -133,12 +138,12 @@ namespace Hypertable.Test
             using (var table = Ns.OpenTable("test-1")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");
                 Assert.AreEqual(table.Schema, _schemaA);
-            }
 
-            const string SchemaB =
-                "<Schema><AccessGroup name=\"default\">" +
-                "<ColumnFamily><Name>b</Name></ColumnFamily>" +
-                "</AccessGroup></Schema>";
+                using (var mutator = table.CreateMutator())
+                {
+                    mutator.Set(new Key("R1", "a"), new byte[] { 1, 2, 3});
+                }
+            }
 
             Ns.AlterTable("test-1", SchemaB);
             var _schemaB = Ns.GetTableSchema("test-1");
@@ -146,6 +151,43 @@ namespace Hypertable.Test
             using (var table = Ns.OpenTable("test-1")) {
                 Assert.AreEqual(table.Name, Ns.Name + "/test-1");
                 Assert.AreEqual(table.Schema, _schemaB);
+
+                using (var mutator = table.CreateMutator())
+                {
+                    try
+                    {
+                        mutator.Set(new Key("R1", "a"), new byte[] { 1, 2, 3 });
+                        Assert.Fail();
+                    }
+                    catch (BadKeyException)
+                    {
+                    }
+                    catch
+                    {
+                        Assert.Fail(); 
+                    }
+
+                    mutator.Set(new Key("R2", "b"), new byte[] { 1, 2, 3 });
+                }
+
+                Ns.AlterTable("test-1", SchemaA);
+
+                using (var mutator = table.CreateMutator())
+                {
+                    mutator.Set(new Key("R1", "a"), new byte[] { 1, 2, 3 });
+
+                    try
+                    {
+                        mutator.Set(new Key("R2", "b"), new byte[] { 1, 2, 3 });
+                    }
+                    catch (BadKeyException)
+                    {
+                    }
+                    catch
+                    {
+                        Assert.Fail();
+                    }
+                }
             }
 
             try
