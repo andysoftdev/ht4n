@@ -50,7 +50,7 @@ namespace Hypertable {
 	{
 		AddRow( row );
 	}
-	
+
 	ScanSpec::ScanSpec( Key^ key )
 	{
 		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
@@ -82,7 +82,7 @@ namespace Hypertable {
 	DateTime ScanSpec::StartDateTime::get( ) {
 		return timestampOrigin + TimeSpan::FromTicks(StartTimestamp / 100);
 	}
-	
+
 	void ScanSpec::StartDateTime::set( DateTime value) {
 		if( value < timestampOrigin ) throw gcnew ArgumentException( L"Invalid DateTime" );
 		if( value.Kind == DateTimeKind::Unspecified ) throw gcnew ArgumentException( L"Unspecified DateTime Kind" );
@@ -105,7 +105,7 @@ namespace Hypertable {
 		}
 		return AsReadOnly( rows );
 	}
-	
+
 	ReadOnlyCollection<String^>^ ScanSpec::Columns::get( ) {
 		if( columns == nullptr ) {
 			columns = gcnew SortedSet<String^>();
@@ -527,11 +527,6 @@ namespace Hypertable {
 				if( String::IsNullOrEmpty(columnPredicate->ColumnFamily) ) throw gcnew BadScanSpecException(L"Invalid column family in column predicate");
 				if( columnPredicate->Match == MatchKind::Undefined ) throw gcnew BadScanSpecException(L"Invalid match kind in column predicate");
 
-				if( !_columnFamilies->Contains(columnPredicate->ColumnFamily) ) {
-					scanSpec.addColumn( CM2U8(columnPredicate->ColumnFamily) );
-					_columnFamilies->Add( columnPredicate->ColumnFamily );
-				}
-
 				if( columnPredicate->SearchValue != nullptr ) {
 					if( columnPredicate->SearchValue->Length > 0 ) {
 						pin_ptr<byte> searchValue = &columnPredicate->SearchValue[0];
@@ -554,7 +549,7 @@ namespace Hypertable {
 				else {
 					scanSpec.addColumnPredicate( 
 						  CM2U8(columnPredicate->ColumnFamily)
-						, 0
+						, CM2U8(columnPredicate->ColumnQualifier)
 						, static_cast<uint32_t>(columnPredicate->Match)
 						, 0
 						, 0 );
