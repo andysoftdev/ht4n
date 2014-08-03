@@ -52,6 +52,14 @@ namespace Hypertable {
 			ColumnPredicate( String^ columnFamily, MatchKind match, cli::array<byte>^ searchValue );
 
 			/// <summary>
+			/// Initializes a new instance of the ColumnPredicate class using column family, qualifier, match kind.
+			/// </summary>
+			/// <param name="columnFamily">Column family.</param>
+			/// <param name="columnFamily">Column qualifier.</param>
+			/// <param name="match">Defines the match kind.</param>
+			ColumnPredicate( String^ columnFamily, String^ columnQualifier, MatchKind match );
+
+			/// <summary>
 			/// Initializes a new instance of the ColumnPredicate class using column family, qualifier, match kind and search value.
 			/// </summary>
 			/// <param name="columnFamily">Column family.</param>

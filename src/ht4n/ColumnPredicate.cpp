@@ -72,6 +72,15 @@ namespace Hypertable {
 		SearchValue = searchValue;
 	}
 
+	ColumnPredicate::ColumnPredicate( String^ columnFamily, String^ columnQualifier,  MatchKind match ) {
+		if( String::IsNullOrEmpty(columnFamily) ) throw gcnew ArgumentNullException(L"columnFamily");
+		if( match != MatchKind::QualifierExact && match != MatchKind::QualifierPrefix && match != MatchKind::QualifierRegex ) throw gcnew ArgumentException(L"Invalid match", L"match");
+
+		ColumnFamily = columnFamily;
+		ColumnQualifier = columnQualifier;
+		Match = match;
+	}
+
 	ColumnPredicate::ColumnPredicate( String^ columnFamily, String^ columnQualifier,  MatchKind match, cli::array<byte>^ searchValue ) {
 		if( String::IsNullOrEmpty(columnFamily) ) throw gcnew ArgumentNullException(L"columnFamily");
 		if( match == MatchKind::Undefined ) throw gcnew ArgumentException(L"Invalid match", L"match");
