@@ -36,8 +36,8 @@ using namespace System::Security::Permissions;
 [assembly: AssemblyDescription("Hypertable .NET client library")];
 [assembly: AssemblyCompany("ht4n.softdev.ch")];
 [assembly: AssemblyCopyright("Copyright © 2010-2014")];
-[assembly: AssemblyVersion("0.9.8.3")];
-[assembly: AssemblyFileVersion("0.9.8.3")];
+[assembly: AssemblyVersion("0.9.8.4")];
+[assembly: AssemblyFileVersion("0.9.8.4")];
 
 [assembly: CLSCompliant(true)];
 [assembly: ComVisible(false)];
