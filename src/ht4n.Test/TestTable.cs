@@ -21,9 +21,11 @@
 
 namespace Hypertable.Test
 {
+    using System.Linq;
     using System.Text.RegularExpressions;
 
     using Hypertable;
+    using Hypertable.Xml;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -187,6 +189,27 @@ namespace Hypertable.Test
                     {
                         Assert.Fail();
                     }
+                }
+
+                var existingSchema = TableSchema.Parse(Ns.GetTableSchema("test-1", true));
+                Assert.IsTrue(existingSchema.GenerationSpecified);
+                Assert.IsTrue(existingSchema.AccessGroups.All(ag => ag.GenerationSpecified));
+                Assert.IsTrue(existingSchema.AccessGroups.SelectMany(ag => ag.ColumnFamilies).All(cf => cf.GenerationSpecified));
+
+                var newSchema = TableSchema.Parse(Ns.GetTableSchema("test-1"));
+                newSchema.AccessGroups.First().ColumnFamilies.Insert(0, new ColumnFamily { Name = "new" });
+                Ns.AlterTable("test-1", newSchema.ToString());
+                var alteredSchema = TableSchema.Parse(Ns.GetTableSchema("test-1", true));
+                Assert.IsTrue(alteredSchema.GenerationSpecified);
+                Assert.IsTrue(existingSchema.Generation < alteredSchema.Generation);
+                Assert.IsTrue(existingSchema.AccessGroups.All(ag => ag.GenerationSpecified));
+                Assert.IsTrue(existingSchema.AccessGroups.SelectMany(ag => ag.ColumnFamilies).All(cf => cf.GenerationSpecified));
+
+                var d = alteredSchema.AccessGroups.SelectMany(ag => ag.ColumnFamilies).ToDictionary(cf => cf.Id);
+                foreach (var cf in existingSchema.AccessGroups.SelectMany(ag => ag.ColumnFamilies))
+                {
+                    Assert.IsTrue(d.ContainsKey(cf.Id));
+                    Assert.AreEqual(cf.Name, d[cf.Id].Name);
                 }
             }
 
