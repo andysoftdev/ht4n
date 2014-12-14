@@ -59,7 +59,7 @@ namespace Hypertable.Test
             
             var accessGroup = schema.AccessGroups[0];
             Assert.AreEqual("default", accessGroup.Name);
-            Assert.IsFalse(accessGroup.CounterSpecified);
+            Assert.IsNull(accessGroup.Options);
             Assert.IsNotNull(accessGroup.ColumnFamilies);
             Assert.AreEqual(1, accessGroup.ColumnFamilies.Count);
 
@@ -67,7 +67,7 @@ namespace Hypertable.Test
             Assert.AreEqual("a", columnFamily.Name);
 
             schema = TableSchema.Parse(
-                "<Schema><AccessGroup name=\"default\"><ColumnFamily><Name>a</Name></ColumnFamily><ColumnFamily><Name>b</Name><Counter>true</Counter></ColumnFamily></AccessGroup></Schema>");
+                "<Schema><AccessGroup name=\"default\"><ColumnFamily><Name>a</Name></ColumnFamily><ColumnFamily><Name>b</Name><Options><Counter>true</Counter></Options></ColumnFamily></AccessGroup></Schema>");
             Assert.IsNotNull(schema);
 
             Assert.IsNotNull(schema.AccessGroups);
@@ -75,7 +75,7 @@ namespace Hypertable.Test
 
             accessGroup = schema.AccessGroups[0];
             Assert.AreEqual("default", accessGroup.Name);
-            Assert.IsFalse(accessGroup.CounterSpecified);
+            Assert.IsNull(accessGroup.Options);
             Assert.IsNotNull(accessGroup.ColumnFamilies);
             Assert.AreEqual(2, accessGroup.ColumnFamilies.Count);
 
@@ -84,8 +84,9 @@ namespace Hypertable.Test
 
             columnFamily = accessGroup.ColumnFamilies[1];
             Assert.AreEqual("b", columnFamily.Name);
-            Assert.IsTrue(columnFamily.CounterSpecified);
-            Assert.IsTrue(columnFamily.Counter);
+            Assert.IsNotNull(columnFamily.Options);
+            Assert.IsTrue(columnFamily.Options.CounterSpecified);
+            Assert.IsTrue(columnFamily.Options.Counter);
         }
 
         /// <summary>
@@ -102,7 +103,7 @@ namespace Hypertable.Test
 
             var accessGroup = new AccessGroup { Name = "default", ColumnFamilies = new List<ColumnFamily>() };
             accessGroup.ColumnFamilies.Add(new ColumnFamily { Name = "a" });
-            accessGroup.ColumnFamilies.Add(new ColumnFamily { Name = "b", MaxVersions = 5, MaxVersionsSpecified = true });
+            accessGroup.ColumnFamilies.Add(new ColumnFamily { Name = "b", Options = new ColumnFamilyOptions { MaxVersions = 5, MaxVersionsSpecified = true } });
             schema.AccessGroups.Add(accessGroup);
 
             accessGroup = new AccessGroup { Name = "other", ColumnFamilies = new List<ColumnFamily>() };
@@ -128,8 +129,9 @@ namespace Hypertable.Test
 
             columnFamily = accessGroup.ColumnFamilies[1];
             Assert.AreEqual("b", columnFamily.Name);
-            Assert.IsTrue(columnFamily.MaxVersionsSpecified);
-            Assert.AreEqual(5, columnFamily.MaxVersions);
+            Assert.IsNotNull(columnFamily.Options);
+            Assert.IsTrue(columnFamily.Options.MaxVersionsSpecified);
+            Assert.AreEqual(5, columnFamily.Options.MaxVersions);
 
             accessGroup = schema.AccessGroups[1];
             Assert.AreEqual("other", accessGroup.Name);

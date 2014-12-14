@@ -46,6 +46,20 @@ namespace Hypertable { namespace Xml {
 				}
 		};
 
+		ref class TableSchemaTextWriter sealed : public XmlTextWriter
+		{
+			public:
+
+				TableSchemaTextWriter( StringBuilder^ sb )
+					: XmlTextWriter( gcnew UTF8StringWriter(sb) )
+				{
+				}
+
+				virtual void WriteEndElement() override {
+						XmlTextWriter::WriteFullEndElement();
+				}
+		};
+
 	}
 
 	TableSchema^ TableSchema::Parse( String^ xml ) {
@@ -67,17 +81,17 @@ namespace Hypertable { namespace Xml {
 		StringBuilder^ sb = gcnew StringBuilder();
 		XmlSerializerNamespaces^ ns = gcnew XmlSerializerNamespaces();
 		ns->Add( String::Empty, String::Empty );
-		StringWriter^ stringWriter = nullptr;
+		XmlTextWriter^ textWriter = nullptr;
 		try {
-			stringWriter = gcnew UTF8StringWriter( sb );
+			textWriter = gcnew TableSchemaTextWriter( sb );
 			XmlSerializer^ serializer = gcnew XmlSerializer( TableSchema::typeid );
-			serializer->Serialize( stringWriter, this, ns );
-			stringWriter->Flush();
+			serializer->Serialize( textWriter, this, ns );
+			textWriter->Flush();
 			return sb->ToString();
 		}
 		finally {
-			if( stringWriter != nullptr ) {
-				delete stringWriter;
+			if( textWriter != nullptr ) {
+				delete textWriter;
 			}
 		}
 	}

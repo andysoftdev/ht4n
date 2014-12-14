@@ -33,25 +33,155 @@ namespace Hypertable { namespace Xml {
 	using namespace System::Xml::Serialization;
 
 	ref class TableSchema;
+	ref class AccessGroupOptions;
 	ref class AccessGroup;
+	ref class ColumnFamilyOptions;
 	ref class ColumnFamily;
 
+	/// <summary>
+	/// Specifies whether the time order is ascending or descending.
+	/// </summary>
+	[XmlType(TypeName="timeOrderType", AnonymousType=true)]
+	public enum class ColumnFamilyTimeOrder {
+
+		/// <summary>
+		/// Ascending time order.
+		/// </summary>
+		asc,
+
+		/// <summary>
+		/// Descending time order.
+		/// </summary>
+		desc,
+	};
+	
+	/// <summary>
+	/// Represents a access group options.
+	/// </summary>
+	[XmlType(AnonymousType=true)]
+	public ref class AccessGroupOptions sealed {
+
+		public:
+
 			/// <summary>
-			/// Specifies whether the time order is ascending or descending.
+			/// Gets or sets the replication level.
 			/// </summary>
-			[XmlType(TypeName="timeOrderType", AnonymousType=true)]
-			public enum class ColumnFamilyTimeOrder {
+			/// <remarks>
+			/// The replication option controls the replication level in the underlying distributed file system (DFS) for cell store files
+			/// created for this access group. The default is unspecified, which translates to whatever the default replication level is
+			/// for the underlying file system.
+			/// </remarks>
+			[XmlElement("Replication")]
+			property int Replication;
 
-				/// <summary>
-				/// Ascending time order.
-				/// </summary>
-				ASC,
+			/// <summary>
+			/// Gets or sets a value that indicates whether the Replication property has been specified.
+			/// </summary>
+			[XmlIgnore]
+			property bool ReplicationSpecified;
 
-				/// <summary>
-				/// Descending time order.
-				/// </summary>
-				DESC,
-			};
+			/// <summary>
+			/// Gets or sets the block size.
+			/// </summary>
+			/// <remarks>
+			/// he block size option controls the size of the compressed blocks in the cell stores. A smaller block
+			/// size minimizes the amount of data that must be read from disk and decompressed for a key lookup at the
+			/// expense of a larger block index which consumes memory. The default value for the block size is 65KB.
+			/// </remarks>
+			[XmlElement("BlockSize")]
+			property int BlockSize;
+
+			/// <summary>
+			/// Gets or sets a value that indicates whether the BlockSize property has been specified.
+			/// </summary>
+			[XmlIgnore]
+			property bool BlockSizeSpecified;
+
+			/// <summary>
+			/// Gets or sets the compressor for the access group.
+			/// </summary>
+			/// <remarks>
+			/// The cell store blocks within an access group are compressed using the compression codec that is specified for the access group.
+			/// The following compression codecs are available: bmz, lzo, quicklz, snappy, zlib, none
+			/// </remarks>
+			[XmlElement("Compressor")]
+			property String^ Compressor;
+
+			/// <summary>
+			/// Gets or sets the bloom filter specification.
+			/// </summary>
+			[XmlElement("BloomFilter")]
+			property String^ BloomFilter;
+
+			/// <summary>
+			/// Gets or sets a value that indicates whether the AccessGroup should remain memory resident.
+			/// </summary>
+			[XmlElement("InMemory")]
+			property bool InMemory;
+
+			/// <summary>
+			/// Gets or sets a value that indicates whether the InMemory property has been specified.
+			/// </summary>
+			[XmlIgnore]
+			property bool InMemorySpecified;
+	};
+
+	/// <summary>
+	/// Represents the column family options.
+	/// </summary>
+	[XmlType(AnonymousType=true)]
+	public ref class ColumnFamilyOptions sealed {
+
+		public:
+
+			/// <summary>
+			/// Gets or sets a value that defines the N most recent versions of each cell to keep.
+			/// </summary>
+			[XmlElement("MaxVersions")]
+			property int MaxVersions;
+
+			/// <summary>
+			/// Gets or sets a value that indicates whether the MaxVersions property has been specified.
+			/// </summary>
+			[XmlIgnore]
+			property bool MaxVersionsSpecified;
+
+			/// <summary>
+			/// Gets or sets the time order.
+			/// </summary>
+			[XmlElement("TimeOrder")]
+			property ColumnFamilyTimeOrder TimeOrder;
+
+			/// <summary>
+			/// Gets or sets a value that indicates whether the TimeOrder property has been specified.
+			/// </summary>
+			[XmlIgnore]
+			property bool TimeOrderSpecified;
+
+			/// <summary>
+			/// Gets or sets a value that specify to keep cell versions that fall within some time window [ms] in the immediate past.
+			/// </summary>
+			[XmlElement("TTL")]
+			property int Ttl;
+
+			/// <summary>
+			/// Gets or sets a value that indicates whether the Ttl property has been specified.
+			/// </summary>
+			[XmlIgnore]
+			property bool TtlSpecified;
+
+			/// <summary>
+			/// Gets or sets a value that indicates whether this column family is a counter column.
+			/// </summary>
+			[XmlElement("Counter")]
+			property bool Counter;
+
+			/// <summary>
+			/// Gets or sets a value that indicates whether the Counter property has been specified.
+			/// </summary>
+			[XmlIgnore]
+			property bool CounterSpecified;
+	};
 
 	/// <summary>
 	/// Represents a Hypertable xml table schema.
@@ -88,16 +218,10 @@ namespace Hypertable { namespace Xml {
 		public:
 
 			/// <summary>
-			/// Gets or sets the access groups.
+			/// Gets or sets the column family generation.
 			/// </summary>
-			[XmlElement(L"AccessGroup")]
-			property List<AccessGroup^>^ AccessGroups;
-
-			/// <summary>
-			/// Gets or sets the schema generation.
-			/// </summary>
-			[XmlAttribute("Generation")]
-			property Byte Generation;
+			[XmlElement("Generation")]
+			property UInt64 Generation;
 
 			/// <summary>
 			/// Gets or sets a value that indicates whether the Generation property has been specified.
@@ -106,23 +230,13 @@ namespace Hypertable { namespace Xml {
 			property bool GenerationSpecified;
 
 			/// <summary>
-			/// Gets or sets the default compressor.
-			/// </summary>
-			/// <remarks>
-			/// The cell store blocks within an access group are compressed using the compression codec that is specified for the access group.
-			/// The following compression codecs are available: bmz, lzo, quicklz, snappy, zlib, none
-			/// </remarks>
-			[XmlAttribute("compressor")]
-			property String^ Compressor;
-
-			/// <summary>
 			/// Gets or sets the group commit interval.
 			/// </summary>
 			/// <remarks>
 			/// The group commit interval option tells the system that updates to this table should be carried out with group
 			/// commit and also specifies the commit interval in milliseconds.
 			/// </remarks>
-			[XmlAttribute("group_commit_interval")]
+			[XmlElement("GroupCommitInterval")]
 			property int GroupCommitInterval;
 
 			/// <summary>
@@ -130,6 +244,24 @@ namespace Hypertable { namespace Xml {
 			/// </summary>
 			[XmlIgnore]
 			property bool GroupCommitIntervalSpecified;
+
+			/// <summary>
+			/// Gets or sets the access group defaults.
+			/// </summary>
+			[XmlElement("AccessGroupDefaults")]
+			property AccessGroupOptions^ AccessGroupDefaults;
+
+			/// <summary>
+			/// Gets or sets the column family defaults.
+			/// </summary>
+			[XmlElement("ColumnFamilyDefaults")]
+			property ColumnFamilyOptions^ ColumnFamilyDefaults;
+
+			/// <summary>
+			/// Gets or sets the access groups.
+			/// </summary>
+			[XmlElement(L"AccessGroup")]
+			property List<AccessGroup^>^ AccessGroups;
 
 			/// <summary>
 			/// Initializes a new instance of the TableSchema class.
@@ -166,93 +298,43 @@ namespace Hypertable { namespace Xml {
 		public:
 
 			/// <summary>
-			/// Gets or sets the column families.
-			/// </summary>
-			[XmlElement(L"ColumnFamily")]
-			property List<ColumnFamily^>^ ColumnFamilies;
-
-			/// <summary>
 			/// Gets or sets the access group name.
 			/// </summary>
 			/// <remarks>
 			/// Access group names must be unique for the entire table schema.
 			/// </remarks>
-			[XmlAttribute(AttributeName="name")]
+			[XmlAttribute("name")]
 			property String^ Name;
 
 			/// <summary>
-			/// Gets or sets a value that indicates whether the AccessGroup should remain memory resident.
+			/// Gets or sets the column family generation.
 			/// </summary>
-			[XmlAttribute(AttributeName="inMemory")]
-			property bool InMemory;
+			[XmlElement("Generation")]
+			property UInt64 Generation;
 
 			/// <summary>
-			/// Gets or sets a value that indicates whether the InMemory property has been specified.
+			/// Gets or sets a value that indicates whether the Generation property has been specified.
 			/// </summary>
 			[XmlIgnore]
-			property bool InMemorySpecified;
+			property bool GenerationSpecified;
 
 			/// <summary>
-			/// Gets or sets a value that indicates whether all column families in the access group are counter columns.
+			/// Gets or sets the access group options.
 			/// </summary>
-			[XmlAttribute(AttributeName="counter")]
-			property bool Counter;
+			[XmlElement("Options")]
+			property AccessGroupOptions^ Options;
 
 			/// <summary>
-			/// Gets or sets a value that indicates whether the Counter property has been specified.
+			/// Gets or sets the column family defaults.
 			/// </summary>
-			[XmlIgnore]
-			property bool CounterSpecified;
+			[XmlElement("ColumnFamilyDefaults")]
+			property ColumnFamilyOptions^ ColumnFamilyDefaults;
 
 			/// <summary>
-			/// Gets or sets the replication level.
+			/// Gets or sets the column families.
 			/// </summary>
-			/// <remarks>
-			/// The replication option controls the replication level in the underlying distributed file system (DFS) for cell store files
-			/// created for this access group. The default is unspecified, which translates to whatever the default replication level is
-			/// for the underlying file system.
-			/// </remarks>
-			[XmlAttribute(AttributeName="replication")]
-			property int Replication;
-
-			/// <summary>
-			/// Gets or sets a value that indicates whether the Replication property has been specified.
-			/// </summary>
-			[XmlIgnore]
-			property bool ReplicationSpecified;
-
-			/// <summary>
-			/// Gets or sets the block size.
-			/// </summary>
-			/// <remarks>
-			/// he block size option controls the size of the compressed blocks in the cell stores. A smaller block
-			/// size minimizes the amount of data that must be read from disk and decompressed for a key lookup at the
-			/// expense of a larger block index which consumes memory. The default value for the block size is 65KB.
-			/// </remarks>
-			[XmlAttribute(AttributeName="blksz")]
-			property int BlockSize;
-
-			/// <summary>
-			/// Gets or sets a value that indicates whether the BlockSize property has been specified.
-			/// </summary>
-			[XmlIgnore]
-			property bool BlockSizeSpecified;
-
-			/// <summary>
-			/// Gets or sets the compressor for the access group.
-			/// </summary>
-			/// <remarks>
-			/// The cell store blocks within an access group are compressed using the compression codec that is specified for the access group.
-			/// The following compression codecs are available: bmz, lzo, quicklz, snappy, zlib, none
-			/// </remarks>
-			[XmlAttribute(AttributeName="compressor")]
-			property String^ Compressor;
-
-			/// <summary>
-			/// Gets or sets the bloom filter specification.
-			/// </summary>
-			[XmlAttribute(AttributeName="bloomFilter")]
-			property String^ BloomFilter;
+			[XmlElement(L"ColumnFamily")]
+			property List<ColumnFamily^>^ ColumnFamilies;
 
 			/// <summary>
 			/// Initializes a new instance of the AccessGroup class.
@@ -271,19 +353,22 @@ namespace Hypertable { namespace Xml {
 		public:
 
 			/// <summary>
-			/// Gets or sets the mandatory column family name.
+			/// Gets or sets the column family identifier.
 			/// </summary>
-			/// <remarks>
-			/// Column family names must be unique for the entire table schema.
-			/// </remarks>
-			[XmlElement(ElementName="Name")]
-			property String^ Name;
+			[XmlAttribute("id")]
+			property int Id;
+
+			/// <summary>
+			/// Gets or sets a value that indicates whether the Id property has been specified.
+			/// </summary>
+			[XmlIgnore]
+			property bool IdSpecified;
 
 			/// <summary>
 			/// Gets or sets the column family generation.
 			/// </summary>
-			[XmlElement(ElementName="Generation")]
-			property Byte Generation;
+			[XmlElement("Generation")]
+			property UInt64 Generation;
 
 			/// <summary>
 			/// Gets or sets a value that indicates whether the Generation property has been specified.
@@ -292,57 +377,18 @@ namespace Hypertable { namespace Xml {
 			property bool GenerationSpecified;
 
 			/// <summary>
-			/// Gets or sets a value that indicates whether this column family is a counter column.
+			/// Gets or sets the mandatory column family name.
 			/// </summary>
-			[XmlElement(ElementName="Counter")]
-			property bool Counter;
-
-			/// <summary>
-			/// Gets or sets a value that indicates whether the Counter property has been specified.
-			/// </summary>
-			[XmlIgnore]
-			property bool CounterSpecified;
-
-			/// <summary>
-			/// Gets or sets a value that defines the N most recent versions of each cell to keep.
-			/// </summary>
-			[XmlElement(ElementName="MaxVersions")]
-			property int MaxVersions;
-
-			/// <summary>
-			/// Gets or sets a value that indicates whether the MaxVersions property has been specified.
-			/// </summary>
-			[XmlIgnore]
-			property bool MaxVersionsSpecified;
-
-			/// <summary>
-			/// Gets or sets the time order.
-			/// </summary>
-			[XmlElement(ElementName="TimeOrder")]
-			property ColumnFamilyTimeOrder TimeOrder;
-
-			/// <summary>
-			/// Gets or sets a value that indicates whether the TimeOrder property has been specified.
-			/// </summary>
-			[XmlIgnore]
-			property bool TimeOrderSpecified;
-
-			/// <summary>
-			/// Gets or sets a value that specify to keep cell versions that fall within some time window [ms] in the immediate past.
-			/// </summary>
-			[XmlElement(ElementName="ttl")]
-			property int Ttl;
-
-			/// <summary>
-			/// Gets or sets a value that indicates whether the Ttl property has been specified.
-			/// </summary>
-			[XmlIgnore]
-			property bool TtlSpecified;
+			/// <remarks>
+			/// Column family names must be unique for the entire table schema.
+			/// </remarks>
+			[XmlElement("Name")]
+			property String^ Name;
 
 			/// <summary>
 			/// Gets or sets a value that indicates whether the column family has been deleted.
 			/// </summary>
-			[XmlElement(ElementName="deleted")]
+			[XmlElement("Deleted")]
 			property bool Deleted;
 
 			/// <summary>
@@ -352,27 +398,9 @@ namespace Hypertable { namespace Xml {
 			property bool DeletedSpecified;
 
 			/// <summary>
-			/// Gets or sets a value that indicates whether the column family has been renamed.
-			/// </summary>
-			[XmlElement(ElementName="renamed")]
-			property bool Renamed;
-
-			/// <summary>
-			/// Gets or sets a value that indicates whether the Renamed property has been specified.
-			/// </summary>
-			[XmlIgnore]
-			property bool RenamedSpecified;
-
-			/// <summary>
-			/// Gets or sets the new column family name.
-			/// </summary>
-			[XmlElement(ElementName="NewName")]
-			property String^ NewName;
-
-			/// <summary>
 			/// Gets or sets a value that indicates whether the column family has a cell value index.
 			/// </summary>
-			[XmlElement(ElementName="Index")]
+			[XmlElement("Index")]
 			property bool Index;
 
 			/// <summary>
@@ -384,7 +412,7 @@ namespace Hypertable { namespace Xml {
 			/// <summary>
 			/// Gets or sets a value that indicates whether the column family has a column qualifier index.
 			/// </summary>
-			[XmlElement(ElementName="QualifierIndex")]
+			[XmlElement("QualifierIndex")]
 			property bool QualifierIndex;
 
 			/// <summary>
@@ -394,16 +422,10 @@ namespace Hypertable { namespace Xml {
 			property bool QualifierIndexSpecified;
 
 			/// <summary>
-			/// Gets or sets the column family identifier.
+			/// Gets or sets the column family options.
 			/// </summary>
-			[XmlAttribute(AttributeName="id")]
-			property int Id;
-
-			/// <summary>
-			/// Gets or sets a value that indicates whether the Id property has been specified.
-			/// </summary>
-			[XmlIgnore]
-			property bool IdSpecified;
+			[XmlElement("Options")]
+			property ColumnFamilyOptions^ Options;
 
 			/// <summary>
 			/// Initializes a new instance of the ColumnFamily class.
