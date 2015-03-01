@@ -13,9 +13,12 @@
 	<PropertyGroup>
 		<Version>0.9.8.4</Version>
 
-		<FxVersion Condition="'$(VisualStudioVersion)' == '10.0'">4.0</FxVersion>
-		<FxVersion Condition="'$(VisualStudioVersion)' == '11.0'">4.5</FxVersion>
-		<FxVersion Condition="'$(VisualStudioVersion)' == '12.0'">4.5</FxVersion>
+    <FxVersion Condition="'$(TargetFrameworkVersion)' == 'v4.0'">4.0</FxVersion>
+    <FxVersion Condition="'$(TargetFrameworkVersion)' == 'v4.5'">4.5</FxVersion>
+
+		<FxVersion Condition="'$(FxVersion)' == '' And '$(VisualStudioVersion)' == '10.0'">4.0</FxVersion>
+		<FxVersion Condition="'$(FxVersion)' == '' And '$(VisualStudioVersion)' == '11.0'">4.5</FxVersion>
+		<FxVersion Condition="'$(FxVersion)' == '' And '$(VisualStudioVersion)' == '12.0'">4.5</FxVersion>
 
 		<Master_x86>dist\$(VisualStudioVersion)\ht4n-$(Version)-x86-fx$(FxVersion)-vc$(VisualStudioVersion).zip</Master_x86>
 		<Master_x64>dist\$(VisualStudioVersion)\ht4n-$(Version)-x64-fx$(FxVersion)-vc$(VisualStudioVersion).zip</Master_x64>
@@ -63,11 +66,11 @@
 		<PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
 	</PropertyGroup>
 
-	<!-- Platform toolset -->
+	<!-- Target framework -->
 	<PropertyGroup>
-		<TargetFrameworkVersion Condition="'$(VisualStudioVersion)' == '10.0'">v4.0</TargetFrameworkVersion>
-		<TargetFrameworkVersion Condition="'$(VisualStudioVersion)' == '11.0'">v4.5</TargetFrameworkVersion>
-		<TargetFrameworkVersion Condition="'$(VisualStudioVersion)' == '12.0'">v4.5</TargetFrameworkVersion>
+		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == '' And '$(VisualStudioVersion)' == '10.0'">v4.0</TargetFrameworkVersion>
+		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == '' And '$(VisualStudioVersion)' == '11.0'">v4.5</TargetFrameworkVersion>
+		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == '' And '$(VisualStudioVersion)' == '12.0'">v4.5</TargetFrameworkVersion>
 	</PropertyGroup>
 
 	<!-- Check for mstest64 -->
