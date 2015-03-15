@@ -42,8 +42,8 @@ namespace Hypertable {
 			/// Gets the old session state.
 			/// </summary>
 			/// <seealso cref="SessionState"/>
-			property SessionState^ OldSessionState {
-				SessionState^ get( ) {
+			property SessionState OldSessionState {
+				SessionState get( ) {
 					return oldSessionState;
 				}
 			}
@@ -52,8 +52,8 @@ namespace Hypertable {
 			/// Gets the new session state.
 			/// </summary>
 			/// <seealso cref="SessionState"/>
-			property SessionState^ NewSessionState {
-				SessionState^ get( ) {
+			property SessionState NewSessionState {
+				SessionState get( ) {
 					return newSessionState;
 				}
 			}
