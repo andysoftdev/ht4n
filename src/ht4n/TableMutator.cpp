@@ -175,7 +175,6 @@ namespace Hypertable {
 		if( tableMutator == 0 ) throw gcnew ArgumentNullException(L"tableMutator");
 	}
 
-
 	void TableMutator::Set( Key^ key, cli::array<Byte>^ value, CellFlag cellFlag, bool createRowKey ) {
 		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
 		HT4N_TRY {
