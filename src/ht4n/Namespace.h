@@ -40,6 +40,7 @@ namespace Hypertable {
 	using namespace ht4c;
 
 	interface class ITable;
+	ref class Client;
 	ref class NamespaceListing;
 	ref class Cell;
 
@@ -125,12 +126,13 @@ namespace Hypertable {
 
 		internal:
 
-			Namespace( IClient^ client, Common::Namespace* ns );
+			Namespace( Client^ client, Common::Namespace* ns );
 
 			Common::Namespace* get();
 
 		private:
 
+			Object^ syncRoot;
 			IClient^ client;
 			Common::Namespace* ns;
 			bool disposed;

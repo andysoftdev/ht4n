@@ -95,8 +95,15 @@ namespace Hypertable {
 
 			Client( Hypertable::Context^ _ctx );
 
+			property Object^ SyncRoot { 
+				Object^ get() { 
+					return syncRoot;
+				}
+			}
+
 		private:
 
+			Object^ syncRoot;
 			Common::Client* client;
 			Hypertable::Context^ ctx;
 			bool disposed;

@@ -57,6 +57,7 @@ namespace Hypertable {
 
 	Client::Client( Hypertable::Context^ _ctx )
 	: client( 0 )
+	, syncRoot( gcnew Object() )
 	, ctx( _ctx )
 	, disposed( false )
 	{
@@ -89,6 +90,7 @@ namespace Hypertable {
 		}
 
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			client->createNamespace( CM2U8(name)
 														 , nsBase != nullptr ? nsBase->get() : 0
 														 , (dispo & CreateDispositions::CreateIntermediate) == CreateDispositions::CreateIntermediate
@@ -119,6 +121,7 @@ namespace Hypertable {
 		}
 
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			switch( dispo & (OpenDispositions::OpenExisting|OpenDispositions::OpenAlways|OpenDispositions::CreateAlways) ) {
 			case OpenDispositions::OpenAlways:
 				if( !NamespaceExists(name, nsBase) ) {
@@ -171,6 +174,7 @@ namespace Hypertable {
 		}
 
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			client->dropNamespace( CM2U8(name)
 								 , nsBase != nullptr ? nsBase->get() : 0
 								 , (dispo & DropDispositions::IfExists) == DropDispositions::IfExists
@@ -194,6 +198,7 @@ namespace Hypertable {
 		}
 
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			return client->existsNamespace( CM2U8(name), nsBase != nullptr ? nsBase->get() : 0 );
 		}
 		HT4N_RETHROW

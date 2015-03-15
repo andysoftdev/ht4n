@@ -94,12 +94,14 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(schema) ) throw gcnew ArgumentNullException( L"schema" );
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			ns->createTable( CM2U8(name), CM2U8(schema) );
 		}
 		HT4N_RETHROW
 	}
 
 	void Namespace::CreateTable( String^ name, String^ schema, CreateDispositions dispo ) {
+		msclr::lock sync( syncRoot );
 		if( (dispo & CreateDispositions::CreateIfNotExist) == CreateDispositions::CreateIfNotExist ) {
 			if( TableExists(name) ) {
 				return;
@@ -114,12 +116,14 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(like) ) throw gcnew ArgumentNullException( L"like" );
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			ns->createTableLike( CM2U8(name), CM2U8(like) );
 		}
 		HT4N_RETHROW
 	}
 
 	void Namespace::CreateTableLike( String^ name, String^ like, CreateDispositions dispo ) {
+		msclr::lock sync( syncRoot );
 		if( (dispo & CreateDispositions::CreateIfNotExist) == CreateDispositions::CreateIfNotExist ) {
 			if( TableExists(name) ) {
 				return;
@@ -134,6 +138,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(schema) ) throw gcnew ArgumentNullException( L"schema" );
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			ns->alterTable( CM2U8(name), CM2U8(schema) );
 		}
 		HT4N_RETHROW
@@ -148,6 +153,7 @@ namespace Hypertable {
 
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			return gcnew Table( ns->openTable(CM2U8(name), (dispo & OpenDispositions::Force) == OpenDispositions::Force) );
 		}
 		HT4N_RETHROW
@@ -159,6 +165,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(schema) ) throw gcnew ArgumentNullException( L"schema" );
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			switch( dispo & (OpenDispositions::OpenExisting|OpenDispositions::OpenAlways|OpenDispositions::CreateAlways) ) {
 			case OpenDispositions::OpenAlways:
 				if( !TableExists(name) ) {
@@ -182,6 +189,7 @@ namespace Hypertable {
 		if( String::IsNullOrEmpty(nameNew) ) throw gcnew ArgumentNullException( L"nameNew" );
 		HT4N_TRY {
 			if( nameOld != nameNew ) {
+				msclr::lock sync( syncRoot );
 				ns->renameTable( CM2U8(nameOld), CM2U8(nameNew) );
 			}
 		}
@@ -197,6 +205,7 @@ namespace Hypertable {
 
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			ns->dropTable( CM2U8(name), (dispo & DropDispositions::IfExists) == DropDispositions::IfExists );
 		}
 		HT4N_RETHROW
@@ -226,6 +235,7 @@ namespace Hypertable {
 
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		HT4N_TRY {
+			msclr::lock sync( syncRoot );
 			return ns->existsTable( CM2U8(name) );
 		} 
 		HT4N_RETHROW
@@ -387,13 +397,16 @@ namespace Hypertable {
 												 , Name != nullptr ? Name : L"null");
 	}
 
-	Namespace::Namespace( IClient^ _client, Common::Namespace* _ns )
+	Namespace::Namespace( Client^ _client, Common::Namespace* _ns )
 	: client( _client )
 	, ns( _ns )
+	, syncRoot( nullptr )
 	, disposed( false )
 	{
 		if( client == nullptr ) throw gcnew ArgumentNullException(L"client");
 		if( ns == 0 ) throw gcnew ArgumentNullException(L"ns");
+
+		syncRoot = _client->SyncRoot;
 	}
 
 	Common::Namespace* Namespace::get() {
