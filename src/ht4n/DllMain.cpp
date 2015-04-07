@@ -93,7 +93,7 @@ extern "C" BOOL WINAPI DllMain(HANDLE /*hInstance*/, DWORD dwReason, LPVOID /*lp
 
 			boost::on_thread_exit();
 
-			boost::spirit::classic::static_<
+			/*boost::spirit::classic::static_<
 				boost::thread_specific_ptr<
 					boost::weak_ptr<
 						boost::spirit::classic::impl::grammar_helper<
@@ -110,7 +110,7 @@ extern "C" BOOL WINAPI DllMain(HANDLE /*hInstance*/, DWORD dwReason, LPVOID /*lp
 						>
 					>
 					,boost::spirit::classic::impl::get_definition_static_data_tag
-				>::free();
+				>::free();*/
 
 			boost::on_process_exit();
 			break;
