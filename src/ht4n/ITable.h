@@ -38,6 +38,12 @@ namespace Hypertable {
 	ref class Cell;
 	ref class AsyncResult;
 
+	namespace Xml {
+
+		ref class TableSchema;
+
+	}
+
 	/// <summary>
 	/// Represents a Hypertable table.
 	/// </summary>
@@ -217,6 +223,12 @@ namespace Hypertable {
 			/// <param name="callback">Asynchronous scanner callback.</param>
 			/// <returns>Asynchronous scanner identifier.</returns>
 			int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, Object^ param, AsyncScannerCallback^ callback );
+
+			/// <summary>
+			/// Gets a table schema instance.
+			/// </summary>
+			/// <returns>The table schem instance.</returns>
+			Xml::TableSchema^ GetTableSchema( );
 	};
 
 }

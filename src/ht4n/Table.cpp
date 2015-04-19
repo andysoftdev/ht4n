@@ -32,6 +32,7 @@
 #include "BlockingAsyncResult.h"
 #include "AsyncScannerContext.h"
 #include "AsyncMutatorContext.h"
+#include "Xml\TableSchema.h"
 #include "Exception.h"
 #include "CM2U8.h"
 
@@ -77,7 +78,7 @@ namespace Hypertable {
 		HT4N_THROW_OBJECTDISPOSED( );
 
 		HT4N_TRY {
-			return CM2U8::ToString( table->getSchema().c_str() );
+			return CM2U8::ToString( table->getSchema(false).c_str() );
 		} 
 		HT4N_RETHROW
 	}
@@ -233,6 +234,15 @@ namespace Hypertable {
 			if( _scanSpec ) delete _scanSpec;
 		}
 		return 0;
+	}
+
+	Xml::TableSchema^ Table::GetTableSchema( ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
+		HT4N_TRY {
+			return Xml::TableSchema::Parse(CM2U8::ToString(table->getSchema(true).c_str()) );
+		} 
+		HT4N_RETHROW
 	}
 
 	String^ Table::ToString() {

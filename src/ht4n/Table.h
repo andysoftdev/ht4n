@@ -45,6 +45,12 @@ namespace Hypertable {
 	ref class Cell;
 	ref class AsyncResult;
 
+	namespace Xml {
+
+		ref class TableSchema;
+
+	}
+
 	/// <summary>
 	/// Represents a Hypertable table.
 	/// </summary>
@@ -94,6 +100,7 @@ namespace Hypertable {
 			virtual int64_t BeginScan( AsyncResult^ asyncResult, AsyncScannerCallback^ callback );
 			virtual int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, AsyncScannerCallback^ callback );
 			virtual int64_t BeginScan( AsyncResult^ asyncResult, ScanSpec^ scanSpec, Object^ param, AsyncScannerCallback^ callback );
+			virtual Xml::TableSchema^ GetTableSchema( );
 
 			#pragma endregion
 

@@ -22,6 +22,7 @@
 namespace Hypertable.Test
 {
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Text.RegularExpressions;
 
     using Hypertable;
@@ -313,6 +314,33 @@ namespace Hypertable.Test
             catch
             {
                 Assert.Fail();
+            }
+
+            const string Schema2 =
+                "<Schema><AccessGroup name=\"default\">" +
+                "<ColumnFamily id=\"2\"><Name>a</Name></ColumnFamily>" +
+                "<ColumnFamily id=\"1\"><Name>b</Name></ColumnFamily>" +
+                "</AccessGroup></Schema>";
+
+            Ns.CreateTable("test-4", Schema2);
+            Assert.IsTrue(Ns.TableExists("test-4"));
+            using (var table = Ns.OpenTable("test-4"))
+            {
+                Assert.AreEqual(2, table.GetTableSchema().AccessGroups.First().ColumnFamilies.First(cf => cf.Name == "a").Id);
+            }
+
+            const string Schema3 =
+                 "<Schema><AccessGroup name=\"default\">" +
+                 "<ColumnFamily id='2'><Name>a</Name></ColumnFamily>" +
+                 "<ColumnFamily id='3'><Name>b</Name></ColumnFamily>" +
+                 "<ColumnFamily id='1'><Name>c</Name></ColumnFamily>" +
+                 "</AccessGroup></Schema>";
+
+            Ns.CreateTable("test-5", Schema3);
+            Assert.IsTrue(Ns.TableExists("test-5"));
+            using (var table = Ns.OpenTable("test-5"))
+            {
+                Assert.AreEqual(3, table.GetTableSchema().AccessGroups.First().ColumnFamilies.First(cf => cf.Name == "b").Id);
             }
         }
 
