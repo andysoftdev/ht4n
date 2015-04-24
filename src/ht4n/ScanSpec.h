@@ -149,6 +149,12 @@ namespace Hypertable {
 			explicit ScanSpec( CellInterval^ cellInterval );
 
 			/// <summary>
+			/// Initializes a new instance of the ScanSpec class.
+			/// </summary>
+			/// <param name="scanSpec">Scan specification to copy.</param>
+			explicit ScanSpec( ScanSpec^ scanSpec );
+
+			/// <summary>
 			/// Gets or sets the maximum number of rows to return in the scan.
 			/// </summary>
 			/// <remarks>
@@ -217,6 +223,11 @@ namespace Hypertable {
 			/// Scan and filter should be used if query more than 10% of all rows in a table.
 			/// </remarks>
 			property bool ScanAndFilter;
+
+			/// <summary>
+			/// AND together all the column predicates, if not set then the OR logic will be used.
+			/// </summary>
+			property bool ColumnPredicateAnd;
 
 			/// <summary>
 			/// Gets or sets the start time of the scan.
@@ -447,6 +458,12 @@ namespace Hypertable {
 			ScanSpec^ RemoveColumnPredicate( ColumnPredicate^ columnPredicate );
 
 			/// <summary>
+			/// Removes all column predicates.
+			/// </summary>
+			/// <returns>This ScanSpec instance.</returns>
+			ScanSpec^ ClearColumnPredicates( );
+
+			/// <summary>
 			/// Adds a cell to be returned in the scan.
 			/// </summary>
 			/// <param name="row">Row.</param>
@@ -515,6 +532,12 @@ namespace Hypertable {
 			ScanSpec^ RemoveRowInterval( RowInterval^ rowInterval );
 
 			/// <summary>
+			/// Removes all row intervals.
+			/// </summary>
+			/// <returns>This ScanSpec instance.</returns>
+			ScanSpec^ ClearRowIntervals( );
+
+			/// <summary>
 			/// Adds one or more cell intervals to be returned in the scan.
 			/// </summary>
 			/// <param name="cellInterval">Cell interval to add.</param>
@@ -535,6 +558,12 @@ namespace Hypertable {
 			/// <param name="cellInterval">Cell interval to remove.</param>
 			/// <returns>This ScanSpec instance.</returns>
 			ScanSpec^ RemoveCellInterval( CellInterval^ cellInterval );
+
+			/// <summary>
+			/// Removes all cell intervals.
+			/// </summary>
+			/// <returns>This ScanSpec instance.</returns>
+			ScanSpec^ ClearCellIntervals( );
 
 			/// <summary>
 			/// Returns a string that represents the current object.

@@ -79,6 +79,47 @@ namespace Hypertable {
 		AddCellInterval( cellInterval );
 	}
 
+	ScanSpec::ScanSpec( ScanSpec^ scanSpec ) {
+		if( scanSpec == nullptr ) throw gcnew ArgumentNullException( L"scanSpec" );
+		MaxRows = scanSpec->MaxRows;
+		MaxVersions = scanSpec->MaxVersions;
+		MaxCells = scanSpec->MaxCells;
+		MaxCellsColumnFamily = scanSpec->MaxCellsColumnFamily;
+		RowOffset = scanSpec->RowOffset;
+		CellOffset = scanSpec->CellOffset;
+		KeysOnly = scanSpec->KeysOnly;
+		NotUseQueryCache = scanSpec->NotUseQueryCache;
+		ScanAndFilter = scanSpec->ScanAndFilter;
+		ColumnPredicateAnd = scanSpec->ColumnPredicateAnd;
+		StartTimestamp = scanSpec->StartTimestamp;
+		EndTimestamp = scanSpec->EndTimestamp;
+		RowRegex = scanSpec->RowRegex;
+		ValueRegex = scanSpec->ValueRegex;
+		Timeout = scanSpec->Timeout;
+		Flags = scanSpec->Flags;
+		isSorted = scanSpec->isSorted;
+
+		if( scanSpec->rows != nullptr ) {
+			AddRow(scanSpec->rows);
+		}
+		if( scanSpec->columns != nullptr ) {
+			AddColumn(scanSpec->columns);
+		}
+		if( scanSpec->keys != nullptr ) {
+			AddCell(scanSpec->keys);
+		}
+		if( scanSpec->columnPredicates != nullptr ) {
+			AddColumnPredicate(scanSpec->columnPredicates);
+		}
+		if( scanSpec->rowIntervals != nullptr ) {
+			AddRowInterval(scanSpec->rowIntervals);
+		}
+		if( scanSpec->cellIntervals != nullptr ) {
+			AddCellInterval(scanSpec->cellIntervals);
+		}
+
+	}
+
 	DateTime ScanSpec::StartDateTime::get( ) {
 		return timestampOrigin + TimeSpan::FromTicks(StartTimestamp / 100);
 	}
@@ -261,6 +302,13 @@ namespace Hypertable {
 		return this;
 	}
 
+	ScanSpec^  ScanSpec::ClearColumnPredicates( ) {
+		if( columnPredicates != nullptr ) {
+			columnPredicates->Clear( );
+		}
+		return this;
+	}
+
 	ScanSpec^ ScanSpec::AddCell( String^ row, String^ columnFamily, String^ columnQualifier ) {
 		AddCell( gcnew Key(row, columnFamily, columnQualifier) );
 		return this;
@@ -343,6 +391,13 @@ namespace Hypertable {
 		return this;
 	}
 
+	ScanSpec^  ScanSpec::ClearRowIntervals( ) {
+		if( rowIntervals != nullptr ) {
+			rowIntervals->Clear( );
+		}
+		return this;
+	}
+
 	ScanSpec^ ScanSpec::AddCellInterval( CellInterval^ cellInterval, ... cli::array<CellInterval^>^ moreCellIntervals ) {
 		if( cellInterval == nullptr ) throw gcnew ArgumentNullException( L"cellInterval" );
 		if( String::IsNullOrEmpty(cellInterval->StartColumnFamily) ) throw gcnew ArgumentException( L"Invalid parameter cellInterval (cellInterval.StartColumnFamily null or empty)", L"cellInterval" );
@@ -379,6 +434,13 @@ namespace Hypertable {
 
 		if( cellIntervals != nullptr ) {
 			cellIntervals->Remove( cellInterval );
+		}
+		return this;
+	}
+
+	ScanSpec^  ScanSpec::ClearCellIntervals( ) {
+		if( cellIntervals != nullptr ) {
+			cellIntervals->Clear( );
 		}
 		return this;
 	}
@@ -501,7 +563,12 @@ namespace Hypertable {
 		}
 		scanSpec.keysOnly( KeysOnly );
 		scanSpec.notUseQueryCache( NotUseQueryCache );
-		scanSpec.scanAndFilter( ScanAndFilter );
+
+		scanSpec.scanAndFilter(
+			ScanAndFilter && ((rows != nullptr && rows->Count > 1) || (rowIntervals != nullptr && rowIntervals->Count > 1)) );
+
+		scanSpec.columnPredicateAnd(
+			ColumnPredicateAnd && columnPredicates != nullptr && columnPredicates->Count > 1 );
 
 		if( StartTimestamp > 0 ) {
 			scanSpec.startTimestamp( StartTimestamp );
