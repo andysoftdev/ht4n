@@ -96,6 +96,10 @@ namespace Hypertable {
 					scanSpec->ScanAndFilter = true;
 					return this;
 				}
+				virtual IScanSpecBuilderOp^ ColumnPredicateAnd( ) {
+					scanSpec->ColumnPredicateAnd = true;
+					return this;
+				}
 				virtual IScanSpecBuilderOp^ KeysOnly( ) {
 					scanSpec->KeysOnly = true;
 					return this;
@@ -153,22 +157,12 @@ namespace Hypertable {
 					scanSpec->AddRowInterval( rowIntervals );
 					return this;
 				}
-		};
 
-		ref class ScanSpecBuilderWithColumnPredicateOp sealed : public ScanSpecBuilderBaseOp
-																													, public IScanSpecBuilderWithColumnPredicateOp {
-
-			public:
-
-				ScanSpecBuilderWithColumnPredicateOp( ScanSpec^ scanSpec )
-				: ScanSpecBuilderBaseOp( scanSpec ) {
-				}
-
-				virtual IScanSpecBuilderWithColumnPredicateOp^ WithColumnPredicates( ColumnPredicate^ columnPredicate, ... cli::array<ColumnPredicate^>^ moreColumnPredicates ) {
+				virtual IScanSpecBuilderWithRowOp^ WithColumnPredicates( ColumnPredicate^ columnPredicate, ... cli::array<ColumnPredicate^>^ moreColumnPredicates ) {
 					scanSpec->AddColumnPredicate( columnPredicate, moreColumnPredicates );
 					return this;
 				}
-				virtual IScanSpecBuilderWithColumnPredicateOp^ WithColumnPredicates( IEnumerable<ColumnPredicate^>^ columnPredicates ) {
+				virtual IScanSpecBuilderWithRowOp^ WithColumnPredicates( IEnumerable<ColumnPredicate^>^ columnPredicates ) {
 					scanSpec->AddColumnPredicate( columnPredicates );
 					return this;
 				}
@@ -234,13 +228,13 @@ namespace Hypertable {
 					return Continue( ScanSpecBuilderWithRowOp );
 				}
 
-				virtual IScanSpecBuilderWithColumnPredicateOp^ WithColumnPredicates( ColumnPredicate^ columnPredicate, ... cli::array<ColumnPredicate^>^ moreColumnPredicates ) {
+				virtual IScanSpecBuilderWithRowOp^ WithColumnPredicates( ColumnPredicate^ columnPredicate, ... cli::array<ColumnPredicate^>^ moreColumnPredicates ) {
 					scanSpec->AddColumnPredicate( columnPredicate, moreColumnPredicates );
-					return Continue( ScanSpecBuilderWithColumnPredicateOp );
+					return Continue( ScanSpecBuilderWithRowOp );
 				}
-				virtual IScanSpecBuilderWithColumnPredicateOp^ WithColumnPredicates( IEnumerable<ColumnPredicate^>^ columnPredicates ) {
+				virtual IScanSpecBuilderWithRowOp^ WithColumnPredicates( IEnumerable<ColumnPredicate^>^ columnPredicates ) {
 					scanSpec->AddColumnPredicate( columnPredicates );
-					return Continue( ScanSpecBuilderWithColumnPredicateOp );
+					return Continue( ScanSpecBuilderWithRowOp );
 				}
 
 				virtual IScanSpecBuilderWithCellOp^ WithCells( String^ row, String^ columnFamily, String^ columnQualifier ) {

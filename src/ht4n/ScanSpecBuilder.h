@@ -156,6 +156,11 @@ namespace Hypertable {
 				IScanSpecBuilderOp^ ScanAndFilter( );
 
 				/// <summary>
+				/// AND together all the column predicates, if not set then the OR logic will be used.
+				/// </summary>
+				IScanSpecBuilderOp^ ColumnPredicateAnd( );
+
+				/// <summary>
 				/// Return keys only.
 				/// </summary>
 				/// <returns>The scan specification common options and limits builder.</returns>
@@ -231,6 +236,21 @@ namespace Hypertable {
 				/// <param name="rowIntervals">Row intervals to add.</param>
 				/// <returns>The scan specification row predicate builder, including common options and limits.</returns>
 				IScanSpecBuilderWithRowOp^ WithRows( IEnumerable<RowInterval^>^ rowIntervals );
+
+				/// <summary>
+				/// Adds one or more column predicates to the scan.
+				/// </summary>
+				/// <param name="columnPredicate">Column predicate to add.</param>
+				/// <param name="moreColumnPredicates">More column predicates to add.</param>
+				/// <returns>The scan specification column predicate builder, including common options and limits.</returns>
+				IScanSpecBuilderWithRowOp^ WithColumnPredicates( ColumnPredicate^ columnPredicate, ... cli::array<ColumnPredicate^>^ moreColumnPredicates );
+
+				/// <summary>
+				/// Adds a bunch of column predicates to the scan.
+				/// </summary>
+				/// <param name="columnPredicates">Column predicates to add.</param>
+				/// <returns>The scan specification column predicate builder, including common options and limits.</returns>
+				IScanSpecBuilderWithRowOp^ WithColumnPredicates( IEnumerable<ColumnPredicate^>^ columnPredicates );
 		};
 
 		/// <summary>
@@ -239,38 +259,6 @@ namespace Hypertable {
 		/// <seealso cref="ScanSpecBuilder"/>
 		public interface class IScanSpecBuilderWithRowOp : public IScanSpecBuilderWithRow
 																										 , public IScanSpecBuilderOp {
-		};
-
-		/// <summary>
-		/// The scan specification column predicate builder.
-		/// </summary>
-		/// <seealso cref="ScanSpecBuilder"/>
-		public interface class IScanSpecBuilderWithColumnPredicate {
-
-			public:
-
-				/// <summary>
-				/// Adds one or more column predicates to the scan.
-				/// </summary>
-				/// <param name="columnPredicate">Column predicate to add.</param>
-				/// <param name="moreColumnPredicates">More column predicates to add.</param>
-				/// <returns>The scan specification column predicate builder, including common options and limits.</returns>
-				IScanSpecBuilderWithColumnPredicateOp^ WithColumnPredicates( ColumnPredicate^ columnPredicate, ... cli::array<ColumnPredicate^>^ moreColumnPredicates );
-
-				/// <summary>
-				/// Adds a bunch of column predicates to the scan.
-				/// </summary>
-				/// <param name="columnPredicates">Column predicates to add.</param>
-				/// <returns>The scan specification column predicate builder, including common options and limits.</returns>
-				IScanSpecBuilderWithColumnPredicateOp^ WithColumnPredicates( IEnumerable<ColumnPredicate^>^ columnPredicates );
-		};
-
-		/// <summary>
-		/// The scan specification column predicate builder, including common options and limits.
-		/// </summary>
-		/// <seealso cref="ScanSpecBuilder"/>
-		public interface class IScanSpecBuilderWithColumnPredicateOp : public IScanSpecBuilderWithColumnPredicate
-																																 , public IScanSpecBuilderOp {
 		};
 
 		/// <summary>
@@ -340,7 +328,6 @@ namespace Hypertable {
 		/// </summary>
 		/// <seealso cref="ScanSpecBuilder"/>
 		public interface class IScanSpecBuilderWhere : public IScanSpecBuilderWithRow
-																								 , public IScanSpecBuilderWithColumnPredicate
 																								 , public IScanSpecBuilderWithCell {
 
 		};
