@@ -38,7 +38,7 @@ namespace Hypertable {
 	/// Match kind is used on column predicates.
 	/// </remarks>
 	/// <seealso cref="ColumnPredicate" />
-	[Serializable]
+	[Serializable, Flags]
 	public enum class MatchKind {
 
 		/// <summary>
@@ -64,17 +64,20 @@ namespace Hypertable {
 		/// <summary>
 		/// Exact qualifier match for the search.
 		/// </summary>
+		/// <remarks>Can be combined with ValueExact.</remarks>
 		QualifierExact = 0x0100,
 
 		/// <summary>
 		/// Qualifier prefix match for the search.
 		/// </summary>
+		/// <remarks>Can be combined with ValueExact.</remarks>
 		QualifierPrefix = 0x0200,
 
 		/// <summary>
 		/// Qualifier regular expression match for the search.
 		/// </summary>
-		QualifierRegex  = 0x0400,
+		/// <remarks>Can be combined with ValueExact.</remarks>
+		QualifierRegex = 0x0400,
 	};
 
 }
