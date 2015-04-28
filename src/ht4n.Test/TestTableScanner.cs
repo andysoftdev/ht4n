@@ -1461,6 +1461,92 @@ namespace Hypertable.Test
                     Assert.AreEqual(4, c);
                 }
 
+                scanSpec =
+                   ScanSpecBuilder.Create()
+                       .WithColumns("a")
+                       .WithRows(new RowInterval("002000", null))
+                       .WithColumnPredicates(new ColumnPredicate("b", "1", MatchKind.ValueExact | MatchKind.QualifierExact, BitConverter.GetBytes(7)))
+                       .Build();
+
+                using (var scanner = _table.CreateScanner(scanSpec))
+                {
+                    var c = 0;
+                    Cell cell;
+                    while (scanner.Next(out cell))
+                    {
+                        Assert.AreEqual("a", cell.Key.ColumnFamily);
+                        Assert.IsTrue((int.Parse(cell.Key.Row) % 100) == 0);
+                        ++c;
+                    }
+
+                    Assert.AreEqual(80, c);
+                }
+
+
+
+                scanSpec =
+                   ScanSpecBuilder.Create()
+                       .WithColumns("a")
+                       .WithRows(new RowInterval("002000", null))
+                       .WithColumnPredicates(new ColumnPredicate("b", "1", MatchKind.ValueExact | MatchKind.QualifierExact, BitConverter.GetBytes(7)))
+                       .Build();
+
+                using (var scanner = _table.CreateScanner(scanSpec))
+                {
+                    var c = 0;
+                    Cell cell;
+                    while (scanner.Next(out cell))
+                    {
+                        Assert.AreEqual("a", cell.Key.ColumnFamily);
+                        Assert.IsTrue((int.Parse(cell.Key.Row) % 100) == 0);
+                        ++c;
+                    }
+
+                    Assert.AreEqual(80, c);
+                }
+
+                scanSpec =
+                   ScanSpecBuilder.Create()
+                       .WithColumns("a")
+                       .WithRows(new RowInterval(string.Empty, false, "002000", false))
+                       .WithColumnPredicates(new ColumnPredicate("b", "1", MatchKind.ValueExact | MatchKind.QualifierExact, BitConverter.GetBytes(7)))
+                       .Build();
+
+                using (var scanner = _table.CreateScanner(scanSpec))
+                {
+                    var c = 0;
+                    Cell cell;
+                    while (scanner.Next(out cell))
+                    {
+                        Assert.AreEqual("a", cell.Key.ColumnFamily);
+                        Assert.IsTrue((int.Parse(cell.Key.Row) % 100) == 0);
+                        ++c;
+                    }
+
+                    Assert.AreEqual(20, c);
+                }
+
+                scanSpec =
+                   ScanSpecBuilder.Create()
+                       .WithColumns("a")
+                       .WithRows(new RowInterval(null, false, "002000", false))
+                       .WithColumnPredicates(new ColumnPredicate("b", "1", MatchKind.ValueExact | MatchKind.QualifierExact, BitConverter.GetBytes(7)))
+                       .Build();
+
+                using (var scanner = _table.CreateScanner(scanSpec))
+                {
+                    var c = 0;
+                    Cell cell;
+                    while (scanner.Next(out cell))
+                    {
+                        Assert.AreEqual("a", cell.Key.ColumnFamily);
+                        Assert.IsTrue((int.Parse(cell.Key.Row) % 100) == 0);
+                        ++c;
+                    }
+
+                    Assert.AreEqual(20, c);
+                }
+
                 // exact value match and row intervals
                 scanSpec =
                     ScanSpecBuilder.Create()
