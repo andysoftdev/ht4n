@@ -565,7 +565,10 @@ namespace Hypertable {
 		scanSpec.notUseQueryCache( NotUseQueryCache );
 
 		scanSpec.scanAndFilter(
-			ScanAndFilter && ((rows != nullptr && rows->Count > 1) || (rowIntervals != nullptr && rowIntervals->Count > 1)) );
+			ScanAndFilter && 
+				(	 (rows != nullptr && rows->Count > 1)
+				|| (rowIntervals != nullptr && rowIntervals->Count > 0)
+				|| (cellIntervals != nullptr && cellIntervals->Count > 0)));
 
 		scanSpec.columnPredicateAnd(
 			ColumnPredicateAnd && columnPredicates != nullptr && columnPredicates->Count > 1 );
