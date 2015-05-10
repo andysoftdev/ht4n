@@ -81,7 +81,16 @@ namespace Hypertable {
 			/// <param name="string">Unmanaged utf8 C string.</param>
 			/// <returns>Managed string.</returns>
 			static String^ ToString( const char* string ) {
-				int len = strlen( string );
+				return ToString( string, strlen(string) );
+			}
+
+			/// <summary>
+			/// Creates a managed string from an unmanaged utf8 C string.
+			/// </summary>
+			/// <param name="string">Unmanaged utf8 C string.</param>
+			/// <param name="len">The string length.</param>
+			/// <returns>Managed string.</returns>
+			static String^ ToString( const char* string, int len ) {
 				if( len ) {
 					wchar_t wbuf[SIZE + 1];
 					int cc = len < SIZE ? MultiByteToWideChar(CP_UTF8, 0, string, len, wbuf, SIZE) : 0;
