@@ -36,6 +36,12 @@ namespace Hypertable {
 		Flag = CellFlag::Default;
 	}
 
+	Cell::Cell( Hypertable::Key^ key ) {
+		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
+		Key = key;
+		Flag = CellFlag::Default;
+	}
+
 	Cell::Cell( Hypertable::Key^ key, cli::array<Byte>^ value ) {
 		if( key == nullptr ) throw gcnew ArgumentNullException( L"key" );
 		Key = key;

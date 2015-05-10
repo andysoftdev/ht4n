@@ -76,6 +76,13 @@ namespace Hypertable {
 			Cell( );
 
 			/// <summary>
+			/// Initializes a new instance of the Cell class using the specified cell key.
+			/// </summary>
+			/// <param name="key">Cell key.</param>
+			/// <seealso cref="Key"/>
+			Cell( Key^ key );
+
+			/// <summary>
 			/// Initializes a new instance of the Cell class using the specified cell key and cell value.
 			/// </summary>
 			/// <param name="key">Cell key.</param>
