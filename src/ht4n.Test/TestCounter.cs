@@ -50,18 +50,19 @@ namespace Hypertable.Test
         [ClassInitialize]
         public static void ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext)
         {
+            if( !HasCounterColumn ) {
+                Assert.IsFalse(IsHyper);
+                Assert.IsFalse(IsThrift);
+
+                return;
+            }
+
             const string Schema =
                 "<Schema><AccessGroup name=\"default\" blksz=\"1024\">" + "<ColumnFamily><Name>a</Name><Counter>true</Counter></ColumnFamily>"
                 + "<ColumnFamily><Name>b</Name><Counter>true</Counter></ColumnFamily>" + "<ColumnFamily><Name>c</Name><Counter>true</Counter></ColumnFamily>"
                 + "</AccessGroup></Schema>";
 
             table = EnsureTable(typeof(TestCounter), Schema);
-
-            if (!HasCounterColumn)
-            {
-                Assert.IsFalse(IsHyper);
-                Assert.IsFalse(IsThrift);
-            }
         }
 
         [TestMethod]
