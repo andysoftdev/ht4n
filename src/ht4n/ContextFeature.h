@@ -64,7 +64,12 @@ namespace Hypertable {
 		/// <summary>
 		/// Notify session state changed.
 		/// </summary>
-		NotifySessionStateChanged = ht4c::Common::CF_NotifySessionStateChanged
+		NotifySessionStateChanged = ht4c::Common::CF_NotifySessionStateChanged,
+
+		/// <summary>
+		/// Counter column.
+		/// </summary>
+		CounterColumn = ht4c::Common::CF_CounterColumn,
 	};
 
 }

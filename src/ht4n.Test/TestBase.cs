@@ -94,6 +94,17 @@ namespace Hypertable.Test
         }
 
         /// <summary>
+        /// Returns true if the actual provider supports counter columns.
+        /// </summary>
+        protected static bool HasCounterColumn
+        {
+            get
+            {
+                return Context.HasFeature(ContextFeature.CounterColumn);
+            }
+        }
+
+        /// <summary>
         /// Returns true if the actual provider supports HQL.
         /// </summary>
         protected static bool HasHQL {

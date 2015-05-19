@@ -36,6 +36,7 @@ namespace Hypertable {
 	using namespace ht4c;
 
 	ref class Key;
+	ref class Counter;
 
 	/// <summary>
 	/// Represents a Hypertable cell, provide accessors to the cell attributes.
@@ -65,6 +66,7 @@ namespace Hypertable {
 	/// </code>
 	/// </example>
 	/// <seealso cref="Key"/>
+	/// <seealso cref="Counter"/>
 	[Serializable]
 	public ref class Cell sealed {
 
