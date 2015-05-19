@@ -161,12 +161,15 @@ namespace Hypertable {
 
 	void QueuedTableMutator::SetCell() {
 		try {
-			while( true ) {
-				if( bc->Count == 0 ) {
-					mre->Set();
+			while( !bc->IsCompleted ) {
+				for each( Cell^ cell in bc->GetConsumingEnumerable() ) {
+					inner->Set(cell);
+					if( bc->Count == 0 ) {
+						mre->Set();
+					}
 				}
-				inner->Set(bc->Take());
 			}
+			mre->Set();
 		}
 		catch( InvalidOperationException^ ) {
 		}
