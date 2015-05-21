@@ -42,7 +42,9 @@ namespace Hypertable.Test
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            table.Dispose();
+            if( table != null ) {
+                table.Dispose();
+            }
             Ns.DropNamespaces(DropDispositions.Complete);
             Ns.DropTables();
         }
