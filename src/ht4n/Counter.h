@@ -42,7 +42,6 @@ namespace Hypertable {
 	/// <code>
 	/// using( var mutator = table.CreateMutator() ) {
 	///    Key key = new Key("row", "cf");
-	///    Cell cell = new Cell();
 	///    Counter counter = new Counter(key, 1234);
 	///    mutator.Set(counter.ToCell());
 	/// }
