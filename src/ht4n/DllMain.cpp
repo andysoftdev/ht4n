@@ -89,7 +89,8 @@ extern "C" BOOL WINAPI DllMain(HANDLE /*hInstance*/, DWORD dwReason, LPVOID /*lp
 		}
 
 		case DLL_PROCESS_DETACH: {
-			ht4c::Logging::shutdown();
+			/* no longer shutdown, fails on std::mutex lock
+			ht4c::Logging::shutdown(); */
 
 			boost::on_thread_exit();
 
