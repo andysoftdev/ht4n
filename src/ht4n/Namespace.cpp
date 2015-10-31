@@ -93,6 +93,9 @@ namespace Hypertable {
 
 		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
 		if( String::IsNullOrEmpty(schema) ) throw gcnew ArgumentNullException( L"schema" );
+		name = name->Trim(L'/');
+		if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentException( L"Invalid table name", L"name" );
+
 		HT4N_TRY {
 			msclr::lock sync( syncRoot );
 			ns->createTable( CM2U8(name), CM2U8(schema) );
@@ -101,10 +104,23 @@ namespace Hypertable {
 	}
 
 	void Namespace::CreateTable( String^ name, String^ schema, CreateDispositions dispo ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
 		msclr::lock sync( syncRoot );
 		if( (dispo & CreateDispositions::CreateIfNotExist) == CreateDispositions::CreateIfNotExist ) {
 			if( TableExists(name) ) {
 				return;
+			}
+		}
+
+		if( (dispo & CreateDispositions::CreateIntermediate) == CreateDispositions::CreateIntermediate ) {
+			if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentNullException( L"name" );
+			name = name->Trim(L'/');
+			if( String::IsNullOrEmpty(name) ) throw gcnew ArgumentException( L"Invalid table name", L"name" );
+
+			int pos = name->LastIndexOf('/');
+			if( pos > 0 ) {
+				CreateNamespace( name->Substring(0, pos), CreateDispositions::CreateIntermediate | CreateDispositions::CreateIfNotExist );
 			}
 		}
 		CreateTable( name, schema );

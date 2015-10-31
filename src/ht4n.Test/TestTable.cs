@@ -326,6 +326,7 @@ namespace Hypertable.Test
             Assert.IsTrue(Ns.TableExists("test-4"));
             using (var table = Ns.OpenTable("test-4"))
             {
+                Assert.AreEqual("test/test-4", table.Name);
                 Assert.AreEqual(2, table.GetTableSchema().AccessGroups.First().ColumnFamilies.First(cf => cf.Name == "a").Id);
             }
 
@@ -340,6 +341,15 @@ namespace Hypertable.Test
             Assert.IsTrue(Ns.TableExists("test-5"));
             using (var table = Ns.OpenTable("test-5"))
             {
+                Assert.AreEqual(3, table.GetTableSchema().AccessGroups.First().ColumnFamilies.First(cf => cf.Name == "b").Id);
+            }
+
+            Ns.CreateTable("1/2/3/test-5", Schema3, CreateDispositions.CreateIntermediate);
+            Assert.IsTrue(Ns.NamespaceExists("1/2/3"));
+            Assert.IsTrue(Ns.TableExists("1/2/3/test-5"));
+            using (var table = Ns.OpenTable("1/2/3/test-5"))
+            {
+                Assert.AreEqual("test/1/2/3/test-5", table.Name);
                 Assert.AreEqual(3, table.GetTableSchema().AccessGroups.First().ColumnFamilies.First(cf => cf.Name == "b").Id);
             }
         }

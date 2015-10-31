@@ -41,8 +41,9 @@ namespace Hypertable.Test
             using (var client = Context.CreateClient()) {
                 Assert.IsFalse(client.NamespaceExists("test/abc/def/ghi"));
                 client.CreateNamespace("test/abc/def/ghi", CreateDispositions.CreateIntermediate);
-                using (client.OpenNamespace("test/abc/def/ghi/jkl/mno", OpenDispositions.OpenAlways | OpenDispositions.CreateIntermediate)) {
+                using (var ns = client.OpenNamespace("test/abc/def/ghi/jkl/mno", OpenDispositions.OpenAlways | OpenDispositions.CreateIntermediate)) {
                     try {
+                        Assert.AreEqual("test/abc/def/ghi/jkl/mno", ns.Name);
                         client.CreateNamespace("test/abc/def/ghi/jkl/mno/xxx/yyy/yy/y");
                         Assert.Fail();
                     }
