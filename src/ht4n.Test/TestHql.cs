@@ -117,7 +117,8 @@ namespace Hypertable.Test
                 return;
             }
 
-            var filenames = new[] { "DumpTest.txt", "DumpTest.gz", "fs://DumpTest.txt", "fs://DumpTest.gz" };
+            var tempPath = Path.GetTempPath();
+            var filenames = new[] { tempPath + "DumpTest.txt", tempPath + "DumpTest.gz", "fs://DumpTest.txt", "fs://DumpTest.gz" };
 
             {
                 Ns.Exec("DROP TABLE IF EXISTS fruit", "CREATE TABLE fruit (tag, description)");
@@ -132,31 +133,45 @@ namespace Hypertable.Test
                 foreach (var filename in filenames)
                 {
                     Ns.Exec(string.Format("DUMP TABLE fruit INTO FILE '{0}'", filename));
-                    Assert.IsTrue(filename.StartsWith("fs:") || File.Exists(filename));
+
+                    var fname = filename;
+                    if (filename.StartsWith("fs:"))
+                    {
+                        fname = Path.Combine(
+                            (string)Context.Properties["Hypertable.DataDirectory"], 
+                            "fs/local",
+                            filename.Replace("fs://", ""));
+                    }
+
+                    Assert.IsTrue(File.Exists(fname));
 
                     Ns.Exec("DROP TABLE IF EXISTS fruit2", "CREATE TABLE fruit2 (tag, description)");
                     Ns.Exec(string.Format("LOAD DATA INFILE '{0}' INTO TABLE fruit2", filename));
                     ValidateFruitTable("fruit2");
 
-                    if (!filename.StartsWith("fs:"))
-                    {
-                        File.Delete(filename);
-                    }
+                    File.Delete(fname);
                 }
 
                 foreach (var filename in filenames)
                 {
                     Ns.Exec(string.Format("SELECT * FROM fruit DISPLAY_TIMESTAMPS INTO FILE '{0}'", filename));
-                    Assert.IsTrue(filename.StartsWith("fs:") || File.Exists(filename));
+
+                    var fname = filename;
+                    if (filename.StartsWith("fs:"))
+                    {
+                        fname = Path.Combine(
+                            (string)Context.Properties["Hypertable.DataDirectory"],
+                            "fs/local",
+                            filename.Replace("fs://", ""));
+                    }
+
+                    Assert.IsTrue(File.Exists(fname));
 
                     Ns.Exec("DROP TABLE IF EXISTS fruit2", "CREATE TABLE fruit2 (tag, description)");
                     Ns.Exec(string.Format("LOAD DATA INFILE '{0}' INTO TABLE fruit2", filename));
                     ValidateFruitTable("fruit2");
 
-                    if (!filename.StartsWith("fs:"))
-                    {
-                        File.Delete(filename);
-                    }
+                    File.Delete(fname);
                 }
 
                 Ns.Exec("DROP TABLE fruit", "DROP TABLE fruit2");
@@ -206,7 +221,17 @@ namespace Hypertable.Test
                 foreach (var filename in filenames)
                 {
                     Ns.Exec(string.Format("DUMP TABLE bin INTO FILE '{0}'", filename));
-                    Assert.IsTrue(filename.StartsWith("fs:") || File.Exists(filename));
+
+                    var fname = filename;
+                    if (filename.StartsWith("fs:"))
+                    {
+                        fname = Path.Combine(
+                            (string)Context.Properties["Hypertable.DataDirectory"],
+                            "fs/local",
+                            filename.Replace("fs://", ""));
+                    }
+
+                    Assert.IsTrue(File.Exists(fname));
 
                     Ns.Exec("DROP TABLE IF EXISTS bin2", "CREATE TABLE bin2 (bin)");
                     Ns.Exec(string.Format("LOAD DATA INFILE '{0}' INTO TABLE bin2", filename));
@@ -217,10 +242,7 @@ namespace Hypertable.Test
                         Assert.IsTrue(data[cell.Key.Row].SequenceEqual(cell.Value));
                     }
 
-                    if (!filename.StartsWith("fs:"))
-                    {
-                        File.Delete(filename);
-                    }
+                    File.Delete(fname);
                 }
 
                 Ns.Exec("DROP TABLE bin", "DROP TABLE bin2");
