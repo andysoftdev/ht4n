@@ -106,7 +106,7 @@ namespace Hypertable.Test
                 "INSERT INTO fruit VALUES" + "(\"cantelope\", \"tag:good\", \"Had with breakfast\"),"
                 + "(\"2009-08-02 08:30:00\", \"cantelope\", \"description\", \"A cultivated variety of muskmelon with orange flesh\"),"
                 + "(\"banana\", \"tag:great\", \"Had with lunch\")");
-            Ns.Exec("DELETE * FROM fruit WHERE ROW=\"banana\";DROP TABLE fruit"); // multiple commands
+            Ns.Exec("DELETE * FROM fruit WHERE ROW=\"banana\"", "DROP TABLE fruit"); // multiple commands
         }
 
         [TestMethod]
@@ -120,7 +120,7 @@ namespace Hypertable.Test
             var filenames = new[] { "DumpTest.txt", "DumpTest.gz", "fs://DumpTest.txt", "fs://DumpTest.gz" };
 
             {
-                Ns.Exec("DROP TABLE IF EXISTS fruit;CREATE TABLE fruit (tag, description)");
+                Ns.Exec("DROP TABLE IF EXISTS fruit", "CREATE TABLE fruit (tag, description)");
 
                 Ns.Exec(
                     "INSERT INTO fruit VALUES" + "(\"cantelope\", \"tag:good\", \"Had with breakfast\"),"
@@ -134,7 +134,7 @@ namespace Hypertable.Test
                     Ns.Exec(string.Format("DUMP TABLE fruit INTO FILE '{0}'", filename));
                     Assert.IsTrue(filename.StartsWith("fs:") || File.Exists(filename));
 
-                    Ns.Exec("DROP TABLE IF EXISTS fruit2;CREATE TABLE fruit2 (tag, description)");
+                    Ns.Exec("DROP TABLE IF EXISTS fruit2", "CREATE TABLE fruit2 (tag, description)");
                     Ns.Exec(string.Format("LOAD DATA INFILE '{0}' INTO TABLE fruit2", filename));
                     ValidateFruitTable("fruit2");
 
@@ -149,7 +149,7 @@ namespace Hypertable.Test
                     Ns.Exec(string.Format("SELECT * FROM fruit DISPLAY_TIMESTAMPS INTO FILE '{0}'", filename));
                     Assert.IsTrue(filename.StartsWith("fs:") || File.Exists(filename));
 
-                    Ns.Exec("DROP TABLE IF EXISTS fruit2;CREATE TABLE fruit2 (tag, description)");
+                    Ns.Exec("DROP TABLE IF EXISTS fruit2", "CREATE TABLE fruit2 (tag, description)");
                     Ns.Exec(string.Format("LOAD DATA INFILE '{0}' INTO TABLE fruit2", filename));
                     ValidateFruitTable("fruit2");
 
@@ -159,7 +159,7 @@ namespace Hypertable.Test
                     }
                 }
 
-                Ns.Exec("DROP TABLE fruit;DROP TABLE fruit2");
+                Ns.Exec("DROP TABLE fruit", "DROP TABLE fruit2");
             }
 
             {
@@ -208,7 +208,7 @@ namespace Hypertable.Test
                     Ns.Exec(string.Format("DUMP TABLE bin INTO FILE '{0}'", filename));
                     Assert.IsTrue(filename.StartsWith("fs:") || File.Exists(filename));
 
-                    Ns.Exec("DROP TABLE IF EXISTS bin2;CREATE TABLE bin2 (bin)");
+                    Ns.Exec("DROP TABLE IF EXISTS bin2", "CREATE TABLE bin2 (bin)");
                     Ns.Exec(string.Format("LOAD DATA INFILE '{0}' INTO TABLE bin2", filename));
 
                     foreach (var cell in table.CreateScanner())
@@ -223,7 +223,7 @@ namespace Hypertable.Test
                     }
                 }
 
-                Ns.Exec("DROP TABLE bin;DROP TABLE bin2");
+                Ns.Exec("DROP TABLE bin", "DROP TABLE bin2");
             }
         }
 
@@ -243,7 +243,7 @@ namespace Hypertable.Test
 
             Ns.Exec("DELETE description FROM fruit WHERE ROW=\"cantelope\"");
 
-            var cells = Ns.Query("SELECT * FROM fruit;SELECT * FROM fruit WHERE ROW=\"banana\""); // multiple queries
+            var cells = Ns.Query("SELECT * FROM fruit", "SELECT * FROM fruit WHERE ROW=\"banana\""); // multiple queries
             Assert.IsNotNull(cells);
             Assert.AreEqual(3, cells.Count);
             Assert.AreEqual(cells[0].Key.Row, "banana");

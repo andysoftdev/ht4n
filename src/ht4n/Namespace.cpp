@@ -346,47 +346,49 @@ namespace Hypertable {
 		HT4N_RETHROW
 	}
 
-	void Namespace::Exec( String^ hql ) {
+	void Namespace::Exec( ... cli::array<String^>^ hql ) {
 		HT4N_THROW_OBJECTDISPOSED( );
 
-		if( String::IsNullOrEmpty(hql) ) throw gcnew ArgumentNullException( L"hql" );
+		if( hql == nullptr ) throw gcnew ArgumentNullException( L"hql" );
 		HT4N_TRY {
-			cli::array<String^>^ commands = hql->Split( L';' );
-			for each( String^ command in commands ) {
-				String^ commandTrimmed = command->Trim();
-				if( !String::IsNullOrEmpty(commandTrimmed) ) {
-					ns->exec( CM2U8(command) );
+			for each( String^ command in hql ) {
+				if( command != nullptr ) {
+					String^ commandTrimmed = command->Trim();
+					if( !String::IsNullOrEmpty(commandTrimmed) ) {
+						ns->exec( CM2U8(commandTrimmed) );
+					}
 				}
 			}
 		}
 		HT4N_RETHROW
 	}
 
-	IList<Cell^>^ Namespace::Query( String^ hql ) {
+	IList<Cell^>^ Namespace::Query( ... cli::array<String^>^ hql ) {
 		HT4N_THROW_OBJECTDISPOSED( );
 
-		if( String::IsNullOrEmpty(hql) ) throw gcnew ArgumentNullException( L"hql" );
+		if( hql == nullptr ) throw gcnew ArgumentNullException( L"hql" );
 		HT4N_TRY {
 			List<Cell^>^ cells = gcnew List<Cell^>();
-			cli::array<String^>^ commands = hql->Split( L';' );
 			Common::Cell* _cell = 0;
 			Common::Cells* _cells = 0;
 			try {
-				for each( String^ command in commands ) {
-					String^ commandTrimmed = command->Trim();
-					if( !String::IsNullOrEmpty(commandTrimmed) ) {
-						_cells = ns->query( CM2U8(commandTrimmed) );
-						if( _cells ) {
-							cells->Capacity += (int)_cells->size();
-							_cell = Common::Cell::create();
-							for( size_t n = 0; n < _cells->size(); ++n ) {
-								_cells->get_unchecked( n, _cell );
-								cells->Add( gcnew Cell(_cell) );
+				for each( String^ command in hql ) {
+					if( command != nullptr ) {
+						String^ commandTrimmed = command->Trim();
+						if( !String::IsNullOrEmpty(commandTrimmed) ) {
+							_cells = ns->query( CM2U8(commandTrimmed) );
+							if( _cells ) {
+								cells->Capacity += (int)_cells->size();
+								_cell = Common::Cell::create();
+								for( size_t n = 0; n < _cells->size(); ++n ) {
+									_cells->get_unchecked( n, _cell );
+									cells->Add( gcnew Cell(_cell) );
+								}
+								delete _cell;
+								_cell = 0;
+								delete _cells;
+								_cells = 0;
 							}
-							delete _cell;
-							_cell = 0;
-							delete _cells;
-							_cells = 0;
 						}
 					}
 				}

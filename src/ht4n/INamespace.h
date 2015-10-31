@@ -335,20 +335,14 @@ namespace Hypertable {
 			/// Executes a HQL command.
 			/// </summary>
 			/// <param name="hql">HQL command.</param>
-			/// <remarks>
-			/// Use ';' to separate multiple HQL commands.
-			/// </remarks>
-			void Exec( String^ hql );
+			void Exec( ... cli::array<String^>^ hql );
 
 			/// <summary>
 			/// Executes a HQL query.
 			/// </summary>
 			/// <param name="hql">HQL query.</param>
 			/// <returns>Resulting cells.</returns>
-			/// <remarks>
-			/// Use ';' to separate multiple HQL queries.
-			/// </remarks>
-			IList<Cell^>^ Query( String^ hql );
+			IList<Cell^>^ Query( ... cli::array<String^>^ hql );
 	};
 
 }

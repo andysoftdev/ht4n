@@ -113,8 +113,8 @@ namespace Hypertable {
 			virtual bool NamespaceExists( String^ name );
 			virtual NamespaceListing^ GetListing( );
 			virtual NamespaceListing^ GetListing( bool deep );
-			virtual void Exec( String^ hql );
-			virtual IList<Cell^>^ Query( String^ hql );
+			virtual void Exec( ... cli::array<String^>^ hql );
+			virtual IList<Cell^>^ Query( ... cli::array<String^>^ hql );
 
 			#pragma endregion
 
