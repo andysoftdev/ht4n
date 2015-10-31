@@ -22,6 +22,9 @@
 namespace Hypertable.Test
 {
     using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
     using System.Text;
 
     using Hypertable;
@@ -107,6 +110,124 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
+        public void DumpAndLoadData()
+        {
+            if (!HasHQL)
+            {
+                return;
+            }
+
+            var filenames = new[] { "DumpTest.txt", "DumpTest.gz", "fs://DumpTest.txt", "fs://DumpTest.gz" };
+
+            {
+                Ns.Exec("DROP TABLE IF EXISTS fruit;CREATE TABLE fruit (tag, description)");
+
+                Ns.Exec(
+                    "INSERT INTO fruit VALUES" + "(\"cantelope\", \"tag:good\", \"Had with breakfast\"),"
+                    + "(\"2009-08-02 08:30:00\", \"cantelope\", \"description\", \"A cultivated variety of muskmelon with orange flesh\"),"
+                    + "(\"banana\", \"tag:great\", \"Had with lunch\")");
+
+                ValidateFruitTable("fruit");
+
+                foreach (var filename in filenames)
+                {
+                    Ns.Exec(string.Format("DUMP TABLE fruit INTO FILE '{0}'", filename));
+                    Assert.IsTrue(filename.StartsWith("fs:") || File.Exists(filename));
+
+                    Ns.Exec("DROP TABLE IF EXISTS fruit2;CREATE TABLE fruit2 (tag, description)");
+                    Ns.Exec(string.Format("LOAD DATA INFILE '{0}' INTO TABLE fruit2", filename));
+                    ValidateFruitTable("fruit2");
+
+                    if (!filename.StartsWith("fs:"))
+                    {
+                        File.Delete(filename);
+                    }
+                }
+
+                foreach (var filename in filenames)
+                {
+                    Ns.Exec(string.Format("SELECT * FROM fruit DISPLAY_TIMESTAMPS INTO FILE '{0}'", filename));
+                    Assert.IsTrue(filename.StartsWith("fs:") || File.Exists(filename));
+
+                    Ns.Exec("DROP TABLE IF EXISTS fruit2;CREATE TABLE fruit2 (tag, description)");
+                    Ns.Exec(string.Format("LOAD DATA INFILE '{0}' INTO TABLE fruit2", filename));
+                    ValidateFruitTable("fruit2");
+
+                    if (!filename.StartsWith("fs:"))
+                    {
+                        File.Delete(filename);
+                    }
+                }
+
+                Ns.Exec("DROP TABLE fruit;DROP TABLE fruit2");
+            }
+
+            {
+                const string Schema = "<Schema><AccessGroup><ColumnFamily><Name>bin</Name></ColumnFamily></AccessGroup></Schema>";
+
+                var rng = new Random();
+                var buf = new byte[1024];
+                var all = new byte[255];
+                for (var i = 0; i < 255; ++i)
+                {
+                    all[i] = (byte)i;
+                }
+
+                var data = new Dictionary<string, byte[]>();
+
+                var table = Ns.OpenTable("bin", Schema, OpenDispositions.CreateAlways);
+                using (var mutator = table.CreateMutator())
+                {
+                    var key = new Key { ColumnFamily = "bin" };
+                    for(var i = 0; i < 10000; ++i)
+                    {
+                        do
+                        {
+                            key.Row = Guid.NewGuid().ToString();
+                        }
+                        while (data.ContainsKey(key.Row));
+                        
+                        rng.NextBytes(buf);
+                        mutator.Set(key, buf);
+
+                        data.Add(key.Row, (byte[])buf.Clone());
+                    }
+
+                    do
+                    {
+                        key.Row = Guid.NewGuid().ToString();
+                    }
+                    while (data.ContainsKey(key.Row));
+
+                    mutator.Set(key, all);
+                    data.Add(key.Row, (byte[])all.Clone());
+                }
+
+                foreach (var filename in filenames)
+                {
+                    Ns.Exec(string.Format("DUMP TABLE bin INTO FILE '{0}'", filename));
+                    Assert.IsTrue(filename.StartsWith("fs:") || File.Exists(filename));
+
+                    Ns.Exec("DROP TABLE IF EXISTS bin2;CREATE TABLE bin2 (bin)");
+                    Ns.Exec(string.Format("LOAD DATA INFILE '{0}' INTO TABLE bin2", filename));
+
+                    foreach (var cell in table.CreateScanner())
+                    {
+                        Assert.IsTrue(data.ContainsKey(cell.Key.Row));
+                        Assert.IsTrue(data[cell.Key.Row].SequenceEqual(cell.Value));
+                    }
+
+                    if (!filename.StartsWith("fs:"))
+                    {
+                        File.Delete(filename);
+                    }
+                }
+
+                Ns.Exec("DROP TABLE bin;DROP TABLE bin2");
+            }
+        }
+
+        [TestMethod]
         public void Query() {
             if (!HasHQL) {
                 return;
@@ -118,51 +239,11 @@ namespace Hypertable.Test
                 + "(\"2009-08-02 08:30:00\", \"cantelope\", \"description\", \"A cultivated variety of muskmelon with orange flesh\"),"
                 + "(\"banana\", \"tag:great\", \"Had with lunch\")");
 
-            var cells = Ns.Query("SELECT * FROM fruit");
-            Assert.IsNotNull(cells);
-            Assert.AreEqual(3, cells.Count);
-            Assert.AreEqual(cells[0].Key.Row, "banana");
-            Assert.AreEqual(cells[0].Key.ColumnFamily, "tag");
-            Assert.AreEqual(cells[0].Key.ColumnQualifier, "great");
-            Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with lunch");
-            Assert.AreEqual(cells[1].Key.Row, "cantelope");
-            Assert.AreEqual(cells[1].Key.ColumnFamily, "tag");
-            Assert.AreEqual(cells[1].Key.ColumnQualifier, "good");
-            Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "Had with breakfast");
-            Assert.AreEqual(cells[2].Key.Row, "cantelope");
-            Assert.AreEqual(cells[2].Key.ColumnFamily, "description");
-            Assert.AreEqual(cells[2].Key.ColumnQualifier, string.Empty);
-            Assert.AreEqual(cells[2].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Local).ToUniversalTime());
-            Assert.AreEqual(Encoding.Default.GetString(cells[2].Value), "A cultivated variety of muskmelon with orange flesh");
-
-            cells = Ns.Query("SELECT tag FROM fruit");
-            Assert.IsNotNull(cells);
-            Assert.AreEqual(2, cells.Count);
-            Assert.AreEqual(cells[0].Key.Row, "banana");
-            Assert.AreEqual(cells[0].Key.ColumnFamily, "tag");
-            Assert.AreEqual(cells[0].Key.ColumnQualifier, "great");
-            Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with lunch");
-            Assert.AreEqual(cells[1].Key.Row, "cantelope");
-            Assert.AreEqual(cells[1].Key.ColumnFamily, "tag");
-            Assert.AreEqual(cells[1].Key.ColumnQualifier, "good");
-            Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "Had with breakfast");
-
-            cells = Ns.Query("SELECT * FROM fruit WHERE ROW=\"cantelope\"");
-            Assert.IsNotNull(cells);
-            Assert.AreEqual(2, cells.Count);
-            Assert.AreEqual(cells[0].Key.Row, "cantelope");
-            Assert.AreEqual(cells[0].Key.ColumnFamily, "tag");
-            Assert.AreEqual(cells[0].Key.ColumnQualifier, "good");
-            Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with breakfast");
-            Assert.AreEqual(cells[1].Key.Row, "cantelope");
-            Assert.AreEqual(cells[1].Key.ColumnFamily, "description");
-            Assert.AreEqual(cells[1].Key.ColumnQualifier, string.Empty);
-            Assert.AreEqual(cells[1].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Local).ToUniversalTime());
-            Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "A cultivated variety of muskmelon with orange flesh");
+            ValidateFruitTable("fruit");
 
             Ns.Exec("DELETE description FROM fruit WHERE ROW=\"cantelope\"");
 
-            cells = Ns.Query("SELECT * FROM fruit;SELECT * FROM fruit WHERE ROW=\"banana\""); // multiple queries
+            var cells = Ns.Query("SELECT * FROM fruit;SELECT * FROM fruit WHERE ROW=\"banana\""); // multiple queries
             Assert.IsNotNull(cells);
             Assert.AreEqual(3, cells.Count);
             Assert.AreEqual(cells[0].Key.Row, "banana");
@@ -255,6 +336,55 @@ namespace Hypertable.Test
             }
             catch (NotImplementedException) {
             }
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void ValidateFruitTable(string tableName)
+        {
+            var cells = Ns.Query(string.Format("SELECT * FROM {0}", tableName));
+            Assert.IsNotNull(cells);
+            Assert.AreEqual(3, cells.Count);
+            Assert.AreEqual(cells[0].Key.Row, "banana");
+            Assert.AreEqual(cells[0].Key.ColumnFamily, "tag");
+            Assert.AreEqual(cells[0].Key.ColumnQualifier, "great");
+            Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with lunch");
+            Assert.AreEqual(cells[1].Key.Row, "cantelope");
+            Assert.AreEqual(cells[1].Key.ColumnFamily, "tag");
+            Assert.AreEqual(cells[1].Key.ColumnQualifier, "good");
+            Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "Had with breakfast");
+            Assert.AreEqual(cells[2].Key.Row, "cantelope");
+            Assert.AreEqual(cells[2].Key.ColumnFamily, "description");
+            Assert.AreEqual(cells[2].Key.ColumnQualifier, string.Empty);
+            Assert.AreEqual(cells[2].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Local).ToUniversalTime());
+            Assert.AreEqual(Encoding.Default.GetString(cells[2].Value), "A cultivated variety of muskmelon with orange flesh");
+
+            cells = Ns.Query(string.Format("SELECT tag FROM {0}", tableName));
+            Assert.IsNotNull(cells);
+            Assert.AreEqual(2, cells.Count);
+            Assert.AreEqual(cells[0].Key.Row, "banana");
+            Assert.AreEqual(cells[0].Key.ColumnFamily, "tag");
+            Assert.AreEqual(cells[0].Key.ColumnQualifier, "great");
+            Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with lunch");
+            Assert.AreEqual(cells[1].Key.Row, "cantelope");
+            Assert.AreEqual(cells[1].Key.ColumnFamily, "tag");
+            Assert.AreEqual(cells[1].Key.ColumnQualifier, "good");
+            Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "Had with breakfast");
+
+            cells = Ns.Query(string.Format("SELECT * FROM {0} WHERE ROW=\"cantelope\"", tableName));
+            Assert.IsNotNull(cells);
+            Assert.AreEqual(2, cells.Count);
+            Assert.AreEqual(cells[0].Key.Row, "cantelope");
+            Assert.AreEqual(cells[0].Key.ColumnFamily, "tag");
+            Assert.AreEqual(cells[0].Key.ColumnQualifier, "good");
+            Assert.AreEqual(Encoding.Default.GetString(cells[0].Value), "Had with breakfast");
+            Assert.AreEqual(cells[1].Key.Row, "cantelope");
+            Assert.AreEqual(cells[1].Key.ColumnFamily, "description");
+            Assert.AreEqual(cells[1].Key.ColumnQualifier, string.Empty);
+            Assert.AreEqual(cells[1].Key.DateTime, new DateTime(2009, 8, 2, 8, 30, 0, DateTimeKind.Local).ToUniversalTime());
+            Assert.AreEqual(Encoding.Default.GetString(cells[1].Value), "A cultivated variety of muskmelon with orange flesh");
         }
 
         #endregion
