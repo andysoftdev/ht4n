@@ -83,7 +83,7 @@ namespace Hypertable {
 	void Counter::ResetCounter( int64_t n ) {
 		value = n;
 		Common::Int64Formatter fmt( n, L'=' );
-		instruction = gcnew String( fmt.c_str(), 0, fmt.size() );
+		instruction = gcnew String( fmt.c_str(), 0, static_cast<int>(fmt.size()) );
 	}
 
 	void Counter::IncrementCounter( int64_t n ) {
@@ -93,7 +93,7 @@ namespace Hypertable {
 		else {
 			value = Nullable<int64_t>();
 			Common::Int64Formatter fmt( n, L'+' );
-			instruction = gcnew String( fmt.c_str(), 0, fmt.size() );
+			instruction = gcnew String( fmt.c_str(), 0, static_cast<int>(fmt.size()) );
 		}
 	}
 
@@ -104,7 +104,7 @@ namespace Hypertable {
 		else {
 			value = Nullable<int64_t>();
 			Common::Int64Formatter fmt( n, L'-' );
-			instruction = gcnew String( fmt.c_str(), 0, fmt.size() );
+			instruction = gcnew String( fmt.c_str(), 0, static_cast<int>(fmt.size()) );
 		}
 	}
 

@@ -81,7 +81,7 @@ namespace Hypertable {
 			/// <param name="string">Unmanaged utf8 C string.</param>
 			/// <returns>Managed string.</returns>
 			static String^ ToString( const char* string ) {
-				return ToString( string, strlen(string) );
+				return ToString( string, static_cast<int>(strlen(string)) );
 			}
 
 			/// <summary>
