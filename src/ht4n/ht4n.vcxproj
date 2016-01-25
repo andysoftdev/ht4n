@@ -9,7 +9,7 @@
     <SupportOdbcDefine Condition="$(SupportOdbc) == true">SUPPORT_ODBC</SupportOdbcDefine>
   </PropertyGroup>
   <PropertyGroup>
-    <BoostVersion>1_59</BoostVersion>
+    <BoostVersion>1_60</BoostVersion>
     <BoostThread Condition="'$(VisualStudioVersion)' == '10.0'">libboost_thread-vc100-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '11.0'">libboost_thread-vc110-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '12.0'">libboost_thread-vc120-mt</BoostThread>
