@@ -11,7 +11,7 @@
 
 	<!-- Master files to make -->
 	<PropertyGroup>
-		<Version>0.9.8.10</Version>
+		<Version>0.9.8.11</Version>
 
 		<FxVersion Condition="'$(TargetFrameworkVersion)' == 'v4.0'">4.0</FxVersion>
 		<FxVersion Condition="'$(TargetFrameworkVersion)' == 'v4.5'">4.5</FxVersion>
