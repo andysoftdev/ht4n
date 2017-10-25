@@ -205,6 +205,19 @@ namespace Hypertable {
 		return gcnew String( Common::KeyBuilder().c_str() );
 	}
 
+	String^ Key::Generate( Type^ type ) {
+		if( type != nullptr ) {
+			char preffix[2] = {
+				type->Name[0],
+				type->Name[type->Name->Length - 1],
+			};
+
+			return gcnew String( Common::KeyBuilder(preffix).c_str() );
+		}
+
+		return gcnew String( Common::KeyBuilder().c_str() );
+	}
+
 	String^ Key::Encode( System::Guid value ) {
 		cli::array<Byte>^ key = value.ToByteArray();
 		pin_ptr<Byte> pkey = &key[0];

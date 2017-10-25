@@ -234,6 +234,12 @@ namespace Hypertable {
 			static String^ Generate( );
 
 			/// <summary>
+			/// Generates a base85 encoded GUID, the first 2 bytes will be taken from type name (key preffix)
+			/// </summary>
+			/// <returns>A new base85 encoded GUID.</returns>
+			static String^ Generate( Type^ type );
+
+			/// <summary>
 			/// Encodes a specified GUID to base85.
 			/// </summary>
 			/// <param name="value">GUID to base85 encode.</param>
