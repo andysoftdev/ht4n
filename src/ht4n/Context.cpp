@@ -378,8 +378,19 @@ namespace Hypertable {
 			return provider( properties );
 		}
 
-		if(  String::Equals(providerName, gcnew String(Common::Config::ProviderHyper))
+		if( false
+
+#ifdef SUPPORT_HYPERTABLE
+
+			|| String::Equals(providerName, gcnew String(Common::Config::ProviderHyper))
+
+#endif
+
+#ifdef SUPPORT_HYPERTABLE_THRIFT
+
 			|| String::Equals(providerName, gcnew String(Common::Config::ProviderThrift))
+
+#endif
 
 #ifdef SUPPORT_HAMSTERDB
 
@@ -470,8 +481,21 @@ namespace Hypertable {
 
 			Uri^ uri = gcnew Uri( uriName );
 			String^ providerName = GetProviderName( properties );
-			if(  String::Equals(providerName, gcnew String(Common::Config::ProviderHyper))
-				|| String::Equals(providerName, gcnew String(Common::Config::ProviderThrift)) ) {
+
+			if( false
+
+#ifdef SUPPORT_HYPERTABLE
+
+				|| String::Equals(providerName, gcnew String(Common::Config::ProviderHyper))
+
+#endif
+
+#ifdef SUPPORT_HYPERTABLE_THRIFT
+
+				|| String::Equals(providerName, gcnew String(Common::Config::ProviderThrift))
+
+#endif
+				) {
 
 				if( uri->IsFile ) {
 					throw gcnew ArgumentException( L"Invalid uri scheme, net.tcp://hostname[:port] required", L"properties" );

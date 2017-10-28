@@ -26,35 +26,55 @@
 #pragma comment( lib, "advapi32.lib" )
 #pragma comment( lib, "version.lib" )
 
-#pragma comment( lib, "zlib.lib" )					// free of charge
 #pragma comment( lib, "expat.lib" )					// free of charge
-#pragma comment( lib, "thrift.lib" )				// Apache License 2.0
+#pragma comment( lib, "re2.lib" )						// New BSD
+
+#pragma comment( lib, "Common.lib" )
+#pragma comment( lib, "Schema.lib" )
+
 #ifdef _USE_SIGAR
 #pragma comment( lib, "sigar.lib" )					// GPL v2
 #endif
 
-#pragma comment( lib, "Common.lib" )
 #ifdef _USE_SIGAR
 #pragma comment( lib, "SystemInfo.lib" )
 #else
 #pragma comment( lib, "SystemInfoWin.lib" )
 #endif
-#pragma comment( lib, "AsyncComm.lib" )
-#pragma comment( lib, "FsBroker.lib" )
-#pragma comment( lib, "Hypertools.lib" )
-#pragma comment( lib, "Hyperspace.lib" )
-#pragma comment( lib, "Hypertable.lib" )
-#pragma comment( lib, "HyperAppHelper.lib" )
-#pragma comment( lib, "ThriftBroker.lib" )
 
 #pragma comment( lib, "ht4c.Common.lib" )
 #pragma comment( lib, "ht4c.Context.lib" )
+
+#if defined(SUPPORT_HYPERTABLE) || defined(SUPPORT_HYPERTABLE_THRIFT)
+
+#pragma comment( lib, "zlib.lib" )					// free of charge
+#pragma comment( lib, "expat.lib" )					// free of charge
+
+#pragma comment( lib, "AsyncComm.lib" )
+#pragma comment( lib, "FsBroker.lib" )
+#pragma comment( lib, "Hypertable.lib" )
+#pragma comment( lib, "Hypertools.lib" )
+#pragma comment( lib, "Hyperspace.lib" )
+#pragma comment( lib, "HyperAppHelper.lib" )
+
+#endif
+
+#ifdef SUPPORT_HYPERTABLE
+
 #pragma comment( lib, "ht4c.Hyper.lib" )
+
+#endif
+
+#ifdef SUPPORT_HYPERTABLE_THRIFT
+
+#pragma comment( lib, "thrift.lib" )				// Apache License 2.0
+#pragma comment( lib, "ThriftBroker.lib" )
 #pragma comment( lib, "ht4c.Thrift.lib" )
+
+#endif
 
 #ifdef SUPPORT_HAMSTERDB
 
-#pragma comment( lib, "re2.lib" )						// New BSD
 #pragma comment( lib, "hamsterdb.lib" )			// GPL & commercial
 #pragma comment( lib, "ht4c.Hamster.lib" )
 
@@ -62,14 +82,12 @@
 
 #ifdef SUPPORT_SQLITEDB
 
-#pragma comment( lib, "re2.lib" )						// New BSD
 #pragma comment( lib, "ht4c.SQLite.lib" )
 
 #endif
 
 #ifdef SUPPORT_ODBC
 
-#pragma comment( lib, "re2.lib" )						// New BSD
 #pragma comment( lib, "ht4c.Odbc.lib" )
 
 #endif

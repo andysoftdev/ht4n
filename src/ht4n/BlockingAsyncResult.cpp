@@ -30,9 +30,19 @@
 #include "ht4c.Common/Cell.h"
 #include "ht4c.Common/Cells.h"
 #include "ht4c.Common/AsyncResultSink.h"
+#include "ht4c.Common/BlockingAsyncResult.h"
+
+#ifdef SUPPORT_HYPERTABLE
 
 #include "ht4c.Hyper/HyperBlockingAsyncResult.h"
+
+#endif
+
+#ifdef SUPPORT_HYPERTABLE_THRIFT
+
 #include "ht4c.Thrift/ThriftBlockingAsyncResult.h"
+
+#endif
 
 namespace Hypertable {
 	using namespace System;
@@ -243,9 +253,24 @@ namespace Hypertable {
 
 	Common::AsyncResult* BlockingAsyncResult::CreateAsyncResult( Common::ContextKind contextKind, Common::AsyncResultSink* asyncResultSink ) {
 		HT4N_TRY {
-			return		contextKind == Common::CK_Hyper
-							? static_cast<Common::AsyncResult*>(Hyper::HyperBlockingAsyncResult::create(capacity) )
-							: static_cast<Common::AsyncResult*>(Thrift::ThriftBlockingAsyncResult::create(capacity) );
+
+#ifdef SUPPORT_HYPERTABLE
+
+			if( contextKind == Common::CK_Hyper ) {
+				return static_cast<Common::AsyncResult*>(Hyper::HyperBlockingAsyncResult::create(capacity) );
+			}
+
+#endif
+
+#ifdef SUPPORT_HYPERTABLE_THRIFT
+
+			if( contextKind == Common::CK_Thrift ) {
+				return static_cast<Common::AsyncResult*>(Thrift::ThriftBlockingAsyncResult::create(capacity) );
+			}
+
+#endif
+
+			return 0;
 		}
 		HT4N_RETHROW
 	}

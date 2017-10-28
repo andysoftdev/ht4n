@@ -37,8 +37,17 @@
 #include "ht4c.Common/AsyncResult.h"
 #include "ht4c.Common/AsyncResultSink.h"
 
+#ifdef SUPPORT_HYPERTABLE
+
 #include "ht4c.Hyper/HyperAsyncResult.h"
+
+#endif
+
+#ifdef SUPPORT_HYPERTABLE_THRIFT
+
 #include "ht4c.Thrift/ThriftAsyncResult.h"
+
+#endif
 
 namespace Hypertable {
 	using namespace System;
@@ -590,9 +599,25 @@ namespace Hypertable {
 	Common::AsyncResult* AsyncResult::CreateAsyncResult( Common::ContextKind contextKind, Common::AsyncResultSink* _asyncResultSink ) {
 		HT4N_TRY {
 			if( !_asyncResultSink ) throw gcnew ArgumentNullException( L"asyncResultSink" );
-			return    contextKind == Common::CK_Hyper
-							? static_cast<Common::AsyncResult*>(Hyper::HyperAsyncResult::create(_asyncResultSink) )
-							: static_cast<Common::AsyncResult*>(Thrift::ThriftAsyncResult::create(_asyncResultSink) );
+
+#ifdef SUPPORT_HYPERTABLE
+
+			if( contextKind == Common::CK_Hyper ) {
+				return static_cast<Common::AsyncResult*>(Hyper::HyperAsyncResult::create(_asyncResultSink) );
+			}
+
+#endif
+
+#ifdef SUPPORT_HYPERTABLE_THRIFT
+
+			if( contextKind == Common::CK_Thrift ) {
+				return static_cast<Common::AsyncResult*>(Thrift::ThriftAsyncResult::create(_asyncResultSink) );
+			}
+
+#endif
+
+			return 0;
+
 		}
 		HT4N_RETHROW
 	}

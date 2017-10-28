@@ -1,9 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <SupportHypertable Condition="'$(SupportHypertable)' == ''">true</SupportHypertable>
+    <SupportHypertableThrift Condition="'$(SupportHypertableThrift)' == ''">true</SupportHypertableThrift>
     <SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
     <SupportSQLiteDb Condition="'$(SupportSQLiteDb)' == ''">true</SupportSQLiteDb>
     <SupportOdbc Condition="'$(SupportOdbc)' == ''">true</SupportOdbc>
+    <SupportHypertableDefine Condition="$(SupportHypertable) == true">SUPPORT_HYPERTABLE</SupportHypertableDefine>
+    <SupportHypertableThriftDefine Condition="$(SupportHypertableThrift) == true">SUPPORT_HYPERTABLE_THRIFT</SupportHypertableThriftDefine>
     <SupportHamsterDbDefine Condition="$(SupportHamsterDb) == true">SUPPORT_HAMSTERDB</SupportHamsterDbDefine>
     <SupportSQLiteDbDefine Condition="$(SupportSQLiteDb) == true">SUPPORT_SQLITEDB</SupportSQLiteDbDefine>
     <SupportOdbcDefine Condition="$(SupportOdbc) == true">SUPPORT_ODBC</SupportOdbcDefine>
@@ -14,6 +18,7 @@
     <BoostThread Condition="'$(VisualStudioVersion)' == '11.0'">libboost_thread-vc110-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '12.0'">libboost_thread-vc120-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '14.0'">libboost_thread-vc140-mt</BoostThread>
+	<BoostThread Condition="'$(VisualStudioVersion)' == '15.0'">libboost_thread-vc141-mt</BoostThread>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -130,7 +135,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -162,7 +167,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -170,7 +175,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -202,7 +207,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -212,7 +217,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -251,7 +256,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -261,7 +266,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -300,7 +305,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
