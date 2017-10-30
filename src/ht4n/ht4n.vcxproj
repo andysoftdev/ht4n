@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SupportHypertable Condition="'$(SupportHypertable)' == ''">true</SupportHypertable>
     <SupportHypertableThrift Condition="'$(SupportHypertableThrift)' == ''">true</SupportHypertableThrift>
@@ -13,12 +13,12 @@
     <SupportOdbcDefine Condition="$(SupportOdbc) == true">SUPPORT_ODBC</SupportOdbcDefine>
   </PropertyGroup>
   <PropertyGroup>
-    <BoostVersion>1_60</BoostVersion>
+    <BoostVersion>1_65_1</BoostVersion>
     <BoostThread Condition="'$(VisualStudioVersion)' == '10.0'">libboost_thread-vc100-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '11.0'">libboost_thread-vc110-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '12.0'">libboost_thread-vc120-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '14.0'">libboost_thread-vc140-mt</BoostThread>
-	<BoostThread Condition="'$(VisualStudioVersion)' == '15.0'">libboost_thread-vc141-mt</BoostThread>
+    <BoostThread Condition="'$(VisualStudioVersion)' == '15.0'">libboost_thread-vc141-mt</BoostThread>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -49,14 +49,14 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -64,7 +64,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -72,7 +72,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -207,7 +207,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -256,7 +256,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -305,7 +305,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -321,6 +321,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="Composition\IContextFactory.h" />
     <ClInclude Include="Composition\IContextProvider.h" />
     <ClInclude Include="Composition\IContextProviderMetaData.h" />
+    <ClInclude Include="ContextKind.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="CrossAppDomainAction.h" />
     <ClInclude Include="AppDomainHandler.h" />

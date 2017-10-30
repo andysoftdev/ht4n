@@ -6,9 +6,10 @@
 	<PropertyGroup>
 		<SupportHypertable Condition="'$(SupportHypertable)' == ''">true</SupportHypertable>
 		<SupportHypertableThrift Condition="'$(SupportHypertableThrift)' == ''">true</SupportHypertableThrift>
-		<SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
 		<SupportSQLiteDb Condition="'$(SupportSQLiteDb)' == ''">true</SupportSQLiteDb>
-		<SupportOdbc Condition="'$(SupportOdbc)' == ''">true</SupportOdbc>
+
+		<SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">false</SupportHamsterDb>
+		<SupportOdbc Condition="'$(SupportOdbc)' == ''">false</SupportOdbc>
 	</PropertyGroup>
 
 	<!-- Master files to make -->

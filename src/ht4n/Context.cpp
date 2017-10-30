@@ -177,7 +177,11 @@ namespace Hypertable {
 			if( type == typeid(void) ) {
 				std::stringstream ss;
 				ss << "Property '" << propName << "' does not exist\n\tat " << __FUNCTION__ << " (" << __FILE__ << ':' << __LINE__ << ')';
-				throw std::bad_cast( ss.str().c_str() );
+#if _MSC_VER < 1900
+				throw std::bad_cast(ss.str().c_str());
+#else
+				throw std::bad_cast::__construct_from_string_literal( ss.str().c_str() );
+#endif
 			}
 			GET_ANY( bool )
 			GET_ANY( uint16_t )
@@ -206,7 +210,11 @@ namespace Hypertable {
 			}
 			std::stringstream ss;
 			ss << "Unknown property type for '" << propName << "'\n\tat " << __FUNCTION__ << " (" << __FILE__ << ':' << __LINE__ << ')';
-			throw std::bad_cast( ss.str().c_str() );
+#if _MSC_VER < 1900
+			throw std::bad_cast(ss.str().c_str());
+#else
+			throw std::bad_cast::__construct_from_string_literal( ss.str().c_str() );
+#endif
 
 			#undef GET_ANY
 			#undef GET_ANY_COLLECTION
@@ -253,6 +261,10 @@ namespace Hypertable {
 		if( connectionString == nullptr ) throw gcnew ArgumentNullException( L"connectionString" );
 		if( properties == nullptr ) throw gcnew ArgumentNullException( L"properties" );
 		return CreateProvider( MergeProperties(connectionString, properties) );
+	}
+
+	bool Context::HasContext( ContextKind contextKind ) {
+		return ht4c::Context::hasContext( static_cast<ht4c::Common::ContextKind>(contextKind) );
 	}
 
 	void Context::RegisterProvider( String^ providerName, Func<IDictionary<String^, Object^>^, IContext^>^ provider ) {

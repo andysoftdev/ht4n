@@ -14,3 +14,5 @@ TestResults/
 *.Cache
 *.nupkg
 *.x??.nuget
+*.VC.db
+*.VC.opendb

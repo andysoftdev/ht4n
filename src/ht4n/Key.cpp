@@ -154,8 +154,8 @@ namespace Hypertable {
 			return String::Format( CultureInfo::InvariantCulture, L"{0}(Empty)", GetType() );
 		}
 
-		#define APPEND_STRING( what ) if( what != nullptr ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
-		#define APPEND_DATETIME( what ) if( what != timestampOrigin ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+		#define APPEND_STRING( what ) if( what != nullptr ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what L"={0}, ", what) );
+		#define APPEND_DATETIME( what ) if( what != timestampOrigin ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what L"={0}, ", what) );
 
 		StringBuilder^ sb = gcnew StringBuilder();
 		sb->Append( GetType() );

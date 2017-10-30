@@ -55,9 +55,9 @@ namespace Hypertable {
 
 	String^ MutatorSpec::ToString() {
 
-		#define APPEND_INT( what ) if( what > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
-		#define APPEND_BOOL( what ) if( what ) sb->Append( L#what##L", " );
-		#define APPEND_TIMESPAN( what ) if( what.Ticks > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what##L"={0}, ", what) );
+		#define APPEND_INT( what ) if( what > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what L"={0}, ", what) );
+		#define APPEND_BOOL( what ) if( what ) sb->Append( L#what L", " );
+		#define APPEND_TIMESPAN( what ) if( what.Ticks > 0 ) sb->Append( String::Format(CultureInfo::InvariantCulture, L#what L"={0}, ", what) );
 
 		StringBuilder^ sb = gcnew StringBuilder();
 		sb->Append( GetType() );

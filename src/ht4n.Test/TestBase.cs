@@ -76,6 +76,28 @@ namespace Hypertable.Test
         }
 
         /// <summary>
+        /// Returns true if the actual implementation supports native hypertable.
+        /// </summary>
+        protected static bool HasHypertable
+        {
+            get
+            {
+                return Hypertable.Context.HasContext(ContextKind.Hyper);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the actual implementation supports thrift hypertable.
+        /// </summary>
+        protected static bool HasHypertableThrift
+        {
+            get
+            {
+                return Hypertable.Context.HasContext(ContextKind.Thrift);
+            }
+        }
+
+        /// <summary>
         /// Returns true if the actual provider supports asynchronous table mutator.
         /// </summary>
         protected static bool HasAsyncTableMutator {

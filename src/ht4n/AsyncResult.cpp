@@ -61,13 +61,19 @@ namespace Hypertable {
 
 			public:
 
+#if _MSC_VER >= 1900
+				_Acquires_lock_(pcs)
+#endif
 				inline Lock( CRITICAL_SECTION* _pcs )
 				: pcs( _pcs ) {
 					::EnterCriticalSection( pcs );
 				}
 
+#if _MSC_VER >= 1900
+				_Releases_lock_(pcs)
+#endif
 				inline ~Lock( ) {
-					::LeaveCriticalSection( pcs );
+					::LeaveCriticalSection( pcs );					
 				}
 
 			private:

@@ -26,6 +26,7 @@
 #endif
 
 #include "IContext.h"
+#include "ContextKind.h"
 #include "ht4c.Common/Types.h"
 
 namespace ht4c {
@@ -183,6 +184,14 @@ namespace Hypertable {
 			/// </table>
 			/// </remarks>
 			static IContext^ Create( String^ connectionString, IDictionary<String^, Object^>^ properties );
+
+			/// <summary>
+			/// Returns true if the implementation supports the context kind specified, otherwise false.
+			/// </summary>
+			/// <param name="contextKind">The context kind</param>
+			/// <returns> Returns true if the implementation supports the context kind specified, otherwise false</returns>
+			/// <seealso cref="ht4c::Common::ContextKind"/>
+			static bool HasContext( ContextKind contextKind );
 
 			/// <summary>
 			/// Registers a custom context provider.

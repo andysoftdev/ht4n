@@ -23,6 +23,12 @@
 
 #pragma warning( disable : 4355 ) // 'this' : used in base member initializer list
 
+#if _MSC_VER >= 1900
+#pragma warning( disable : 4635 ) // XML document comment applied to 'lconv': badly-formed XML: Whitespace is not allowed at this location
+#pragma warning( disable : 4503 ) // decorated name length exceeded, name was truncated
+#pragma warning( disable : 4290 ) // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+#endif
+
 #include <msclr/lock.h>
 #include <msclr/marshal.h>
 #include <msclr/appdomain.h>

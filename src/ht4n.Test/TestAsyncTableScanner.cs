@@ -735,6 +735,9 @@ namespace Hypertable.Test
             if (!IsHyper && !IsThrift) {
                 Assert.Fail("Check implementation below for the new provider {0}", ProviderName);
             }
+            else if (!HasHypertable || !HasHypertableThrift) {
+                return;
+            }
 
             var properties = new Dictionary<string, object> { { "Provider", IsHyper ? "Thrift" : "Hyper" } };
             var nsOtherName = NsName + "/other";
@@ -800,6 +803,9 @@ namespace Hypertable.Test
 
             if (!IsHyper && !IsThrift) {
                 Assert.Fail("Check implementation below for the new provider {0}", ProviderName);
+            }
+            else if (!HasHypertable || !HasHypertableThrift) {
+                return;
             }
 
             var properties = new Dictionary<string, object> { { "Provider", IsHyper ? "Thrift" : "Hyper" } };
