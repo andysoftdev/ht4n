@@ -27,10 +27,6 @@
 namespace Hypertable {
 	using namespace System;
 
-	RowComparer::RowComparer( )
-	{
-	}
-
 	bool RowComparer::Equals( Key^ x, Key^ y ) {
 		if( Object::ReferenceEquals(x, y) ) {
 			return true;

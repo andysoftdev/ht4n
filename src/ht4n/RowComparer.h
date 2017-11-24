@@ -35,14 +35,9 @@ namespace Hypertable {
 	/// Represents a row key comparer.
 	/// </summary>
 	[Serializable]
-	public ref class RowComparer sealed : public IEqualityComparer<Key^>, public System::Collections::IEqualityComparer {
+	public value struct RowComparer : public IEqualityComparer<Key^>, public System::Collections::IEqualityComparer {
 
 		public:
-
-			/// <summary>
-			/// Initializes a new instance of the RowComparer class.
-			/// </summary>
-			RowComparer( );
 
 			#pragma region IEqualityComparer<Key^> methods
 

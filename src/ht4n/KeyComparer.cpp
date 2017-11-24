@@ -30,11 +30,6 @@
 namespace Hypertable {
 	using namespace System;
 
-	KeyComparer::KeyComparer( )
-	: includeTimestamp( false )
-	{
-	}
-
 	KeyComparer::KeyComparer( bool _includeTimestamp )
 	: includeTimestamp( _includeTimestamp )
 	{

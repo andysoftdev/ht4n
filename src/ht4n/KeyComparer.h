@@ -38,14 +38,9 @@ namespace Hypertable {
 	/// An undefined column qualifier will be treated the same as an empty column qualifier.
 	/// </remarks>
 	[Serializable]
-	public ref class KeyComparer sealed : public IEqualityComparer<Key^>, public System::Collections::IEqualityComparer {
+	public value struct KeyComparer : public IEqualityComparer<Key^>, public System::Collections::IEqualityComparer {
 
 		public:
-
-			/// <summary>
-			/// Initializes a new instance of the KeyComparer class.
-			/// </summary>
-			KeyComparer( );
 
 			/// <summary>
 			/// Initializes a new instance of the KeyComparer class using a value that indicates whether to include the timestamp in the comparison or not.
