@@ -139,6 +139,8 @@ namespace Hypertable {
 	void QueuedTableMutator::Flush( ) {
 		HT4N_THROW_OBJECTDISPOSED( );
 
+		ThrowIfInnerExceptionOccurred();
+
 		mre->WaitOne();
 		inner->Flush();
 	}
@@ -158,6 +160,9 @@ namespace Hypertable {
 		if( cell->Value != nullptr && cell->Value->Length > Cell::MaxSize ) {
 			throw gcnew System::ArgumentException("cell value exceeds the limit", "cell");
 		}
+
+		ThrowIfInnerExceptionOccurred();
+
 		mre->Reset();
 		bc->Add( cell );
 	}
@@ -180,10 +185,12 @@ namespace Hypertable {
 				for each( Exception^ e in aggregateException->Flatten()->InnerExceptions ) {
 						Logging::TraceException( e );
 				}
+				innerException = aggregateException;
 				throw;
 		}
 		catch( Exception^ e ) {
 			Logging::TraceException( e );
+			innerException = e;
 			throw;
 		}
 	}

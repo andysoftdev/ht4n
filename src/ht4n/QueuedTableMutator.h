@@ -90,7 +90,14 @@ namespace Hypertable {
 			BlockingCollection<Cell^>^ bc;
 			ManualResetEvent^ mre;
 			ITableMutator^ inner;
+			Exception^ innerException;
 			bool disposed;
+
+			void ThrowIfInnerExceptionOccurred( ) {
+				if( innerException != nullptr ) {
+					throw gcnew AggregateException( "Queuing have been aborted", innerException );
+				}
+			}
 	};
 
 }
