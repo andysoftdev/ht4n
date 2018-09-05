@@ -82,6 +82,10 @@ namespace Hypertable {
 		Flag = flag;
 	}
 
+	int Cell::MaxSize::get() {
+		return Common::Cell::MaxSize;
+	}
+
 	String^ Cell::ToString() {
 		return String::Format( CultureInfo::InvariantCulture
 												 , L"{0}(Key={1}, Value.Length={2}, Flag={3})"

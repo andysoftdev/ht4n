@@ -155,6 +155,9 @@ namespace Hypertable {
 	}
 
 	void QueuedTableMutator::AddCell( Cell^ cell ) {
+		if( cell->Value != nullptr && cell->Value->Length > Cell::MaxSize ) {
+			throw gcnew System::ArgumentException("cell value exceeds the limit", "cell");
+		}
 		mre->Reset();
 		bc->Add( cell );
 	}

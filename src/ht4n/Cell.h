@@ -142,6 +142,13 @@ namespace Hypertable {
 			Cell( Key^ key, cli::array<Byte>^ value, CellFlag flag, bool cloneKey );
 
 			/// <summary>
+			/// Gets the cell size.
+			/// </summary>
+			static property int MaxSize {
+				int get();
+			}
+
+			/// <summary>
 			/// Gets or sets the cell key.
 			/// </summary>
 			/// <seealso cref="Key"/>
