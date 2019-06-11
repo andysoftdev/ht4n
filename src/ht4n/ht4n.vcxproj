@@ -315,6 +315,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="AsyncScannerCallback.h" />
     <ClInclude Include="AsyncScannerContext.h" />
     <ClInclude Include="BlockingAsyncResult.h" />
+    <ClInclude Include="BufferedCell.h" />
     <ClInclude Include="ColumnPredicate.h" />
     <ClInclude Include="Composition\ContextFactory.h" />
     <ClInclude Include="Composition\ExportContextProviderAttribute.h" />
@@ -371,6 +372,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="AsyncResult.cpp" />
+    <ClCompile Include="BufferedCell.cpp" />
     <ClCompile Include="ColumnPredicate.cpp" />
     <ClCompile Include="Composition\ContextFactory.cpp" />
     <ClCompile Include="Composition\ExportContextProviderAttribute.cpp" />

@@ -185,6 +185,9 @@
     <ClInclude Include="ContextKind.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="BufferedCell.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -281,6 +284,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Counter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferedCell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

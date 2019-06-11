@@ -38,6 +38,7 @@ namespace Hypertable {
 	using namespace ht4c;
 
 	ref class Cell;
+	ref class BufferedCell;
 	ref class ScanSpec;
 
 	/// <summary>
@@ -73,6 +74,7 @@ namespace Hypertable {
 			}
 
 			virtual bool Move( Cell^ cell );
+			virtual bool Move( BufferedCell^ cell );
 			virtual bool Next( [Out] Cell^% cell );
 
 			virtual IEnumerator<Cell^>^ generic_GetEnumerator( ) = IEnumerable<Cell^>::GetEnumerator;

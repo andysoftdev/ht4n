@@ -31,6 +31,7 @@ namespace Hypertable {
 	using namespace System::Runtime::InteropServices;
 
 	ref class Cell;
+	ref class BufferedCell;
 	ref class ScanSpec;
 
 	/// <summary>
@@ -95,6 +96,16 @@ namespace Hypertable {
 			/// The methods updates the cell instance specified.
 			/// </remarks>
 			bool Move( Cell^ cell );
+
+			/// <summary>
+			/// Gets the next available cell using the specified cell instance.
+			/// </summary>
+			/// <param name="cell">Cell instance.</param>
+			/// <returns>true if there are more cells available, otherwise false.</returns>
+			/// <remarks>
+			/// The methods updates the cell instance specified.
+			/// </remarks>
+			bool Move( BufferedCell^ cell );
 
 			/// <summary>
 			/// Gets the next available cell, creating a new cell instance.
