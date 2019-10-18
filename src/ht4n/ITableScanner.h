@@ -32,6 +32,7 @@ namespace Hypertable {
 
 	ref class Cell;
 	ref class BufferedCell;
+	ref class PooledCell;
 	ref class ScanSpec;
 
 	/// <summary>
@@ -106,6 +107,16 @@ namespace Hypertable {
 			/// The methods updates the cell instance specified.
 			/// </remarks>
 			bool Move( BufferedCell^ cell );
+
+			/// <summary>
+			/// Gets the next available cell using the specified cell instance.
+			/// </summary>
+			/// <param name="cell">Cell instance.</param>
+			/// <returns>true if there are more cells available, otherwise false.</returns>
+			/// <remarks>
+			/// The methods updates the cell instance specified.
+			/// </remarks>
+			bool Move( PooledCell^ cell );
 
 			/// <summary>
 			/// Gets the next available cell, creating a new cell instance.

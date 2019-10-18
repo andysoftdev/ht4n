@@ -188,6 +188,12 @@
     <ClInclude Include="BufferedCell.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="PooledCell.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ICell.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -287,6 +293,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BufferedCell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PooledCell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

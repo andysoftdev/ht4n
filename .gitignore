@@ -1,10 +1,11 @@
-
+.vs
 /build
 /dist
 /doc/api
 /ipch
 obj/
 TestResults/
+packages/
 *.user
 *.suo
 *.sdf

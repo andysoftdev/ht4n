@@ -24,6 +24,7 @@
 #include "TableScanner.h"
 #include "Cell.h"
 #include "BufferedCell.h"
+#include "PooledCell.h"
 #include "ScanSpec.h"
 #include "Exception.h"
 
@@ -121,6 +122,22 @@ namespace Hypertable {
 			msclr::lock sync(syncRoot);
 			if( tableScanner->next(_cell) ) {
 				cell->From( *_cell );
+				return true;
+			}
+			return false;
+		}
+			HT4N_RETHROW
+	}
+
+	bool TableScanner::Move( PooledCell^ cell ) {
+		HT4N_THROW_OBJECTDISPOSED();
+
+		if (cell == nullptr) throw gcnew ArgumentNullException(L"cell");
+		HT4N_TRY{
+			Common::Cell* _cell;
+			msclr::lock sync(syncRoot);
+			if (tableScanner->next(_cell)) {
+				cell->From(*_cell);
 				return true;
 			}
 			return false;

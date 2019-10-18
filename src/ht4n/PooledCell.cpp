@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 
-#include "BufferedCell.h"
+#include "PooledCell.h"
 #include "Cell.h"
 #include "Key.h"
 
@@ -33,14 +33,11 @@ namespace Hypertable {
 	using namespace System::Runtime::InteropServices;
 	using namespace ht4c;
 
-	BufferedCell::BufferedCell( int capacity ) {
+	PooledCell::PooledCell( ) {
 		Flag = CellFlag::Default;
-		if( capacity > 0 && capacity < Cell::MaxSize ) {
-			value = gcnew cli::array<Byte>( capacity );
-		}
 	}
 
-	String^ BufferedCell::ToString() {
+	String^ PooledCell::ToString() {
 		return String::Format( CultureInfo::InvariantCulture
 												 , L"{0}(Key={1}, Value.Length={2}, Flag={3})"
 												 , GetType()
@@ -49,21 +46,22 @@ namespace Hypertable {
 												 , Flag );
 	}
 
-	BufferedCell::BufferedCell( const Common::Cell* cell ) {
+	PooledCell::PooledCell( const Common::Cell* cell ) {
 		if( cell ) {
 			From( *cell );
 		}
 	}
 
-	void BufferedCell::From( const Common::Cell& cell ) {
+	void PooledCell::From( const Common::Cell& cell ) {
 		Key = gcnew Hypertable::Key( cell );
 
 		if( (valueLength = static_cast<int>(cell.valueLength())) > 0 ) {
-			if( value == nullptr || value->Length < valueLength ) {
-				value = gcnew cli::array<Byte>( valueLength );
-			}
+			value = pool->Rent( valueLength );
 			pin_ptr<Byte> pv = &value[0];
 			memcpy( pv, cell.value(), valueLength );
+		}
+		else {
+			value = nullptr;
 		}
 
 		Flag = (CellFlag)cell.flag();

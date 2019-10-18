@@ -26,6 +26,7 @@
 #endif
 
 #include "CellFlag.h"
+#include "ICell.h"
 
 namespace ht4c { namespace Common {
 	class Cell;
@@ -68,7 +69,7 @@ namespace Hypertable {
 	/// <seealso cref="Key"/>
 	/// <seealso cref="Counter"/>
 	[Serializable]
-	public ref class Cell sealed {
+	public ref class Cell : public ICell {
 
 		public:
 
@@ -152,12 +153,21 @@ namespace Hypertable {
 			/// Gets or sets the cell key.
 			/// </summary>
 			/// <seealso cref="Key"/>
-			property Key^ Key;
+			virtual property Key^ Key;
 
 			/// <summary>
 			/// Gets or sets the cell value, might be null.
 			/// </summary>
-			property cli::array<Byte>^ Value;
+			virtual property cli::array<Byte>^ Value;
+
+			/// <summary>
+			/// Gets the cell value length.
+			/// </summary>
+			virtual property int ValueLength {
+				int get() {
+					return Value != nullptr ? Value->Length : 0;
+				}
+			}
 
 			/// <summary>
 			/// Gets or sets the cell flag.

@@ -13,6 +13,9 @@
     <SupportOdbcDefine Condition="$(SupportOdbc) == true">SUPPORT_ODBC</SupportOdbcDefine>
   </PropertyGroup>
   <PropertyGroup>
+    <TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup>
     <BoostVersion>1_65_1</BoostVersion>
     <BoostThread Condition="'$(VisualStudioVersion)' == '10.0'">libboost_thread-vc100-mt</BoostThread>
     <BoostThread Condition="'$(VisualStudioVersion)' == '11.0'">libboost_thread-vc110-mt</BoostThread>
@@ -326,12 +329,14 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="Counter.h" />
     <ClInclude Include="CrossAppDomainAction.h" />
     <ClInclude Include="AppDomainHandler.h" />
+    <ClInclude Include="ICell.h" />
     <ClInclude Include="IClient.h" />
     <ClInclude Include="IContext.h" />
     <ClInclude Include="ContextFeature.h" />
     <ClInclude Include="INamespace.h" />
     <ClInclude Include="ITable.h" />
     <ClInclude Include="MatchKind.h" />
+    <ClInclude Include="PooledCell.h" />
     <ClInclude Include="QueuedTableMutator.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="CellFlag.h" />
@@ -377,6 +382,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClCompile Include="Composition\ContextFactory.cpp" />
     <ClCompile Include="Composition\ExportContextProviderAttribute.cpp" />
     <ClCompile Include="Counter.cpp" />
+    <ClCompile Include="PooledCell.cpp" />
     <ClCompile Include="QueuedTableMutator.cpp" />
     <ClCompile Include="BlockingAsyncResult.cpp" />
     <ClCompile Include="Cell.cpp" />
@@ -437,9 +443,14 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_WIN64;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup>    
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Buffers.4.5.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>

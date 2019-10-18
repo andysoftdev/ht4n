@@ -34,6 +34,7 @@ namespace ht4c { namespace Common {
 
 namespace Hypertable {
 	using namespace System;
+	using namespace System::Buffers;
 	using namespace ht4c;
 
 	ref class Key;
@@ -50,9 +51,10 @@ namespace Hypertable {
 	/// The following example shows how to iterate through all cells of a table using only one BufferedCell instance.
 	/// <code>
 	/// using( var scanner = table.CreateScanner() ) {
-	///    BufferedCell cell = new BufferedCell(1024);
+	///    PooledCell cell = new PooledCell();
 	///    while( scanner.Move(cell) ) {
 	///       // process cell
+	///       PooledCell.Release(cell.Value);
 	///    }
 	/// }
 	/// </code>
@@ -60,14 +62,14 @@ namespace Hypertable {
 	/// <seealso cref="Key"/>
 	/// <seealso cref="Counter"/>
 	[Serializable]
-	public ref class BufferedCell : public ICell {
+	public ref class PooledCell : public ICell {
 
 		public:
 
 			/// <summary>
-			/// Initializes a new instance of the BufferedCell class.
+			/// Initializes a new instance of the PooledCell class.
 			/// </summary>
-			BufferedCell( int capacity );
+			PooledCell( );
 
 			/// <summary>
 			/// Gets or sets the cell key.
@@ -78,10 +80,7 @@ namespace Hypertable {
 			/// <summary>
 			/// Gets or sets the cell value, might be null.
 			/// </summary>
-			/// <remarks>
-			/// The array length is most likely bigger than the value length.
-			/// </remarks>
-            virtual property cli::array<Byte>^ Value {
+			virtual property cli::array<Byte>^ Value {
 				cli::array<Byte>^ get() {
 					return value;
 				}
@@ -90,9 +89,6 @@ namespace Hypertable {
 			/// <summary>
 			/// Gets the cell value length.
 			/// </summary>
-			/// <remarks>
-			/// The array length is most likely bigger than the value length.
-			/// </remarks>
 			virtual property int ValueLength {
 				int get() {
 					return valueLength;
@@ -111,15 +107,26 @@ namespace Hypertable {
 			/// <returns>A string that represents the current object.</returns>
 			virtual String^ ToString() override;
 
+			/// <summary>
+			/// Returns the value back to pool.
+			/// </summary>
+			static void Return( cli::array<Byte>^ value) {
+				if( value != nullptr ) {
+					pool->Return(value, false);
+				}
+			}
+
 		internal:
 
-			BufferedCell( const Common::Cell* cell );
+			PooledCell( const Common::Cell* cell );
 			void From( const Common::Cell& cell );
 
 		private:
 
 			cli::array<Byte>^ value;
 			int valueLength;
+
+			static ArrayPool<Byte>^ pool = ArrayPool<Byte>::Create();
 	};
 
 }
