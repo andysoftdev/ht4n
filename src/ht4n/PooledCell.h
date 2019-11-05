@@ -126,7 +126,7 @@ namespace Hypertable {
 			cli::array<Byte>^ value;
 			int valueLength;
 
-			static ArrayPool<Byte>^ pool = ArrayPool<Byte>::Create();
+			static ArrayPool<Byte>^ pool = ArrayPool<Byte>::Shared;
 	};
 
 }
