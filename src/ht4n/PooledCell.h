@@ -112,7 +112,12 @@ namespace Hypertable {
 			/// </summary>
 			static void Return( cli::array<Byte>^ value) {
 				if( value != nullptr ) {
-					pool->Return(value, false);
+					if (value->Length <= smallPoolSize) {
+						smallPool->Return(value, false);
+					}
+					else {
+						largePool->Return(value, false);
+					}
 				}
 			}
 
@@ -126,7 +131,11 @@ namespace Hypertable {
 			cli::array<Byte>^ value;
 			int valueLength;
 
-			static ArrayPool<Byte>^ pool = ArrayPool<Byte>::Shared;
+			static initonly int smallPoolSize = 64 * 1024;
+			static initonly int largePoolSize = 1024 * 1024;
+
+			static initonly ArrayPool<Byte>^ smallPool = ArrayPool<Byte>::Create(smallPoolSize, 1024);
+			static initonly ArrayPool<Byte>^ largePool = ArrayPool<Byte>::Create(largePoolSize, 32);
 	};
 
 }

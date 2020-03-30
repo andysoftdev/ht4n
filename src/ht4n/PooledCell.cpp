@@ -56,7 +56,7 @@ namespace Hypertable {
 		Key = gcnew Hypertable::Key( cell );
 
 		if( (valueLength = static_cast<int>(cell.valueLength())) > 0 ) {
-			value = pool->Rent( valueLength );
+			value = valueLength <= smallPoolSize ? smallPool->Rent( valueLength ) : largePool->Rent( valueLength );
 			pin_ptr<Byte> pv = &value[0];
 			memcpy( pv, cell.value(), valueLength );
 		}
