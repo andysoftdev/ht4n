@@ -69,6 +69,9 @@ namespace ht4c { namespace Odbc {
 
 #endif
 
+#ifdef _USE_MIMALLOC
+#include <mimalloc-new-delete.h>
+#endif
 
 extern "C" BOOL WINAPI DllMain(HANDLE /*hInstance*/, DWORD dwReason, LPVOID /*lpReserved*/) {
 	switch( dwReason )

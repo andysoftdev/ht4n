@@ -11,6 +11,7 @@
     <SupportHamsterDbDefine Condition="$(SupportHamsterDb) == true">SUPPORT_HAMSTERDB</SupportHamsterDbDefine>
     <SupportSQLiteDbDefine Condition="$(SupportSQLiteDb) == true">SUPPORT_SQLITEDB</SupportSQLiteDbDefine>
     <SupportOdbcDefine Condition="$(SupportOdbc) == true">SUPPORT_ODBC</SupportOdbcDefine>
+    <UseMimallocDefine Condition="$(UseMimalloc) == true">_USE_MIMALLOC</UseMimallocDefine>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v4.5</TargetFrameworkVersion>
@@ -138,11 +139,11 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\deps\mimalloc\include;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm300 </AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnablePREfast>false</EnablePREfast>
@@ -170,7 +171,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -178,11 +179,11 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\deps\mimalloc\include;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm300 </AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnablePREfast>false</EnablePREfast>
@@ -210,7 +211,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -220,12 +221,12 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\deps\mimalloc\include;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm300 </AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -259,7 +260,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -269,12 +270,12 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\deps\mimalloc\include;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm300 </AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -308,7 +309,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -443,7 +444,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_WIN64;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemGroup>
-  <ItemGroup>    
+  <ItemGroup>
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Buffers.4.5.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
       <Private>True</Private>

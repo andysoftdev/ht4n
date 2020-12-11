@@ -21,6 +21,10 @@
 
 #include "stdafx.h"
 
+#ifdef _USE_MIMALLOC
+#pragma comment( lib, "mimalloc-static.lib" )
+#endif
+
 #pragma comment( lib, "ws2_32.lib" )
 #pragma comment( lib, "netapi32.lib" )
 #pragma comment( lib, "advapi32.lib" )

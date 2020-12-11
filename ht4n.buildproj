@@ -7,9 +7,9 @@
 		<SupportHypertable Condition="'$(SupportHypertable)' == ''">true</SupportHypertable>
 		<SupportHypertableThrift Condition="'$(SupportHypertableThrift)' == ''">true</SupportHypertableThrift>
 		<SupportSQLiteDb Condition="'$(SupportSQLiteDb)' == ''">true</SupportSQLiteDb>
-
 		<SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">false</SupportHamsterDb>
 		<SupportOdbc Condition="'$(SupportOdbc)' == ''">false</SupportOdbc>
+		<UseMimalloc Condition="'$(UseMimalloc)' == ''">false</UseMimalloc>
 	</PropertyGroup>
 
 	<!-- Master files to make -->
@@ -175,7 +175,7 @@
 		<MSBuild
 			Projects="ht4n.sln"
 			Targets="Build"
-			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform);PlatformToolset=$(PlatformToolset);TargetFrameworkVersion=$(TargetFrameworkVersion);SupportHypertable=$(SupportHypertable);SupportHypertableThrift=$(SupportHypertableThrift);SupportHamsterDb=$(SupportHamsterDb);SupportSQLiteDb=$(SupportSQLiteDb);SupportOdbc=$(SupportOdbc)"
+			Properties="Configuration=%(MakeConfiguration.Configuration);Platform=%(MakeConfiguration.Platform);PlatformToolset=$(PlatformToolset);TargetFrameworkVersion=$(TargetFrameworkVersion);SupportHypertable=$(SupportHypertable);SupportHypertableThrift=$(SupportHypertableThrift);SupportHamsterDb=$(SupportHamsterDb);SupportSQLiteDb=$(SupportSQLiteDb);SupportOdbc=$(SupportOdbc);UseMimalloc=$(UseMimalloc)"
 			ContinueOnError="false" />
 	</Target>
 
