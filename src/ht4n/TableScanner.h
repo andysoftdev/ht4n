@@ -37,6 +37,7 @@ namespace Hypertable {
 	using namespace System::Runtime::InteropServices;
 	using namespace ht4c;
 
+	ref class Key;
 	ref class Cell;
 	ref class BufferedCell;
 	ref class PooledCell;
@@ -78,6 +79,7 @@ namespace Hypertable {
 			virtual bool Move( BufferedCell^ cell );
 			virtual bool Move( PooledCell^ cell );
 			virtual bool Next( [Out] Cell^% cell );
+			virtual bool Next( Func<Key^, IntPtr, int, bool>^ action );
 
 			virtual IEnumerator<Cell^>^ generic_GetEnumerator( ) = IEnumerable<Cell^>::GetEnumerator;
 

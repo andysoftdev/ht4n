@@ -22,6 +22,7 @@
 #include "stdafx.h"
 
 #include "TableScanner.h"
+#include "Key.h"
 #include "Cell.h"
 #include "BufferedCell.h"
 #include "PooledCell.h"
@@ -175,6 +176,20 @@ namespace Hypertable {
 				return true;
 			}
 			cell = nullptr;
+			return false;
+		}
+		HT4N_RETHROW
+	}
+
+	bool TableScanner::Next(Func<Key^, IntPtr, int, bool>^ action) {
+		HT4N_THROW_OBJECTDISPOSED();
+
+		HT4N_TRY{
+			Common::Cell* cell;
+			msclr::lock sync(syncRoot);
+			if (tableScanner->next(cell)) {
+				return action(gcnew Key(*cell), IntPtr(const_cast<ht4c::Common::uint8_t*>(cell->value())), cell->valueLength());
+			}
 			return false;
 		}
 		HT4N_RETHROW

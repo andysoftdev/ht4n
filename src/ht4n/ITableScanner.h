@@ -30,6 +30,7 @@ namespace Hypertable {
 	using namespace System::Collections::Generic;
 	using namespace System::Runtime::InteropServices;
 
+	ref class Key;
 	ref class Cell;
 	ref class BufferedCell;
 	ref class PooledCell;
@@ -127,6 +128,13 @@ namespace Hypertable {
 			/// The methods returns a new cell instance.
 			/// </remarks>
 			bool Next( [Out] Cell^% cell );
+
+			/// <summary>
+			/// Gets the next available cell.
+			/// </summary>
+			/// <param name="action">The action called with the scanned cell.</param>
+			/// <returns>true if there are more cells available, otherwise false.</returns>
+			bool Next(Func<Key^, IntPtr, int, bool>^ action);
 	};
 
 }
