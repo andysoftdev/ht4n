@@ -330,6 +330,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="Counter.h" />
     <ClInclude Include="CrossAppDomainAction.h" />
     <ClInclude Include="AppDomainHandler.h" />
+    <ClInclude Include="Heap.h" />
     <ClInclude Include="ICell.h" />
     <ClInclude Include="IClient.h" />
     <ClInclude Include="IContext.h" />
@@ -383,6 +384,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClCompile Include="Composition\ContextFactory.cpp" />
     <ClCompile Include="Composition\ExportContextProviderAttribute.cpp" />
     <ClCompile Include="Counter.cpp" />
+    <ClCompile Include="Heap.cpp" />
     <ClCompile Include="PooledCell.cpp" />
     <ClCompile Include="QueuedTableMutator.cpp" />
     <ClCompile Include="BlockingAsyncResult.cpp" />
