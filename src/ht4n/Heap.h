@@ -40,7 +40,7 @@ namespace Hypertable {
 			/// </summary>
 			/// <param name="size">The number of bytes to allocate.</param>
 			/// <returns>The pointer to the block of memory.</returns>
-			static IntPtr Alloc( int size );
+			static IntPtr Alloc( int64_t size );
 
 			/// <summary>
 			/// Reallocate the memory block specified.
@@ -48,7 +48,7 @@ namespace Hypertable {
 			/// <param name="p">The pointer to the block of memory.</param>
 			/// <param name="size">The new number of bytes.</param>
 			/// <returns>The new pointer to the block of memory.</returns>
-			static IntPtr ReAlloc( IntPtr p, int size );
+			static IntPtr ReAlloc( IntPtr p, int64_t size );
 
 			/// <summary>
 			/// Free the memory block specified.

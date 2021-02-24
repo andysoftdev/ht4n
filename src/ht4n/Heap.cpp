@@ -32,11 +32,11 @@
 namespace Hypertable {
 	using namespace System;
 
-	IntPtr Heap::Alloc(int size) {
+	IntPtr Heap::Alloc(int64_t size) {
 		return IntPtr(malloc(size));
 	}
 
-	IntPtr Heap::ReAlloc( IntPtr p, int size ) {
+	IntPtr Heap::ReAlloc( IntPtr p, int64_t size ) {
 		return IntPtr(realloc(p.ToPointer(), size));
 	}
 
