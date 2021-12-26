@@ -167,7 +167,7 @@
 
 	<!-- Build, tests, make documentation, make master -->
 	<Target Name="Make"
-		DependsOnTargets="CleanMaster;Build;ExecTests;MakeDoc;MakeMaster">
+		DependsOnTargets="CleanMaster;Build;ExecTests;MakeMaster">
 	</Target>
 
 	<!-- Build -->
