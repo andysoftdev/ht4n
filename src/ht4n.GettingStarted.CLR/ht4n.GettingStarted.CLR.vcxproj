@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{36D6F6F7-3058-47F7-94F0-58053C601F3E}</ProjectGuid>
-    <TargetFrameworkVersion Condition=" '$(TargetFrameworkVersion)' == ''">v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v4.8</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>ht4nGettingStartedCLR</RootNamespace>
   </PropertyGroup>
@@ -71,27 +71,27 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(VisualStudioVersion)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(PlatformToolset)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\..\ht4n.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(VisualStudioVersion)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(PlatformToolset)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\..\ht4n.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(VisualStudioVersion)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(PlatformToolset)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(VisualStudioVersion)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(PlatformToolset)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

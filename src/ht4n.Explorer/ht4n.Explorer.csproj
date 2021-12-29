@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{54AB43C3-C8F5-41A7-A2DC-9D6AD087F1F3}</ProjectGuid>
@@ -10,17 +10,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Hypertable.Explorer</RootNamespace>
     <AssemblyName>ht4n.Explorer</AssemblyName>
-    <TargetFrameworkVersion Condition=" '$(TargetFrameworkVersion)' == ''">v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <PlatformToolset Condition="'$(PlatformToolset)' == ''">v140</PlatformToolset>
+    <TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\dist\$(VisualStudioVersion)\Win32\$(Configuration)</OutputPath>
-    <IntermediateOutputPath>..\..\build\$(VisualStudioVersion)\$(AssemblyName)\$(Platform)\$(Configuration)</IntermediateOutputPath>
+    <OutputPath>..\..\dist\$(PlatformToolset)\Win32\$(Configuration)</OutputPath>
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -32,8 +30,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>..\..\dist\$(VisualStudioVersion)\Win32\$(Configuration)</OutputPath>
-    <IntermediateOutputPath>..\..\build\$(VisualStudioVersion)\$(AssemblyName)\$(Platform)\$(Configuration)</IntermediateOutputPath>
+    <OutputPath>..\..\dist\$(PlatformToolset)\Win32\$(Configuration)</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -45,8 +42,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)</OutputPath>
-    <IntermediateOutputPath>..\..\build\$(VisualStudioVersion)\$(AssemblyName)\$(Platform)\$(Configuration)</IntermediateOutputPath>
+    <OutputPath>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)</OutputPath>
     <DefineConstants>TRACE;DEBUG;X64</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -58,8 +54,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\dist\$(VisualStudioVersion)\$(Platform)\$(Configuration)</OutputPath>
-    <IntermediateOutputPath>..\..\build\$(VisualStudioVersion)\$(AssemblyName)\$(Platform)\$(Configuration)</IntermediateOutputPath>
+    <OutputPath>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)</OutputPath>
     <DefineConstants>TRACE;X64</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
