@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SupportHypertable Condition="'$(SupportHypertable)' == ''">true</SupportHypertable>
     <SupportHypertableThrift Condition="'$(SupportHypertableThrift)' == ''">true</SupportHypertableThrift>
@@ -18,13 +18,11 @@
   </PropertyGroup>
   <PropertyGroup>
     <BoostVersion>1_65_1</BoostVersion>
-    <BoostThread Condition="'$(VisualStudioVersion)' == '10.0'">libboost_thread-vc100-mt</BoostThread>
-    <BoostThread Condition="'$(VisualStudioVersion)' == '11.0'">libboost_thread-vc110-mt</BoostThread>
-    <BoostThread Condition="'$(VisualStudioVersion)' == '12.0'">libboost_thread-vc120-mt</BoostThread>
-    <BoostThread Condition="'$(VisualStudioVersion)' == '14.0'">libboost_thread-vc140-mt</BoostThread>
-    <BoostThread Condition="'$(VisualStudioVersion)' == '15.0'">libboost_thread-vc140-mt</BoostThread>
-    <BoostThread Condition="'$(VisualStudioVersion)' == '16.0'">libboost_thread-vc140-mt</BoostThread>
-    <BoostThread Condition="'$(VisualStudioVersion)' == '17.0'">libboost_thread-vc140-mt</BoostThread>
+    <BoostThread Condition="'$(PlatformToolset)' == 'v100'">libboost_thread-vc100-mt</BoostThread>
+    <BoostThread Condition="'$(PlatformToolset)' == 'v110'">libboost_thread-vc110-mt</BoostThread>
+    <BoostThread Condition="'$(PlatformToolset)' == 'v120'">libboost_thread-vc120-mt</BoostThread>
+    <BoostThread Condition="'$(PlatformToolset)' == 'v140'">libboost_thread-vc140-mt</BoostThread>
+    <BoostThread Condition="'$(PlatformToolset)' == 'v142'">libboost_thread-vc142-mt</BoostThread>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -55,14 +53,12 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -70,7 +66,6 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -78,7 +73,6 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">

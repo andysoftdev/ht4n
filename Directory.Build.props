@@ -1,10 +1,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <PlatformToolset Condition="'$(PlatformToolset)' == ''">v140</PlatformToolset>
+    <PlatformToolset Condition="'$(PlatformToolset)' == ''">v142</PlatformToolset>
     <IntermediateOutputPath>$(MSBuildThisFileDirectory)\build\$(PlatformToolset)\$(MSBuildProjectName)\$(Platform)\$(Configuration)</IntermediateOutputPath>
     <MSBuildProjectExtensionsPath>$(MSBuildThisFileDirectory)\build\$(PlatformToolset)\$(MSBuildProjectName)\$(Platform)\$(Configuration)</MSBuildProjectExtensionsPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
-
 </Project>
