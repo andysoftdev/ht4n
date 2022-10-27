@@ -74,11 +74,10 @@
             Condition="'$(MachineProcessorArchitecture)' == 'AMD64'">true</Is64Bit>
     </PropertyGroup>
 
-    <!-- Check for mstest64 -->
     <PropertyGroup>
-        <MSTest64>$(VSInstallDir)\Common7\IDE\mstest64.exe</MSTest64>
-        <HasMSTest64>false</HasMSTest64>
-        <HasMSTest64 Condition="Exists('$(MSTest64)')">true</HasMSTest64>
+        <VSTest>$(VSInstallRoot)\Common7\IDE\Extensions\TestPlatform\vstest.console.exe</VSTest>
+        <HasVSTest>false</HasVSTest>
+        <HasVSTest Condition="Exists('$(VSTest)')">true</HasVSTest>
     </PropertyGroup>
 
     <!-- Default provider uri -->
@@ -119,9 +118,9 @@
         <StartServers>
             <![CDATA[
             public static void ScriptMain() {
-                string filename = @"..\ht4w\dist\$(PlatformToolset)\Win32\release\hypertable.service.exe";
+                string filename = @"..\ht4w\dist\$(PlatformToolset)\x64\release\hypertable.service.exe";
                 if( !File.Exists(filename) )
-                    filename = @"..\ht4w\dist\$(PlatformToolset)\Win32\release\hypertable.service.exe";
+                    filename = @"..\ht4w\dist\$(PlatformToolset)\x64\release\hypertable.service.exe";
                 ProcessStartInfo psi = new ProcessStartInfo(filename, @"--stop-all-services --kill-servers --start-servers --Hypertable.Master.DiskThreshold.Percentage=100");
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
                 Process p = Process.Start(psi);
@@ -133,9 +132,9 @@
         <StopServers>
             <![CDATA[
             public static void ScriptMain() {
-                string filename = @"..\ht4w\dist\$(PlatformToolset)\Win32\release\hypertable.service.exe";
+                string filename = @"..\ht4w\dist\$(PlatformToolset)\x64\release\hypertable.service.exe";
                 if( !File.Exists(filename) )
-                    filename = @"..\ht4w\dist\$(PlatformToolset)\Win32\release\hypertable.service.exe";
+                    filename = @"..\ht4w\dist\$(PlatformToolset)\x64\release\hypertable.service.exe";
                 ProcessStartInfo psi = new ProcessStartInfo(filename, @"--stop-all-services --kill-servers");
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
                 Process p = Process.Start(psi);
@@ -309,7 +308,7 @@
     <!-- Ececute tests -->
     <Target Name="ExecTests"
             DependsOnTargets="StartServers"
-            Condition="$(HasMSBuildCommunityTasks) == true" >
+            Condition="$(HasMSBuildCommunityTasks) == true And $(HasVSTest) == true">
 
         <CallTarget
             Targets="InvokeTests" />
@@ -322,7 +321,7 @@
 
     <!-- Ececute tests w'out start/stop servers -->
     <Target Name="InvokeTests"
-            Condition="$(HasMSBuildCommunityTasks) == true" >
+            Condition="$(HasMSBuildCommunityTasks) == true And $(HasVSTest) == true">
 
         <!-- Hyper tests -->
         <XmlPoke
@@ -333,11 +332,11 @@
 
         <Exec
             Condition="$(SupportHypertable) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
-            Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Command="&#34;$(VSTest)&#34; /Platform:x86 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <Exec
-            Condition="$(SupportHypertable) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
-            Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Condition="$(SupportHypertable) == true AND '%(MakeConfiguration.Platform)' == 'x64'"
+            Command="&#34;$(VSTest)&#34; /Platform:x64 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <!-- Thrift tests -->
         <XmlPoke
@@ -348,11 +347,11 @@
 
         <Exec
             Condition="$(SupportHypertableThrift) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
-            Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Command="&#34;$(VSTest)&#34; /Platform:x86 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <Exec
-            Condition="$(SupportHypertableThrift) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
-            Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Condition="$(SupportHypertableThrift) == true AND '%(MakeConfiguration.Platform)' == 'x64'"
+            Command="&#34;$(VSTest)&#34; /Platform:x64 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <!-- Hamster tests -->
         <XmlPoke
@@ -363,11 +362,11 @@
 
         <Exec
             Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
-            Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Command="&#34;$(VSTest)&#34; /Platform:x86 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <Exec
-            Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
-            Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Condition="$(SupportHamsterDb) == true AND '%(MakeConfiguration.Platform)' == 'x64'"
+            Command="&#34;$(VSTest)&#34; /Platform:x64 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <!-- SQLite tests -->
         <XmlPoke
@@ -378,11 +377,11 @@
 
         <Exec
             Condition="$(SupportSQLiteDb) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
-            Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Command="&#34;$(VSTest)&#34; /Platform:x86 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <Exec
-            Condition="$(SupportSQLiteDb) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
-            Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Condition="$(SupportSQLiteDb) == true AND '%(MakeConfiguration.Platform)' == 'x64'"
+            Command="&#34;$(VSTest)&#34; /Platform:x64 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <!-- Odbc tests -->
         <XmlPoke
@@ -393,11 +392,11 @@
 
         <Exec
             Condition="$(SupportOdbc) == true AND '%(MakeConfiguration.Platform)' == 'Win32'"
-            Command="mstest /testsettings:src\ht4n.Test\x86.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Command="&#34;$(VSTest)&#34; /Platform:x86 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <Exec
-            Condition="$(SupportOdbc) == true AND '%(MakeConfiguration.Platform)' == 'x64' AND $(HasMSTest64) == true"
-            Command="mstest64 /testsettings:src\ht4n.Test\x64.testsettings /testcontainer:dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
+            Condition="$(SupportOdbc) == true AND '%(MakeConfiguration.Platform)' == 'x64'"
+            Command="&#34;$(VSTest)&#34; /Platform:x64 dist\$(PlatformToolset)\%(MakeConfiguration.Platform)\%(MakeConfiguration.Configuration)\tests\ht4n.Test.dll" />
 
         <Exec
             Command="if exist TestResults rd /S /Q TestResults" /> 
