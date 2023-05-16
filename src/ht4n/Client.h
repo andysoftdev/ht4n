@@ -88,6 +88,7 @@ namespace Hypertable {
 			virtual void DropNamespace( String^ name, INamespace^ nsBase, DropDispositions dispo );
 			virtual bool NamespaceExists( String^ name );
 			virtual bool NamespaceExists( String^ name, INamespace^ nsBase );
+			virtual void Optimize( );
 
 			#pragma endregion
 

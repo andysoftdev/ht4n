@@ -242,6 +242,11 @@ namespace Hypertable {
 			/// if the namespace to check is relative to an existing namespace. Namespace names are case sensitive.
 			/// </remarks>
 			bool NamespaceExists( String^ name, INamespace^ nsBase );
+
+			/// <summary>
+			/// Defragment, re-index and optimize database.
+			/// </summary>
+			void Optimize( );
 	};
 
 }

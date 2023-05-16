@@ -204,4 +204,14 @@ namespace Hypertable {
 		HT4N_RETHROW
 	}
 
+	void Client::Optimize( ) {
+		HT4N_THROW_OBJECTDISPOSED( );
+
+		HT4N_TRY {
+			msclr::lock sync( syncRoot );
+			client->optimize( );
+		}
+		HT4N_RETHROW
+	}
+
 }
