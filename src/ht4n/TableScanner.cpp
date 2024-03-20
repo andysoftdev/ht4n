@@ -188,7 +188,7 @@ namespace Hypertable {
 			Common::Cell* cell;
 			msclr::lock sync(syncRoot);
 			if (tableScanner->next(cell)) {
-				return action(gcnew Key(*cell), IntPtr(const_cast<ht4c::Common::uint8_t*>(cell->value())), cell->valueLength());
+				return action(gcnew Key(*cell), IntPtr(const_cast<ht4c::Common::uint8_t*>(cell->value())), static_cast<int>(cell->valueLength()));
 			}
 			return false;
 		}
