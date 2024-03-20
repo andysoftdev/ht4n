@@ -539,29 +539,55 @@ namespace Hypertable.Explorer
                 {
                     this.hwndSourceSurrounds = new[]
                         {
-                            (HwndSource)PresentationSource.FromVisual(this.wndTop), (HwndSource)PresentationSource.FromVisual(this.wndLeft), 
-                            (HwndSource)PresentationSource.FromVisual(this.wndBottom), (HwndSource)PresentationSource.FromVisual(this.wndRight)
+                            (HwndSource)PresentationSource.FromVisual(this.wndTop),
+                            (HwndSource)PresentationSource.FromVisual(this.wndLeft),
+                            (HwndSource)PresentationSource.FromVisual(this.wndBottom),
+                            (HwndSource)PresentationSource.FromVisual(this.wndRight)
                         };
                 }
+
+                var scaleX = this.hwndSourceSurrounds[0].CompositionTarget.TransformToDevice.M11;
+                var scaleY = this.hwndSourceSurrounds[0].CompositionTarget.TransformToDevice.M22;
 
                 var dwp = NativeMethods.BeginDeferWindowPos(4);
 
                 NativeMethods.DeferWindowPos(
-                    dwp, this.hwndSourceSurrounds[0].Handle, IntPtr.Zero, (int)(this.Left - EdgeSize), (int)(this.Top - EdgeSize), (int)(this.Width + EdgeSize * 2), EdgeSize, 0x10);
-
-                NativeMethods.DeferWindowPos(dwp, this.hwndSourceSurrounds[1].Handle, IntPtr.Zero, (int)(this.Left - EdgeSize), (int)this.Top, EdgeSize, (int)this.Height, 0x10);
-
-                NativeMethods.DeferWindowPos(
-                    dwp, 
-                    this.hwndSourceSurrounds[2].Handle, 
-                    IntPtr.Zero, 
-                    (int)(this.Left - EdgeSize), 
-                    (int)(this.Top + this.Height), 
-                    (int)(this.Width + EdgeSize * 2), 
-                    EdgeSize, 
+                    dwp, this.hwndSourceSurrounds[0].Handle,
+                    IntPtr.Zero,
+                    (int)((this.Left - EdgeSize) * scaleX),
+                    (int)((this.Top - EdgeSize) * scaleY),
+                    (int)((this.Width + EdgeSize * 2) * scaleX),
+                    (int)(EdgeSize * scaleY),
                     0x10);
 
-                NativeMethods.DeferWindowPos(dwp, this.hwndSourceSurrounds[3].Handle, IntPtr.Zero, (int)(this.Left + this.Width), (int)this.Top, EdgeSize, (int)this.Height, 0x10);
+                NativeMethods.DeferWindowPos(dwp,
+                    this.hwndSourceSurrounds[1].Handle,
+                    IntPtr.Zero,
+                    (int)((this.Left - EdgeSize) * scaleX),
+                    (int)(this.Top * scaleY),
+                    (int)(EdgeSize * scaleX),
+                    (int)(this.Height * scaleY),
+                    0x10);
+
+                NativeMethods.DeferWindowPos(
+                    dwp,
+                    this.hwndSourceSurrounds[2].Handle,
+                    IntPtr.Zero,
+                    (int)((this.Left - EdgeSize) * scaleX),
+                    (int)((this.Top + this.Height) * scaleY),
+                    (int)((this.Width + EdgeSize * 2) * scaleX),
+                    (int)(EdgeSize * scaleY),
+                    0x10);
+
+                NativeMethods.DeferWindowPos(
+                    dwp,
+                    this.hwndSourceSurrounds[3].Handle,
+                    IntPtr.Zero,
+                    (int)((this.Left + this.Width) * scaleX),
+                    (int)(this.Top * scaleY),
+                    (int)(EdgeSize * scaleX),
+                    (int)(this.Height * scaleY),
+                    0x10);
 
                 NativeMethods.EndDeferWindowPos(dwp);
             }
