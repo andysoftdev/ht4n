@@ -21,6 +21,8 @@
 
 namespace Hypertable.Test
 {
+#if !NETCORE
+
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
@@ -150,4 +152,6 @@ namespace Hypertable.Test
 
         #endregion
     }
+
+#endif
 }

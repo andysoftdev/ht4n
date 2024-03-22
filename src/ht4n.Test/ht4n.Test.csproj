@@ -1,6 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFramework Condition="'$(DotnetFramework)' != 'net48'">net8.0</TargetFramework>
+    <TargetFramework Condition="'$(DotnetFramework)' == 'net48'">net48</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <ProjectGuid>{4AE1AE1F-1FAB-4794-BA82-01FB7B54FD7E}</ProjectGuid>
+    <OutputPath>$(OutputPath)\tests</OutputPath>
+    <RootNamespace>Hypertable.Test</RootNamespace>
+    <AssemblyTitle>ht4n.Test</AssemblyTitle>
+    <Company>ht4n.softdev.ch</Company>
+    <Product>ht4n.Test</Product>
+    <Description>Hypertable .NET client library tests</Description>
+    <Copyright>Copyright © 2010-2024</Copyright>
+    <AssemblyVersion>0.9.8.11</AssemblyVersion>
+    <FileVersion>0.9.8.11</FileVersion>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <NetCoreDefine Condition="'$(DotnetFramework)' != 'net48'">NETCORE</NetCoreDefine>
     <SupportHypertable Condition="'$(SupportHypertable)' == ''">true</SupportHypertable>
     <SupportHypertableThrift Condition="'$(SupportHypertableThrift)' == ''">true</SupportHypertableThrift>
     <SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
@@ -11,160 +25,34 @@
     <SupportHamsterDbDefine Condition="$(SupportHamsterDb) == true">SUPPORT_HAMSTERDB</SupportHamsterDbDefine>
     <SupportSQLiteDbDefine Condition="$(SupportSQLiteDb) == true">SUPPORT_SQLITEDB</SupportSQLiteDbDefine>
     <SupportOdbcDefine Condition="$(SupportOdbc) == true">SUPPORT_ODBC</SupportOdbcDefine>
+    <DefineConstants>X64;$(NetCoreDefine);$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine)</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4AE1AE1F-1FAB-4794-BA82-01FB7B54FD7E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hypertable.Test</RootNamespace>
-    <AssemblyName>ht4n.Test</AssemblyName>
-    <PlatformToolset Condition="'$(PlatformToolset)' == ''">v140</PlatformToolset>
-    <TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\dist\$(PlatformToolset)\Win32\$(Configuration)\tests</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine)</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>..\..\dist\$(PlatformToolset)\Win32\$(Configuration)\tests</OutputPath>
-    <DefineConstants>TRACE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine)</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\tests</OutputPath>
-    <DefineConstants>TRACE;DEBUG;X64;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine)</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\tests</OutputPath>
-    <DefineConstants>TRACE;X64;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine)</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.XML" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="TestCounter.cs" />
-    <Compile Include="TestTableSchema.cs" />
-    <Compile Include="TestNativeMethods.cs" />
-    <Compile Include="TestScanSpec.cs" />
-    <Compile Include="TestScanSpecBuilder.cs" />
-    <Compile Include="TestAsyncTableMutator.cs" />
-    <Compile Include="TestAsyncTableScanner.cs" />
-    <Compile Include="TestComposition.cs" />
-    <Compile Include="TestKeyComparer.cs" />
-    <Compile Include="TestHql.cs" />
-    <Compile Include="TestBase.cs" />
-    <Compile Include="TestMultipleInstances.cs" />
-    <Compile Include="TestNamespace.cs" />
-    <Compile Include="TestTable.cs" />
-    <Compile Include="TestKey.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestContext.cs" />
-    <Compile Include="TestTableMutator.cs" />
-    <Compile Include="TestTableScanner.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
+    <None Include="conf\TestConfiguration.cfg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="conf\TestConfiguration.cfg" />
     <None Include="Settings.StyleCop" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\ht4n\ht4n.vcxproj">
-      <Project>{6D3D2C53-93EB-417A-B4A2-6A8C6B264AFD}</Project>
-      <Name>ht4n</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\ht4n\ht4n.vcxproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.2.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.2.2" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+  </ItemGroup>
+
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Copy Condition="'$(DotnetFramework)' != 'net48'" SourceFiles="$(OutputPath)\$(MSBuildProjectName).dll.config" DestinationFiles="$(OutputPath)\testhost.dll.config" />
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

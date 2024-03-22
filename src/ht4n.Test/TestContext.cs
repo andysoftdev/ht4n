@@ -55,13 +55,12 @@ namespace Hypertable.Test
         }
 
         [TestMethod]
-        [DeploymentItem(@"..\ht4n\src\ht4n.Test\conf\TestConfiguration.cfg")]
         public void CreateContexConfigurationFile() {
             if(!Context.HasContext(ContextKind.Thrift)) {
                 return;
             }
 
-            using (var context = Context.Create("--config TestConfiguration.cfg")) {
+            using (var context = Context.Create("--config conf\\TestConfiguration.cfg")) {
                 Assert.AreEqual("Thrift", context.Properties["Ht4n.Provider"]);
                 Assert.AreEqual("Thrift", context.Properties["Provider"]);
                 Assert.AreEqual("net.tcp://google.com", context.Properties["Ht4n.Uri"]);

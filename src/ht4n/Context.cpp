@@ -42,9 +42,11 @@ namespace Hypertable {
 	using namespace System::Globalization;
 	using namespace System::Reflection;
 	using namespace System::Diagnostics;
+#ifndef NETCORE
 	using namespace System::ComponentModel::Composition;
 	using namespace System::ComponentModel::Composition::Hosting;
 	using namespace System::ComponentModel::Composition::Primitives;
+#endif
 	using namespace System::IO;
 
 	class ShutdownHandler : public AppDomainHandler<ShutdownHandler> {
@@ -427,6 +429,8 @@ namespace Hypertable {
 			return gcnew Context( properties );
 		}
 
+#ifndef NETCORE
+
 		String^ key = gcnew String( Common::Config::ComposablePartCatalogs );
 		if( properties->ContainsKey(key) ) {
 			IEnumerable<ComposablePartCatalog^>^ catalogs = dynamic_cast<IEnumerable<ComposablePartCatalog^>^>( properties[key] );
@@ -464,6 +468,8 @@ namespace Hypertable {
 				}
 			}
 		}
+
+#endif
 
 		if( GetProvider(properties, providerName, provider) ) {
 			return provider( properties );

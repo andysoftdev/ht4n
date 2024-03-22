@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <TargetFramework Condition="'$(DotnetFramework)' != 'net48'">net5.0</TargetFramework>
+    <TargetFrameworkVersion Condition="'$(DotnetFramework)' == 'net48'">v4.8</TargetFrameworkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NetCoreDefine Condition="'$(DotnetFramework)' != 'net48'">NETCORE</NetCoreDefine>
     <SupportHypertable Condition="'$(SupportHypertable)' == ''">true</SupportHypertable>
     <SupportHypertableThrift Condition="'$(SupportHypertableThrift)' == ''">true</SupportHypertableThrift>
     <SupportHamsterDb Condition="'$(SupportHamsterDb)' == ''">true</SupportHamsterDb>
@@ -13,9 +19,7 @@
     <SupportOdbcDefine Condition="$(SupportOdbc) == true">SUPPORT_ODBC</SupportOdbcDefine>
     <UseMimallocDefine Condition="$(UseMimalloc) == true">_USE_MIMALLOC</UseMimallocDefine>
   </PropertyGroup>
-  <PropertyGroup>
-    <TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v4.8</TargetFrameworkVersion>
-  </PropertyGroup>
+
   <PropertyGroup>
     <BoostVersion>1_65_1</BoostVersion>
     <BoostThread Condition="'$(PlatformToolset)' == 'v100'">libboost_thread-vc100-mt</BoostThread>
@@ -24,86 +28,43 @@
     <BoostThread Condition="'$(PlatformToolset)' == 'v140'">libboost_thread-vc140-mt</BoostThread>
     <BoostThread Condition="'$(PlatformToolset)' == 'v142'">libboost_thread-vc142-mt</BoostThread>
   </PropertyGroup>
+
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6D3D2C53-93EB-417a-B4A2-6A8C6B264AFD}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <RootNamespace>Hypertable</RootNamespace>
+    <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport Condition="'$(TargetFrameworkVersion)' != ''">true</CLRSupport>
+    <CLRSupport Condition="'$(TargetFramework)' != ''">NetCore</CLRSupport>
+    <!--<EnableManagedPackageReferenceSupport>true</EnableManagedPackageReferenceSupport>-->
   </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>true</CLRSupport>
-  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>true</CLRSupport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>true</CLRSupport>
-  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>true</CLRSupport>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(PlatformToolset)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>..\..\ht4n.ruleset</CodeAnalysisRuleSet>
-    <LinkKeyFile>
-    </LinkKeyFile>
-    <LinkDelaySign>
-    </LinkDelaySign>
-  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(PlatformToolset)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(PlatformToolset)\$(DotnetFramework)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(PlatformToolset)\$(DotnetFramework)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\..\ht4n.ruleset</CodeAnalysisRuleSet>
@@ -112,70 +73,23 @@
     <LinkDelaySign>
     </LinkDelaySign>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(PlatformToolset)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
-    <LinkKeyFile>
-    </LinkKeyFile>
-    <LinkDelaySign>
-    </LinkDelaySign>
-  </PropertyGroup>
+  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\build\$(PlatformToolset)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>..\..\dist\$(PlatformToolset)\$(DotnetFramework)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\build\$(PlatformToolset)\$(DotnetFramework)\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <LinkKeyFile>
     </LinkKeyFile>
     <LinkDelaySign>
     </LinkDelaySign>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\deps\mimalloc\include;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm300 </AdditionalOptions>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <EnablePREfast>false</EnablePREfast>
-      <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
-      <ExceptionHandling>Async</ExceptionHandling>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(PlatformToolset)\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>$(BoostThread)-gd-$(BoostVersion).lib</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>/IGNORE:4248 %(AdditionalOptions)</AdditionalOptions>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-    </Link>
-    <Xdcmake>
-      <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
-    </Xdcmake>
-    <PostBuildEvent>
-      <Command>ren "$(OutDir)$(TargetName).xml" "$(TargetName).sed"
-sed -f "$(TargetName).sed" "$(OutDir)$(TargetName).sed" &gt; "$(OutDir)$(TargetName).xml"
-del "$(OutDir)$(TargetName).sed"
-sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
-      <Message>Process $(TargetName).xml, re-sign assembly</Message>
-    </PostBuildEvent>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertablThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ResourceCompile>
-  </ItemDefinitionGroup>
+
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(NetCoreDefine);$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -207,58 +121,11 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(NetCoreDefine);$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VC_IncludePath);$(WindowsSDK_IncludePath);</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\ht4c\src;$(ProjectDir)\..\..\..\ht4w\deps\boost;$(ProjectDir)\..\..\..\ht4w\deps\expat;$(ProjectDir)\..\..\..\ht4w\deps\re2;$(ProjectDir)\..\..\..\ht4w\deps\stubs;$(ProjectDir)\..\..\..\ht4w\deps\db\build_windows;$(ProjectDir)\..\..\..\ht4w\deps\mimalloc\include;$(ProjectDir)\..\..\..\ht4w\src\cc</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm300 </AdditionalOptions>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ForcedIncludeFiles>CodeAnalysis\SourceAnnotations.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
-      <ExceptionHandling>Async</ExceptionHandling>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>true</OmitFramePointers>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\ht4w\deps\boost\stage\$(PlatformToolset)\$(Platform)\lib;$(ProjectDir)\..\..\..\ht4w\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\libs;$(ProjectDir)\..\..\..\ht4c\dist\$(PlatformToolset)\$(Platform)\$(Configuration)\libs</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>$(BoostThread)-$(BoostVersion).lib</IgnoreSpecificDefaultLibraries>
-      <ForceSymbolReferences>
-      </ForceSymbolReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>/IGNORE:4248 %(AdditionalOptions)</AdditionalOptions>
-    </Link>
-    <Xdcmake>
-      <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
-    </Xdcmake>
-    <PostBuildEvent>
-      <Command>ren "$(OutDir)$(TargetName).xml" "$(TargetName).sed"
-sed -f "$(TargetName).sed" "$(OutDir)$(TargetName).sed" &gt; "$(OutDir)$(TargetName).xml"
-del "$(OutDir)$(TargetName).sed"
-sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
-      <Message>Process $(TargetName).xml, re-sign assembly</Message>
-    </PostBuildEvent>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ResourceCompile>
-  </ItemDefinitionGroup>
+
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -266,7 +133,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(NetCoreDefine);$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -305,9 +172,11 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
       <Message>Process $(TargetName).xml, re-sign assembly</Message>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;$(NetCoreDefine);$(SupportHypertableDefine);$(SupportHypertableThriftDefine);$(SupportHamsterDbDefine);$(SupportSQLiteDbDefine);$(SupportOdbcDefine);$(UseMimallocDefine);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VC_IncludePath);$(WindowsSDK_IncludePath);</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
+
   <ItemGroup>
     <ClInclude Include="AsyncCallbackResult.h" />
     <ClInclude Include="AsyncMutatorContext.h" />
@@ -372,6 +241,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClInclude Include="ScannerFlags.h" />
     <ClInclude Include="Xml\TableSchema.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="AsyncResult.cpp" />
@@ -390,26 +260,16 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Context.cpp" />
     <ClCompile Include="DllMain.cpp">
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</GenerateXMLDocumentationFiles>
-      <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateXMLDocumentationFiles>
       <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GenerateXMLDocumentationFiles>
       <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</GenerateXMLDocumentationFiles>
     </ClCompile>
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="GlobalSuppressions.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
@@ -426,9 +286,7 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClCompile Include="ScanSpecBuilder.cpp" />
     <ClCompile Include="SessionStateChangedEventArgs.cpp" />
     <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Table.cpp" />
@@ -436,13 +294,15 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <ClCompile Include="TableScanner.cpp" />
     <ClCompile Include="Xml\TableSchema.cpp" />
   </ItemGroup>
+
   <ItemGroup>
     <ResourceCompile Include="ht4n.rc">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_WIN64;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_WIN64;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkVersion)' != ''">
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Buffers.4.5.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
       <Private>True</Private>
@@ -452,10 +312,21 @@ sn -q -R "$(TargetPath)" ..\ht4n.snk</Command>
     <Reference Include="System.Runtime" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+
   <ItemGroup>
     <None Include="ht4n.sed" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+
 </Project>

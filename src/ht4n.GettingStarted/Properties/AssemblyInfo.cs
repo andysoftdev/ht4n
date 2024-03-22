@@ -21,26 +21,11 @@
 
 using System;
 using System.Reflection;
-using System.Resources;
 using System.Runtime.InteropServices;
 
-#if X64
-[assembly: AssemblyTitle("ht4n.GettingStarted (x64)")]
-#else
-
-[assembly: AssemblyTitle("ht4n.GettingStarted (x86)")]
-#endif
-
-[assembly: AssemblyProduct("ht4n.GettingStarted")]
-[assembly: AssemblyDescription("Hypertable GettingStarted")]
-[assembly: AssemblyCompany("ht4n.softdev.ch")]
-[assembly: AssemblyCopyright("Copyright © 2010-2016")]
-[assembly: AssemblyVersion("0.9.8.11")]
-[assembly: AssemblyFileVersion("0.9.8.11")]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 [assembly: Guid("1BCEEC8B-7155-4DC9-9A35-8CAA058051FF")]
-[assembly: NeutralResourcesLanguage("en-US")]
 
 #pragma warning disable 1699 // Use command line option '/keyfile' or appropriate project settings instead of 'AssemblyKeyFile'
 

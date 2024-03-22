@@ -224,8 +224,15 @@ namespace Hypertable {
 #ifdef _DEBUG
 
 			List<TraceListener^>^ listeners = gcnew List<TraceListener^>();
-			listeners->AddRange(Enumerable::Cast<TraceListener^>(Trace::Listeners));
+			for each( Object^ item in Trace::Listeners) {
+				listeners->Add((TraceListener^)item);
+			}
+
+#ifndef NETCORE
+
 			listeners->AddRange(Enumerable::Cast<TraceListener^>(Debug::Listeners));
+
+#endif
 
 			HashSet<String^> names = gcnew HashSet<String^>();
 			for each( TraceListener^ listener in traceSource->Listeners ) {

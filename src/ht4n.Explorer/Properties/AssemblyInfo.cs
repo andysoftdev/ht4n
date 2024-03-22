@@ -21,28 +21,13 @@
 
 using System;
 using System.Reflection;
-using System.Resources;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-#if X64
-[assembly: AssemblyTitle("ht4n.Explorer (x64)")]
-#else
-
-[assembly: AssemblyTitle("ht4n.Explorer (x86)")]
-#endif
-
-[assembly: AssemblyProduct("ht4n.Explorer")]
-[assembly: AssemblyDescription("Hypertable Explorer")]
-[assembly: AssemblyCompany("ht4n.softdev.ch")]
-[assembly: AssemblyCopyright("Copyright © 2010-2016")]
-[assembly: AssemblyVersion("0.9.8.11")]
-[assembly: AssemblyFileVersion("0.9.8.11")]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 [assembly: Guid("2D587F25-C918-4C14-B94F-0C2CD2E19E17")]
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
-[assembly: NeutralResourcesLanguage("en-US")]
 
 #pragma warning disable 1699 // Use command line option '/keyfile' or appropriate project settings instead of 'AssemblyKeyFile'
 

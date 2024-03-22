@@ -19,13 +19,13 @@
  * 02110-1301, USA.
  */
 
-#pragma once
-
 #ifndef __cplusplus_cli
 #error "requires /clr"
 #endif
 
 #include "stdafx.h"
+
+#ifndef NETCORE
 
 #include "ContextFactory.h"
 #include "../Context.h"
@@ -47,3 +47,5 @@ namespace Hypertable { namespace Composition {
 	}
 
 } }
+
+#endif

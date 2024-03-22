@@ -22,19 +22,6 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-#if X64
-[assembly: AssemblyTitle("ht4n.Test (x64)")]
-#else
-
-[assembly: AssemblyTitle("ht4n.Test (x86)")]
-#endif
-
-[assembly: AssemblyProduct("ht4n.Test")]
-[assembly: AssemblyDescription("Hypertable .NET client library tests")]
-[assembly: AssemblyCompany("ht4n.softdev.ch")]
-[assembly: AssemblyCopyright("Copyright © 2010-2016")]
-[assembly: AssemblyVersion("0.9.8.11")]
-[assembly: AssemblyFileVersion("0.9.8.11")]
 [assembly: ComVisible(false)]
 [assembly: Guid("3bfd2fed-0f46-4874-a318-b47e1f456893")]
 

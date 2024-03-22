@@ -82,7 +82,9 @@ namespace Hypertable {
 			/// </summary>
 			/// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
 			/// <param name="context">The StreamingContext that contains contextual information about the source or destination. </param>
+#ifndef NETCORE
 			[Security::SecurityCriticalAttribute, Security::Permissions::SecurityPermissionAttribute(Security::Permissions::SecurityAction::Demand, SerializationFormatter=true)]
+#endif
 			virtual void GetObjectData( SerializationInfo^ info, StreamingContext context ) override;
 
 		internal:
